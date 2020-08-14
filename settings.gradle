@@ -1,0 +1,2 @@
+rootProject.name='Atomic.io'
+include ':app'
