@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private var habitSequence: MutableList<HabitViewModel.Habit>? = null
+    private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
     private var habitRecyclerViewAdapter: HabitRecyclerViewAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,9 +50,9 @@ class MainActivity : AppCompatActivity() {
     // @todo: implement DB and LiveData for habitSequence
     private fun initializeData() {
         habitSequence = mutableListOf(
-            HabitViewModel.Habit("wake up", "sleep", 0),
-            HabitViewModel.Habit("eat breakfast", "diet", 1),
-            HabitViewModel.Habit("walk dog", "exercise", 2)
+            HabitViewModel.HabitViewData("wake up", "sleep", 0),
+            HabitViewModel.HabitViewData("eat breakfast", "diet", 1),
+            HabitViewModel.HabitViewData("walk dog", "exercise", 2)
         )
     }
 
