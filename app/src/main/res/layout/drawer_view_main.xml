@@ -6,20 +6,20 @@
     android:layout_width="240dp"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="@color/colorPrimary"
+    android:background="@color/secondaryColor"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:background="@color/colorAccent"
+        android:background="@color/primaryLightColor"
         android:gravity="bottom"
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="16dp"
         android:paddingBottom="10dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+        android:theme="@style/ThemeOverlay.AppCompat">
 
         <ImageView
             android:id="@+id/imageView"
