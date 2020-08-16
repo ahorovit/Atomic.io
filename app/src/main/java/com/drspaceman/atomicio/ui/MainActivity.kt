@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,8 @@ import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.HabitViewModel
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.habit_sequence.*
 import java.util.*
 
 
@@ -22,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        setupToolbar()
 
 //        fab.setOnClickListener { view ->
 //
@@ -30,6 +33,18 @@ class MainActivity : AppCompatActivity() {
 
         initializeData()
         initializeRecyclerView()
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(toolbar)
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.open_drawer,
+            R.string.close_drawer
+        )
+        toggle.syncState()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
