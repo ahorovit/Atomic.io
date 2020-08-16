@@ -10,15 +10,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
+import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.HabitViewModel
+import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.drawerLayout
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.drawer_view_main.*
 import kotlinx.android.synthetic.main.habit_sequence.*
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
+    private var identityList: MutableList<IdentityViewModel.IdentityViewData>? = null
+    private var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter? = null
+
+    // @todo: Move into Fragment
     private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
     private var habitRecyclerViewAdapter: HabitRecyclerViewAdapter? = null
 
@@ -32,7 +40,8 @@ class MainActivity : AppCompatActivity() {
 //        }
 
         initializeData()
-        initializeRecyclerView()
+        initializeIdentityRecyclerView()
+        initializeHabitSequenceRecyclerView()
     }
 
     private fun setupToolbar() {
@@ -70,9 +79,14 @@ class MainActivity : AppCompatActivity() {
             HabitViewModel.HabitViewData("eat breakfast", "diet", 1),
             HabitViewModel.HabitViewData("walk dog", "exercise", 2)
         )
+
+        identityList = mutableListOf(
+            IdentityViewModel.IdentityViewData("Healthy", "fit, active", "health"),
+            IdentityViewModel.IdentityViewData("Productive", "organized, disciplined", "productivity")
+        )
     }
 
-    private fun initializeRecyclerView() {
+    private fun initializeHabitSequenceRecyclerView() {
         val sequence = habitSequence ?: return
 
         habitSequenceRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -81,6 +95,14 @@ class MainActivity : AppCompatActivity() {
         habitSequenceRecyclerView.adapter = habitRecyclerViewAdapter
 
 //        attachItemTouchHelper()
+    }
+
+    private fun initializeIdentityRecyclerView() {
+        val identities = identityList ?: return
+
+        identityRecyclerView.layoutManager = LinearLayoutManager(this)
+        identityRecyclerViewAdapter = IdentityRecyclerViewAdapter(identities)
+        identityRecyclerView.adapter = identityRecyclerViewAdapter
     }
 
     /**
