@@ -14,6 +14,7 @@ import com.drspaceman.atomicio.viewmodel.HabitViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
+
 class MainActivity : AppCompatActivity() {
     private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
     private var habitRecyclerViewAdapter: HabitRecyclerViewAdapter? = null
@@ -63,9 +64,16 @@ class MainActivity : AppCompatActivity() {
 
         habitRecyclerViewAdapter = HabitRecyclerViewAdapter(sequence)
         habitSequenceRecyclerView.adapter = habitRecyclerViewAdapter
+
+//        attachItemTouchHelper()
     }
 
-    private fun moveHabitItem() {
+    /**
+     * WIP: Make habitSequence items draggable for reordering
+     */
+    private fun attachItemTouchHelper() {
+
+
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             0
@@ -81,6 +89,8 @@ class MainActivity : AppCompatActivity() {
                     val positionTarget = target.adapterPosition
 
                     Collections.swap(it, positionDragged, positionTarget)
+
+                    habitRecyclerViewAdapter?.notifyItemMoved(positionDragged, positionTarget)
                 }
 
                 return false
@@ -91,5 +101,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+
+        itemTouchHelper.attachToRecyclerView(habitSequenceRecyclerView)
     }
 }

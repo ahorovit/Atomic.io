@@ -28,11 +28,15 @@ class HabitRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
         holder.habitLabelTextView.text = habitSequence[position].name
-
+//
+//        holder.parentLayout.setOnClickListener {
+//
+//        }
     }
 
     class HabitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val habitLabelTextView = itemView.habitLabelTextView
         val habitTypeImageView = itemView.habitTypeImageView
+        val parentLayout = itemView.parentLayout
     }
 }
