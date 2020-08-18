@@ -7,6 +7,15 @@
     <string name="close_drawer">"Close Drawer</string>
 
 
+
+    <string name="affirmation_template">\"I am a...\"</string>
+    <string name="identity_label">Aspirational Identity</string>
+    <string name="identity_hint">EG: \"Organized Person\"</string>
+    <string name="type_label">Identity Type</string>
+
+
+
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -15,4 +24,5 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
 </resources>
