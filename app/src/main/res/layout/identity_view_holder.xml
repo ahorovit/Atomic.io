@@ -12,7 +12,7 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_gravity="center_vertical"
-        app:srcCompat="@android:drawable/ic_dialog_alert"
+        app:srcCompat="@drawable/ic_other"
         android:layout_margin="16dp"/>
 
     <TextView

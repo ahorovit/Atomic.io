@@ -1,5 +1,6 @@
 package com.drspaceman.atomicio.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
@@ -14,7 +15,6 @@ import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.HabitViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.drawerLayout
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.drawer_view_main.*
@@ -54,6 +54,11 @@ class MainActivity : AppCompatActivity() {
             R.string.close_drawer
         )
         toggle.syncState()
+
+        addIdentityButton.setOnClickListener {
+            val intent = Intent(this, IdentityDetailActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -81,8 +86,8 @@ class MainActivity : AppCompatActivity() {
         )
 
         identityList = mutableListOf(
-            IdentityViewModel.IdentityViewData("Healthy", "fit, active", "health"),
-            IdentityViewModel.IdentityViewData("Productive", "organized, disciplined", "productivity")
+            IdentityViewModel.IdentityViewData("Healthy Person", "fit, active", "health"),
+            IdentityViewModel.IdentityViewData("Productive Person", "organized, disciplined", "productivity")
         )
     }
 
