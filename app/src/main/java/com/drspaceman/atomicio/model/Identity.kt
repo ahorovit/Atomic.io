@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Identity(
     @PrimaryKey(autoGenerate = true) var id: Long? = null,
     var name: String? = "",
-    var description: String? = ""
+    var description: String? = "",
+    var type: String? = ""
 )

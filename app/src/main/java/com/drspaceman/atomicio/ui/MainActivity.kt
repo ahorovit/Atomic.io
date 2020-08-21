@@ -5,10 +5,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
 import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
@@ -19,12 +21,14 @@ import kotlinx.android.synthetic.main.activity_main.drawerLayout
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.drawer_view_main.*
 import kotlinx.android.synthetic.main.habit_sequence.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
-    private var identityList: MutableList<IdentityViewModel.IdentityViewData>? = null
     private var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter? = null
+    private val identityViewModel by viewModels<IdentityViewModel>()
 
     // @todo: Move into Fragment
     private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
@@ -56,8 +60,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         addIdentityButton.setOnClickListener {
-            val intent = Intent(this, IdentityDetailActivity::class.java)
-            startActivity(intent)
+            newIdentity()
         }
     }
 
@@ -84,11 +87,6 @@ class MainActivity : AppCompatActivity() {
             HabitViewModel.HabitViewData("eat breakfast", "diet", 1),
             HabitViewModel.HabitViewData("walk dog", "exercise", 2)
         )
-
-        identityList = mutableListOf(
-            IdentityViewModel.IdentityViewData("Healthy Person", "fit, active", "health"),
-            IdentityViewModel.IdentityViewData("Productive Person", "organized, disciplined", "productivity")
-        )
     }
 
     private fun initializeHabitSequenceRecyclerView() {
@@ -103,10 +101,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeIdentityRecyclerView() {
-        val identities = identityList ?: return
-
         identityRecyclerView.layoutManager = LinearLayoutManager(this)
-        identityRecyclerViewAdapter = IdentityRecyclerViewAdapter(identities)
+        identityRecyclerViewAdapter = IdentityRecyclerViewAdapter(null, this)
         identityRecyclerView.adapter = identityRecyclerViewAdapter
     }
 
@@ -145,5 +141,30 @@ class MainActivity : AppCompatActivity() {
         })
 
         itemTouchHelper.attachToRecyclerView(habitSequenceRecyclerView)
+    }
+
+    private fun newIdentity() {
+        GlobalScope.launch {
+            val identityId = identityViewModel.addIdentity()
+            identityId?.let { startIdentityDetails(it) }
+        }
+    }
+
+    fun editIdentityDetails(identityView: IdentityViewModel.IdentityView) {
+        drawerLayout.closeDrawer(drawerView)
+
+        identityView.id?.let {
+            startIdentityDetails(it)
+        }
+    }
+
+    private fun startIdentityDetails(identityId: Long) {
+        val intent = Intent(this, IdentityDetailActivity::class.java)
+        intent.putExtra(EXTRA_IDENTITY_ID, identityId)
+        startActivity(intent)
+    }
+
+    companion object {
+        const val EXTRA_IDENTITY_ID = "com.drspaceman.atomicio.EXTRA_IDENTITY_ID"
     }
 }
