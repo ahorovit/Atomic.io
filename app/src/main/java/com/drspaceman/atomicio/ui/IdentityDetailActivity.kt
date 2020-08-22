@@ -8,6 +8,8 @@ import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
 import kotlinx.android.synthetic.main.activity_identity_detail.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class IdentityDetailActivity : AppCompatActivity() {
     private val identityViewModel by viewModels<IdentityViewModel>()
@@ -27,24 +29,54 @@ class IdentityDetailActivity : AppCompatActivity() {
 
     private fun getIntentData() {
         val identityId = intent.getLongExtra(MainActivity.EXTRA_IDENTITY_ID, 0)
+
+        if (identityId != 0L) {
+            observeIdentity(identityId)
+            //                    populateFields()
+            //                    populateTypeList()
+        }
+    }
+
+    private fun observeIdentity(identityId: Long) {
         identityViewModel.getIdentity(identityId)?.observe(
             this,
             Observer<IdentityView> {
                 it?.let {
                     identityView = it
-//                    populateFields()
-//                    populateTypeList()
                 }
             }
         )
+    }
+
+    private fun newIdentity() {
+        GlobalScope.launch {
+            val identityId = identityViewModel.addIdentity()
+
+            identityId?.let {
+                val targetIdentityView = identityViewModel.getIdentity(identityId)
+                writeInputValues(targetIdentityView)
+
+            }
+
+
+            identityId?.let {
+//                observeIdentity(identityId)
+            }
+        }
     }
 
     private fun populateTypeList() {
         TODO("Not yet implemented")
     }
 
-    private fun populateFields() {
-        TODO("Not yet implemented")
+    private fun writeInputValues(targetIdentityView: IdentityView?) {
+
+        targetIdentityView?.let {
+            it.name = editTextName.text.toString()
+//            it.type = spinnerCategory.selectedItem as String
+
+            identityViewModel.updateIdentity(it)
+        }
     }
 
     private fun saveIdentityDetails() {
@@ -53,11 +85,10 @@ class IdentityDetailActivity : AppCompatActivity() {
             return
         }
 
-        identityView?.let {
-            it.name = editTextName.text.toString()
-//            it.type = spinnerCategory.selectedItem as String
-
-            identityViewModel.updateIdentity(it)
+        if (identityView != null) {
+            writeInputValues(identityView)
+        } else {
+            newIdentity()
         }
     }
 }

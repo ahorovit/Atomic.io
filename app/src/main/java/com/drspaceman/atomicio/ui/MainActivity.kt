@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         addIdentityButton.setOnClickListener {
-            newIdentity()
+            startIdentityDetails(null)
         }
     }
 
@@ -143,13 +143,6 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(habitSequenceRecyclerView)
     }
 
-    private fun newIdentity() {
-        GlobalScope.launch {
-            val identityId = identityViewModel.addIdentity()
-            identityId?.let { startIdentityDetails(it) }
-        }
-    }
-
     fun editIdentityDetails(identityView: IdentityViewModel.IdentityView) {
         drawerLayout.closeDrawer(drawerView)
 
@@ -158,9 +151,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startIdentityDetails(identityId: Long) {
+    private fun startIdentityDetails(identityId: Long?) {
         val intent = Intent(this, IdentityDetailActivity::class.java)
-        intent.putExtra(EXTRA_IDENTITY_ID, identityId)
+
+        if (identityId != null) {
+            intent.putExtra(EXTRA_IDENTITY_ID, identityId)
+        }
+
         startActivity(intent)
     }
 
