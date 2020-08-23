@@ -103,8 +103,11 @@ class IdentityDetailActivity : AppCompatActivity() {
     }
 
     private fun setSpinnerSelection() {
-        val type = identityView?.type ?: return
-        spinnerTypes.setSelection(spinnerAdapter.getPosition(type))
+        identityView?.let {
+            val type = it.type ?: return
+            spinnerTypes.setSelection(spinnerAdapter.getPosition(type))
+            imageViewType.setImageResource(it.typeResourceId)
+        }
     }
 
     private fun saveIdentityDetails() {
