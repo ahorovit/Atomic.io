@@ -15,6 +15,13 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
     private var identityView: LiveData<IdentityView>? = null
     private var identities: LiveData<List<IdentityView>>? = null
 
+    // @TODO: observe?
+    fun getNewIdentityView(): IdentityView {
+        val newIdentityView = IdentityView()
+        newIdentityView.type = "Other"
+        return newIdentityView
+    }
+
     fun insertIdentity(newIdentityView: IdentityView) {
         val identity = identityViewToIdentity(newIdentityView)
 
@@ -88,6 +95,16 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
 
         return identity
     }
+
+    fun getTypes(): List<String> {
+        return atomicIoRepo.identityTypes
+    }
+
+    fun getTypeResourceId(type: String?): Int? {
+        return atomicIoRepo.getTypeResourceId(type)
+    }
+
+
 
     data class IdentityView(
         var id: Long? = null,

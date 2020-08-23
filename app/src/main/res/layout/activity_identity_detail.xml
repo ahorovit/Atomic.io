@@ -69,13 +69,13 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/textViewCategory"
+                            android:id="@+id/textViewType"
                             style="@style/FormLabel"
                             android:layout_weight="0.4"
                             android:text="@string/type_label" />
 
                         <ImageView
-                            android:id="@+id/imageViewCategory"
+                            android:id="@+id/imageViewType"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="bottom"
@@ -84,7 +84,7 @@
                             app:srcCompat="@drawable/ic_other" />
 
                         <Spinner
-                            android:id="@+id/spinnerCategory"
+                            android:id="@+id/spinnerTypes"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
