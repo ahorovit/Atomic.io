@@ -27,6 +27,10 @@ interface AtomicIoDao {
     @Delete
     fun deleteHabitSequence(sequence: HabitSequence)
 
+
+    // @TODO: Break up DAOs?
+
+
     @Insert(onConflict = IGNORE)
     fun insertIdentity(identity: Identity): Long?
 
@@ -38,4 +42,7 @@ interface AtomicIoDao {
 
     @Query("SELECT * FROM Identity WHERE id = :identityId")
     fun getIdentity(identityId: Long): Identity
+
+    @Query("SELECT * FROM Identity ORDER BY name")
+    fun loadAllIdentities(): LiveData<List<Identity>>
 }

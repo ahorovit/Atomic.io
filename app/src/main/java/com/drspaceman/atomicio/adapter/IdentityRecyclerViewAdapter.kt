@@ -30,11 +30,20 @@ class IdentityRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: IdentityViewHolder, position: Int) {
         val identityData = identityData ?: return
+
+
+
+        holder.identityId = identityData[position].id
         holder.identityLabelTextView.text = identityData[position].name
 //
 //        holder.parentLayout.setOnClickListener {
 //
 //        }
+    }
+
+    fun setIdentityData(identities: List<IdentityView>) {
+        identityData = identities
+        notifyDataSetChanged()
     }
 
     class IdentityViewHolder(
@@ -44,12 +53,13 @@ class IdentityRecyclerViewAdapter(
 
         init {
             itemView.setOnClickListener {
-                val identityView = itemView.tag as IdentityView
-                mainActivity.editIdentityDetails(identityView)
+                identityId?.let {
+                    mainActivity.editIdentityDetails(it)
+                }
             }
         }
 
-
+        var identityId: Long? = null
         val identityLabelTextView = itemView.identityLabelTextView
         val habitTypeImageView = itemView.identityTypeImageView
         val parentLayout = itemView.parentLayout

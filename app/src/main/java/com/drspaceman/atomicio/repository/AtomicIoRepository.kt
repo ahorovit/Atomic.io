@@ -7,8 +7,14 @@ import com.drspaceman.atomicio.db.AtomicIoDatabase
 import com.drspaceman.atomicio.model.Identity
 
 class AtomicIoRepository(context: Context) {
+
     private var db = AtomicIoDatabase.getInstance(context)
     private var dao = db.atomicIoDao()
+
+    val allIdentities: LiveData<List<Identity>>
+        get() {
+            return dao.loadAllIdentities()
+        }
 
     fun createIdentity(): Identity {
         return Identity()

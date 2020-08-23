@@ -30,8 +30,6 @@ class IdentityDetailActivity : AppCompatActivity() {
 
         if (identityId != 0L) {
             observeIdentity(identityId)
-            //                    populateFields()
-            //                    populateTypeList()
         }
     }
 
@@ -41,9 +39,17 @@ class IdentityDetailActivity : AppCompatActivity() {
             Observer<IdentityView> {
                 it?.let {
                     identityView = it
+                    populateFields()
+                    //                    populateTypeList()
                 }
             }
         )
+    }
+
+    private fun populateFields() {
+        identityView?.let {
+            editTextName.setText(it.name)
+        }
     }
 
     private fun populateTypeList() {
@@ -78,13 +84,12 @@ class IdentityDetailActivity : AppCompatActivity() {
     }
 
     // @TODO: This might break separation of concerns, having the UI create an IdentityView
-    private fun createNewIdentityView() : IdentityView {
+    private fun createNewIdentityView(): IdentityView {
         val writeIdentityView = IdentityView()
         fillIdentityFields(writeIdentityView)
 
         return writeIdentityView
     }
-
 
 
 }

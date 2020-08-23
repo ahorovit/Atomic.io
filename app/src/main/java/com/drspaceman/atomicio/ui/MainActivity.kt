@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,18 +17,17 @@ import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
 import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.HabitViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
+import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
 
 import kotlinx.android.synthetic.main.activity_main.drawerLayout
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.drawer_view_main.*
 import kotlinx.android.synthetic.main.habit_sequence.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
-    private var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter? = null
+    private lateinit var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter
     private val identityViewModel by viewModels<IdentityViewModel>()
 
     // @todo: Move into Fragment
@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         addIdentityButton.setOnClickListener {
+            drawerLayout.closeDrawer(drawerView)
             startIdentityDetails(null)
         }
     }
@@ -104,6 +105,18 @@ class MainActivity : AppCompatActivity() {
         identityRecyclerView.layoutManager = LinearLayoutManager(this)
         identityRecyclerViewAdapter = IdentityRecyclerViewAdapter(null, this)
         identityRecyclerView.adapter = identityRecyclerViewAdapter
+        createIdentityObserver()
+    }
+
+    private fun createIdentityObserver() {
+        identityViewModel.getIdentityViews()?.observe(
+            this,
+            Observer<List<IdentityView>> {
+                it?.let {
+                    identityRecyclerViewAdapter.setIdentityData(it)
+                }
+            }
+        )
     }
 
     /**
@@ -143,12 +156,9 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(habitSequenceRecyclerView)
     }
 
-    fun editIdentityDetails(identityView: IdentityViewModel.IdentityView) {
+    fun editIdentityDetails(identityId: Long) {
         drawerLayout.closeDrawer(drawerView)
-
-        identityView.id?.let {
-            startIdentityDetails(it)
-        }
+        startIdentityDetails(identityId)
     }
 
     private fun startIdentityDetails(identityId: Long?) {

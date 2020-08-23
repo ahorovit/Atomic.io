@@ -11,8 +11,9 @@ import kotlinx.coroutines.launch
 
 class IdentityViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var atomicIoRepo = AtomicIoRepository(getApplication())
+    private var atomicIoRepo = AtomicIoRepository(getApplication()) // @TODO: insert as Explicity Dependency
     private var identityView: LiveData<IdentityView>? = null
+    private var identities: LiveData<List<IdentityView>>? = null
 
     fun insertIdentity(newIdentityView: IdentityView) {
         val identity = identityViewToIdentity(newIdentityView)
@@ -34,6 +35,20 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         }
 
         return identityView
+    }
+
+    fun getIdentityViews(): LiveData<List<IdentityView>>? {
+        if (identities == null) {
+            mapIdentitiesToIdentityViews()
+        }
+
+        return identities
+    }
+
+    private fun mapIdentitiesToIdentityViews() {
+        identities = Transformations.map(atomicIoRepo.allIdentities) { repoIdentities ->
+            repoIdentities.map { identityToIdentityView(it) }
+        }
     }
 
     fun updateIdentity(identityView: IdentityView) {
