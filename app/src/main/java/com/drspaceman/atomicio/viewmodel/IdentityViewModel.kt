@@ -14,10 +14,18 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
     private var atomicIoRepo = AtomicIoRepository(getApplication())
     private var identityView: LiveData<IdentityView>? = null
 
-    fun addIdentity(): Long? {
-        val identity: Identity = atomicIoRepo.createIdentity()
-        identity.type = "Other"
-        return atomicIoRepo.addIdentity(identity)
+    fun insertIdentity(newIdentityView: IdentityView) {
+        val identity = identityViewToIdentity(newIdentityView)
+
+        GlobalScope.launch {
+            val identityId = atomicIoRepo.addIdentity(identity)
+
+            // @TODO: this might be unnecessary, because when we save a new Identity, we also finis() the
+            // IdentityDetailActivity --> So we're synching UI unnecessarily here maybe?
+            identityId?.let {
+                mapIdentityToIdentityView(identityId)
+            }
+        }
     }
 
     fun getIdentity(identityId: Long): LiveData<IdentityView>? {
@@ -26,6 +34,13 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         }
 
         return identityView
+    }
+
+    fun updateIdentity(identityView: IdentityView) {
+        GlobalScope.launch {
+            val identity = identityViewToIdentity(identityView)
+            atomicIoRepo.updateIdentity(identity)
+        }
     }
 
     private fun mapIdentityToIdentityView(identityId: Long) {
@@ -46,30 +61,18 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
-    fun updateIdentity(identityView: IdentityView) {
-        GlobalScope.launch {
-            val identity = identityViewToIdentity(identityView)
-            identity?.let {
-                atomicIoRepo.updateIdentity(it)
-            }
-        }
-    }
-
-    private fun identityViewToIdentity(identityView: IdentityView): Identity? {
+    private fun identityViewToIdentity(identityView: IdentityView): Identity {
         val identity = identityView.id?.let {
             atomicIoRepo.getIdentity(it)
-        }
+        } ?: atomicIoRepo.createIdentity()
 
-        identity?.let {
-            it.id = identityView.id
-            it.name = identityView.name
-            it.type = identityView.type
-            it.description = identityView.description
-        }
+        identity.id = identityView.id
+        identity.name = identityView.name
+        identity.type = identityView.type
+        identity.description = identityView.description
 
         return identity
     }
-
 
     data class IdentityView(
         var id: Long? = null,

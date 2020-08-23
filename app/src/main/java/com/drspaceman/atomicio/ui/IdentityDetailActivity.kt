@@ -8,8 +8,6 @@ import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
 import kotlinx.android.synthetic.main.activity_identity_detail.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class IdentityDetailActivity : AppCompatActivity() {
     private val identityViewModel by viewModels<IdentityViewModel>()
@@ -48,35 +46,8 @@ class IdentityDetailActivity : AppCompatActivity() {
         )
     }
 
-    private fun newIdentity() {
-        GlobalScope.launch {
-            val identityId = identityViewModel.addIdentity()
-
-            identityId?.let {
-                val targetIdentityView = identityViewModel.getIdentity(identityId)
-                writeInputValues(targetIdentityView)
-
-            }
-
-
-            identityId?.let {
-//                observeIdentity(identityId)
-            }
-        }
-    }
-
     private fun populateTypeList() {
         TODO("Not yet implemented")
-    }
-
-    private fun writeInputValues(targetIdentityView: IdentityView?) {
-
-        targetIdentityView?.let {
-            it.name = editTextName.text.toString()
-//            it.type = spinnerCategory.selectedItem as String
-
-            identityViewModel.updateIdentity(it)
-        }
     }
 
     private fun saveIdentityDetails() {
@@ -85,10 +56,35 @@ class IdentityDetailActivity : AppCompatActivity() {
             return
         }
 
-        if (identityView != null) {
-            writeInputValues(identityView)
-        } else {
-            newIdentity()
+        identityView?.let {
+            fillIdentityFields(it)
+            identityViewModel.updateIdentity(it)
+        } ?: run {
+            val newIdentity = createNewIdentityView()
+            identityViewModel.insertIdentity(newIdentity)
+        }
+
+        finish()
+    }
+
+
+    private fun fillIdentityFields(writeIdentityView: IdentityView?) {
+
+        writeIdentityView?.let {
+            it.name = editTextName.text.toString()
+//            it.type = spinnerCategory.selectedItem as String
+
         }
     }
+
+    // @TODO: This might break separation of concerns, having the UI create an IdentityView
+    private fun createNewIdentityView() : IdentityView {
+        val writeIdentityView = IdentityView()
+        fillIdentityFields(writeIdentityView)
+
+        return writeIdentityView
+    }
+
+
+
 }
