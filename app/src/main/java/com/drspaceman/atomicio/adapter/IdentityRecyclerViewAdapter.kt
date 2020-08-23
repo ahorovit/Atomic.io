@@ -29,16 +29,13 @@ class IdentityRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: IdentityViewHolder, position: Int) {
-        val identityData = identityData ?: return
 
-
-
-        holder.identityId = identityData[position].id
-        holder.identityLabelTextView.text = identityData[position].name
-//
-//        holder.parentLayout.setOnClickListener {
-//
-//        }
+        identityData?.let {
+            val identity = it[position]
+            holder.identityId = identity.id
+            holder.identityLabelTextView.text = identity.name
+            holder.identityTypeImageView.setImageResource(identity.typeResourceId)
+        }
     }
 
     fun setIdentityData(identities: List<IdentityView>) {
@@ -61,7 +58,6 @@ class IdentityRecyclerViewAdapter(
 
         var identityId: Long? = null
         val identityLabelTextView = itemView.identityLabelTextView
-        val habitTypeImageView = itemView.identityTypeImageView
-        val parentLayout = itemView.parentLayout
+        val identityTypeImageView = itemView.identityTypeImageView
     }
 }

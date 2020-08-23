@@ -21,7 +21,7 @@ class AtomicIoRepository(context: Context) {
 
     val identityTypes: List<String>
         get() {
-            return ArrayList(allTypes.keys)
+            return ArrayList(allTypes.keys.sorted())
         }
 
     fun createIdentity(): Identity {
@@ -63,7 +63,7 @@ class AtomicIoRepository(context: Context) {
         )
     }
 
-    fun getTypeResourceId(type: String?): Int? {
-        return type?.let { allTypes[type] }
+    fun getTypeResourceId(type: String?): Int {
+        return type?.let { allTypes[type] } ?: allTypes["Other"]!!
     }
 }

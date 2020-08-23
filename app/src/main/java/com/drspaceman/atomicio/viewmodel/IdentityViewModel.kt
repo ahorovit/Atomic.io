@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import kotlinx.coroutines.GlobalScope
@@ -79,7 +80,8 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
             identity.id,
             identity.name,
             identity.description,
-            identity.type
+            identity.type,
+            atomicIoRepo.getTypeResourceId(identity.type)
         )
     }
 
@@ -104,12 +106,11 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         return atomicIoRepo.getTypeResourceId(type)
     }
 
-
-
     data class IdentityView(
         var id: Long? = null,
         var name: String? = "",
         var description: String? = "",
-        var type: String? = ""
+        var type: String? = "",
+        var typeResourceId: Int = R.drawable.ic_other
     )
 }
