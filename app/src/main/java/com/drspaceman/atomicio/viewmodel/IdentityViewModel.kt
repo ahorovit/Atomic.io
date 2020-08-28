@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 
 class IdentityViewModel(application: Application) : AndroidViewModel(application) {
 
-    private var atomicIoRepo = AtomicIoRepository(getApplication()) // @TODO: insert as Explicity Dependency
+    // @TODO: insert as Explicit Dependency
+    private var atomicIoRepo = AtomicIoRepository(getApplication())
     private var identityView: LiveData<IdentityView>? = null
     private var identities: LiveData<List<IdentityView>>? = null
 
@@ -45,7 +46,7 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         return identityView
     }
 
-    fun getIdentityViews(): LiveData<List<IdentityView>>? {
+    fun getIdentities(): LiveData<List<IdentityView>>? {
         if (identities == null) {
             mapIdentitiesToIdentityViews()
         }

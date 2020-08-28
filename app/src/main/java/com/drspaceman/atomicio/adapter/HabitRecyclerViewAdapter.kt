@@ -9,7 +9,7 @@ import com.drspaceman.atomicio.viewmodel.HabitViewModel
 import kotlinx.android.synthetic.main.habit_view_holder.view.*
 
 class HabitRecyclerViewAdapter(
-    val habitSequence: MutableList<HabitViewModel.HabitViewData>
+    val habitSequence: MutableList<HabitViewModel.HabitView>
 ) : RecyclerView.Adapter<HabitRecyclerViewAdapter.HabitViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {

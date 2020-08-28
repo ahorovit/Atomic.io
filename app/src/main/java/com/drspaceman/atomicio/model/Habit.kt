@@ -8,19 +8,18 @@ import androidx.room.PrimaryKey
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = HabitSequence::class,
+            entity = Identity::class,
             parentColumns = ["id"],
-            childColumns = ["sequenceId"],
-            onDelete = ForeignKey.CASCADE
+            childColumns = ["identityId"],
+            onDelete = ForeignKey.SET_NULL // Parent Identity is not required
         )
     ],
-    indices = [Index("sequenceId")]
+    indices = [Index("identityId")]
 )
 data class Habit(
-    @PrimaryKey(autoGenerate = true) val id: Long? = null,
-    var sequenceId: Long? = null,
+    @PrimaryKey(autoGenerate = true) var id: Long? = null,
+    var identityId: Long? = null,
     var name: String? = "",
     var type: String? = "",
-    var sequencePosition: Int? = null,
     var duration: Int? = null
 )

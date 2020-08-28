@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private val identityViewModel by viewModels<IdentityViewModel>()
 
     // @todo: Move into Fragment
-    private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
+    private var habitSequence: MutableList<HabitViewModel.HabitView>? = null
     private var habitRecyclerViewAdapter: HabitRecyclerViewAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,13 +39,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setupToolbar()
 
-//        fab.setOnClickListener { view ->
-//
-//        }
-
-        initializeData()
         initializeIdentityRecyclerView()
         initializeHabitSequenceRecyclerView()
+
+
+        fab.setOnClickListener {
+            startHabitDetails(null)
+        }
     }
 
     private fun setupToolbar() {
@@ -81,22 +81,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // @todo: implement DB and LiveData for habitSequence
-    private fun initializeData() {
-        habitSequence = mutableListOf(
-            HabitViewModel.HabitViewData("wake up", "sleep", 0),
-            HabitViewModel.HabitViewData("eat breakfast", "diet", 1),
-            HabitViewModel.HabitViewData("walk dog", "exercise", 2)
-        )
-    }
-
     private fun initializeHabitSequenceRecyclerView() {
         val sequence = habitSequence ?: return
 
-        habitSequenceRecyclerView.layoutManager = LinearLayoutManager(this)
+        habitListRecyclerView.layoutManager = LinearLayoutManager(this)
 
         habitRecyclerViewAdapter = HabitRecyclerViewAdapter(sequence)
-        habitSequenceRecyclerView.adapter = habitRecyclerViewAdapter
+        habitListRecyclerView.adapter = habitRecyclerViewAdapter
 
 //        attachItemTouchHelper()
     }
@@ -109,7 +100,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createIdentityObserver() {
-        identityViewModel.getIdentityViews()?.observe(
+        identityViewModel.getIdentities()?.observe(
             this,
             Observer<List<IdentityView>> {
                 it?.let {
@@ -153,7 +144,7 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        itemTouchHelper.attachToRecyclerView(habitSequenceRecyclerView)
+        itemTouchHelper.attachToRecyclerView(habitListRecyclerView)
     }
 
     fun editIdentityDetails(identityId: Long) {
@@ -171,7 +162,18 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun startHabitDetails(habitId: Long?) {
+        val intent = Intent(this, HabitDetailActivity::class.java)
+
+        if (habitId != null) {
+            intent.putExtra(EXTRA_HABIT_ID, habitId)
+        }
+
+        startActivity(intent)
+    }
+
     companion object {
+        const val EXTRA_HABIT_ID = "com.drspaceman.atomicio.EXTRA_HABIT_ID"
         const val EXTRA_IDENTITY_ID = "com.drspaceman.atomicio.EXTRA_IDENTITY_ID"
     }
 }

@@ -9,14 +9,20 @@ import android.widget.ImageView
 import android.widget.Spinner
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
-import kotlinx.android.synthetic.main.activity_identity_detail.*
 
-class IdentityDetailActivity : AppCompatActivity() {
+import com.drspaceman.atomicio.R
+import com.drspaceman.atomicio.viewmodel.HabitViewModel
+import com.drspaceman.atomicio.viewmodel.IdentityViewModel
+
+import kotlinx.android.synthetic.main.activity_habit_detail.*
+
+class HabitDetailActivity : AppCompatActivity() {
+    private val habitViewModel by viewModels<HabitViewModel>()
+    private var habitView: HabitViewModel.HabitView? = null
+
+    // @todo: multiple ViewModels? Better than duplicating IdentityViewModel functions...
     private val identityViewModel by viewModels<IdentityViewModel>()
-    private var identityView: IdentityView? = null
+    private var identityViews: List<IdentityViewModel.IdentityView>? = null
 
     // @todo: KAE isn't working for these Views for some reason
     private lateinit var imageViewType: ImageView
@@ -25,34 +31,34 @@ class IdentityDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_identity_detail)
-        populateTypeSpinner()
+        setContentView(R.layout.activity_habit_detail)
+//        populateTypeSpinner()
 
         setSupportActionBar(toolbar)
         getIntentData()
 
-        saveIdentityButton.setOnClickListener {
-            saveIdentityDetails()
+        saveHabitButton.setOnClickListener {
+            saveHabitDetails()
         }
     }
 
     private fun getIntentData() {
-        val identityId = intent.getLongExtra(MainActivity.EXTRA_IDENTITY_ID, 0)
+        val habitId = intent.getLongExtra(MainActivity.EXTRA_HABIT_ID, 0)
 
-        if (identityId != 0L) {
-            observeIdentity(identityId)
+        if (habitId != 0L) {
+            observeHabit(habitId)
         } else {
-            identityView = identityViewModel.getNewIdentityView()
-            setSpinnerSelection()
+            habitView = habitViewModel.getNewHabitView()
+//            setSpinnerSelection()
         }
     }
 
-    private fun observeIdentity(identityId: Long) {
-        identityViewModel.getIdentity(identityId)?.observe(
+    private fun observeHabit(habitId: Long) {
+        habitViewModel.getHabit(habitId)?.observe(
             this,
-            Observer<IdentityView> {
+            Observer<HabitViewModel.HabitView> {
                 it?.let {
-                    identityView = it
+                    habitView = it
                     populateExistingValues()
                 }
             }
@@ -60,21 +66,23 @@ class IdentityDetailActivity : AppCompatActivity() {
     }
 
     private fun populateExistingValues() {
-        identityView?.let { identityView ->
-            editTextIdentityName.setText(identityView.name)
-            setSpinnerSelection()
-        }
+        TODO("not yet implemented")
+//        habitView?.let { habitView ->
+//            editTextName.setText(habitView.name)
+//            setSpinnerSelection()
+//        }
     }
 
     private fun populateTypeSpinner() {
         // @TODO: Figure out why KAE isn't working
-        spinnerTypes = findViewById(R.id.spinnerTypes)
-        imageViewType = findViewById(R.id.imageViewIdentityType)
+        spinnerTypes = findViewById(R.id.spinnerIdentities)
+        imageViewType = findViewById(R.id.imageViewHabitType)
 
         spinnerAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
-            identityViewModel.getTypes()
+//            habitViewModel.getIdentities()
+            arrayOf() // @todo: get Identities for spinner
         )
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -88,11 +96,7 @@ class IdentityDetailActivity : AppCompatActivity() {
                     position: Int,
                     id: Long
                 ) {
-                    val type = parent.getItemAtPosition(position) as String
-                    val resourceId = identityViewModel.getTypeResourceId(type)
-                    resourceId?.let {
-                        imageViewType.setImageResource(it)
-                    }
+                    TODO("Not yet implemented")
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -102,31 +106,33 @@ class IdentityDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun setSpinnerSelection() {
-        identityView?.let {
+    private fun setSpinnerSelection(position: Int) {
+        val parentIdentity = identityViews?.get(position) ?: return
+
+        parentIdentity.let {
             val type = it.type ?: return
-            spinnerTypes.setSelection(spinnerAdapter.getPosition(type))
+            spinnerTypes.setSelection(position)
             imageViewType.setImageResource(it.typeResourceId)
         }
     }
 
-    private fun saveIdentityDetails() {
-        val writeIdentityView = identityView?: return
+    private fun saveHabitDetails() {
+        val writeHabitView = habitView?: return
 
-        val name = editTextIdentityName.text.toString()
+        val name = editTextHabitName.text.toString()
         if (name.isEmpty()) {
             return
         }
 
-        writeIdentityView.let {
+        writeHabitView.let {
             it.name = name
             it.type = spinnerTypes.selectedItem as String
         }
 
-        writeIdentityView.id?.let {
-            identityViewModel.updateIdentity(writeIdentityView)
+        writeHabitView.id?.let {
+            habitViewModel.updateHabit(writeHabitView)
         } ?: run {
-            identityViewModel.insertIdentity(writeIdentityView)
+            habitViewModel.insertHabit(writeHabitView)
         }
 
         finish()
