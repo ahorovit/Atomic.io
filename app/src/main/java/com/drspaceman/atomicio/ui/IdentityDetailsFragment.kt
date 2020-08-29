@@ -14,7 +14,7 @@ import androidx.lifecycle.Observer
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 
-import kotlinx.android.synthetic.main.activity_identity_detail.*
+import kotlinx.android.synthetic.main.fragment_identity_details.*
 
 class IdentityDetailsFragment : DialogFragment() {
     private val identityId: Long? by lazy {
