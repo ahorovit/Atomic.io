@@ -1,6 +1,5 @@
 package com.drspaceman.atomicio.ui
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
@@ -81,11 +80,7 @@ class MainActivity : AppCompatActivity() {
         identityRecyclerView.layoutManager = LinearLayoutManager(this)
         identityRecyclerViewAdapter = IdentityRecyclerViewAdapter(null, this)
         identityRecyclerView.adapter = identityRecyclerViewAdapter
-        createIdentityObserver()
-    }
 
-    // @todo: move into initializeIndenityRecyclerView
-    private fun createIdentityObserver() {
         identityViewModel.getIdentityViews()?.observe(
             this,
             Observer<List<IdentityView>> {
@@ -96,36 +91,16 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
-
-
-
-
     fun editIdentityDetails(identityId: Long?) {
         drawerLayout.closeDrawer(drawerView)
-//        startIdentityDetails(identityId)
-
         showIdentityDetailsFragment(identityId)
     }
 
-//    private fun startIdentityDetails(identityId: Long?) {
-//        val intent = Intent(this, IdentityDetailActivity::class.java)
-//
-//        if (identityId != null) {
-//            intent.putExtra(EXTRA_IDENTITY_ID, identityId)
-//        }
-//
-//        startActivity(intent)
-//    }
 
     private fun showIdentityDetailsFragment(identityId: Long?) {
         val fragmentManager = supportFragmentManager
         val identityDetailsFragment = IdentityDetailsFragment.newInstance(identityId)
 
         identityDetailsFragment.show(fragmentManager, IdentityDetailsFragment.TAG)
-    }
-
-    companion object {
-        const val EXTRA_IDENTITY_ID = "com.drspaceman.atomicio.EXTRA_IDENTITY_ID"
     }
 }
