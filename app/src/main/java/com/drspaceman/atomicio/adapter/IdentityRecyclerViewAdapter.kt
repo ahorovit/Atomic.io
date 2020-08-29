@@ -3,6 +3,8 @@ package com.drspaceman.atomicio.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.ui.MainActivity
@@ -48,6 +50,12 @@ class IdentityRecyclerViewAdapter(
         private val mainActivity: MainActivity
     ) : RecyclerView.ViewHolder(itemView) {
 
+        var identityId: Long? = null
+
+        // @todo: KAE isn't working!! Why?
+        val identityLabelTextView: TextView = itemView.findViewById(R.id.identityLabelTextView)
+        val identityTypeImageView: ImageView = itemView.findViewById(R.id.identityTypeImageView)
+
         init {
             itemView.setOnClickListener {
                 identityId?.let {
@@ -55,9 +63,5 @@ class IdentityRecyclerViewAdapter(
                 }
             }
         }
-
-        var identityId: Long? = null
-        val identityLabelTextView = itemView.identityLabelTextView
-        val identityTypeImageView = itemView.identityTypeImageView
     }
 }

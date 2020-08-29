@@ -24,7 +24,11 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include layout="@layout/habit_sequence" />
+        <fragment
+            android:id="@+id/agendaFragment"
+            android:name="com.drspaceman.atomicio.ui.AgendaFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

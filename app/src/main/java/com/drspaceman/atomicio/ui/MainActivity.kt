@@ -7,45 +7,42 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
 import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
-import com.drspaceman.atomicio.viewmodel.HabitViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
 
-import kotlinx.android.synthetic.main.activity_main.drawerLayout
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.drawer_view_main.*
-import kotlinx.android.synthetic.main.habit_sequence.*
-import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
     private lateinit var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter
     private val identityViewModel by viewModels<IdentityViewModel>()
 
-    // @todo: Move into Fragment
-    private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
-    private var habitRecyclerViewAdapter: HabitRecyclerViewAdapter? = null
+    // @todo: KAE isn't working!! Why?
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var identityRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        drawerLayout = findViewById(R.id.drawerLayout)
+        identityRecyclerView = findViewById(R.id.identityRecyclerView)
+
         setupToolbar()
 
 //        fab.setOnClickListener { view ->
 //
 //        }
 
-        initializeData()
         initializeIdentityRecyclerView()
-        initializeHabitSequenceRecyclerView()
     }
 
     private fun setupToolbar() {
@@ -81,25 +78,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // @todo: implement DB and LiveData for habitSequence
-    private fun initializeData() {
-        habitSequence = mutableListOf(
-            HabitViewModel.HabitViewData("wake up", "sleep", 0),
-            HabitViewModel.HabitViewData("eat breakfast", "diet", 1),
-            HabitViewModel.HabitViewData("walk dog", "exercise", 2)
-        )
-    }
 
-    private fun initializeHabitSequenceRecyclerView() {
-        val sequence = habitSequence ?: return
 
-        habitSequenceRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        habitRecyclerViewAdapter = HabitRecyclerViewAdapter(sequence)
-        habitSequenceRecyclerView.adapter = habitRecyclerViewAdapter
-
-//        attachItemTouchHelper()
-    }
 
     private fun initializeIdentityRecyclerView() {
         identityRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -119,42 +99,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    /**
-     * WIP: Make habitSequence items draggable for reordering
-     */
-    private fun attachItemTouchHelper() {
 
-
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            0
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                dragged: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-
-                habitSequence?.let {
-                    val positionDragged = dragged.adapterPosition
-                    val positionTarget = target.adapterPosition
-
-                    Collections.swap(it, positionDragged, positionTarget)
-
-                    habitRecyclerViewAdapter?.notifyItemMoved(positionDragged, positionTarget)
-                }
-
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                TODO("Not yet implemented")
-            }
-
-        })
-
-        itemTouchHelper.attachToRecyclerView(habitSequenceRecyclerView)
-    }
 
     fun editIdentityDetails(identityId: Long) {
         drawerLayout.closeDrawer(drawerView)
