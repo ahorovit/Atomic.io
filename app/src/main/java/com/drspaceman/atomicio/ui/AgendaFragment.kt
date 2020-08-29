@@ -117,9 +117,6 @@ class AgendaFragment : Fragment() {
     }
 
     companion object {
-        fun createInstance(): AgendaFragment {
-            return AgendaFragment()
-        }
+        fun newInstance() = AgendaFragment()
     }
-
 }

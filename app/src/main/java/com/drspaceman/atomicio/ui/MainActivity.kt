@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
         addIdentityButton.setOnClickListener {
             drawerLayout.closeDrawer(drawerView)
-            startIdentityDetails(null)
+            showIdentityDetailsFragment(null)
         }
     }
 
@@ -97,30 +97,32 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-//    private fun addAgendaFragment() {
-//        val fragmentManager = supportFragmentManager
-//        val fragmentTransaction = fragmentManager.beginTransaction()
-//        val agendaFragment = AgendaFragment.createInstance()
-//
-//        fragmentTransaction.add(R.id.mainFragmentContainer, agendaFragment)
-//        fragmentTransaction.commit()
-//    }
 
 
 
-    fun editIdentityDetails(identityId: Long) {
+
+    fun editIdentityDetails(identityId: Long?) {
         drawerLayout.closeDrawer(drawerView)
-        startIdentityDetails(identityId)
+//        startIdentityDetails(identityId)
+
+        showIdentityDetailsFragment(identityId)
     }
 
-    private fun startIdentityDetails(identityId: Long?) {
-        val intent = Intent(this, IdentityDetailActivity::class.java)
+//    private fun startIdentityDetails(identityId: Long?) {
+//        val intent = Intent(this, IdentityDetailActivity::class.java)
+//
+//        if (identityId != null) {
+//            intent.putExtra(EXTRA_IDENTITY_ID, identityId)
+//        }
+//
+//        startActivity(intent)
+//    }
 
-        if (identityId != null) {
-            intent.putExtra(EXTRA_IDENTITY_ID, identityId)
-        }
+    private fun showIdentityDetailsFragment(identityId: Long?) {
+        val fragmentManager = supportFragmentManager
+        val identityDetailsFragment = IdentityDetailsFragment.newInstance(identityId)
 
-        startActivity(intent)
+        identityDetailsFragment.show(fragmentManager, IdentityDetailsFragment.TAG)
     }
 
     companion object {
