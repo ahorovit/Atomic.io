@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/appToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/primaryColor"
@@ -24,8 +24,14 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+<!--        <androidx.fragment.app.FragmentContainerView-->
+<!--            android:id="@+id/mainFragmentContainer"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"/>-->
+
         <fragment
             android:id="@+id/agendaFragment"
+            android:tag="agenda_fragment"
             android:name="com.drspaceman.atomicio.ui.AgendaFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

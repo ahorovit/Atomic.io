@@ -17,7 +17,6 @@ import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
 
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.drawer_view_main.*
 
@@ -46,11 +45,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(appToolbar)
         val toggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
-            toolbar,
+            appToolbar,
             R.string.open_drawer,
             R.string.close_drawer
         )
@@ -78,9 +77,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-
-
     private fun initializeIdentityRecyclerView() {
         identityRecyclerView.layoutManager = LinearLayoutManager(this)
         identityRecyclerViewAdapter = IdentityRecyclerViewAdapter(null, this)
@@ -88,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         createIdentityObserver()
     }
 
+    // @todo: move into initializeIndenityRecyclerView
     private fun createIdentityObserver() {
         identityViewModel.getIdentityViews()?.observe(
             this,
@@ -98,6 +95,16 @@ class MainActivity : AppCompatActivity() {
             }
         )
     }
+
+
+//    private fun addAgendaFragment() {
+//        val fragmentManager = supportFragmentManager
+//        val fragmentTransaction = fragmentManager.beginTransaction()
+//        val agendaFragment = AgendaFragment.createInstance()
+//
+//        fragmentTransaction.add(R.id.mainFragmentContainer, agendaFragment)
+//        fragmentTransaction.commit()
+//    }
 
 
 

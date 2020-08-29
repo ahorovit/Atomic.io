@@ -116,4 +116,10 @@ class AgendaFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(habitSequenceRecyclerView)
     }
 
+    companion object {
+        fun createInstance(): AgendaFragment {
+            return AgendaFragment()
+        }
+    }
+
 }

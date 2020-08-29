@@ -30,7 +30,7 @@ class IdentityDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_identity_detail)
         populateTypeSpinner()
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(appToolbar)
         getIntentData()
 
         saveIdentityButton.setOnClickListener {
