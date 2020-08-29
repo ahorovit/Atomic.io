@@ -1,9 +1,7 @@
 package com.drspaceman.atomicio.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +21,25 @@ class AgendaFragment : Fragment() {
     private lateinit var habitSequenceRecyclerView: RecyclerView
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // @todo: required if adding to the options menu
+//        setHasOptionsMenu(true)
+    }
+
+    // @todo: add options to menu
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    // @todo handle menu option selection
+    // NOTE: Activity will run onOptionsItemSelected first, and must not handle items specific to this fragment
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return super.onOptionsItemSelected(item)
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,12 +47,17 @@ class AgendaFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_agenda, container, false)
 
+        // @todo: Move into onCreate()?
         habitSequenceRecyclerView = view.findViewById(R.id.habitSequenceRecyclerView)
 
         initializeData()
         initializeHabitSequenceRecyclerView(view)
 
         return view
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 
     // @todo: implement DB and LiveData for habitSequence

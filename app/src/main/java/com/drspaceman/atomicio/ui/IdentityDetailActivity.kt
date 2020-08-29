@@ -14,6 +14,8 @@ import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
 import kotlinx.android.synthetic.main.activity_identity_detail.*
 
+
+// @todo: use DialogFragment?
 class IdentityDetailActivity : AppCompatActivity() {
     private val identityViewModel by viewModels<IdentityViewModel>()
     private var identityView: IdentityView? = null
