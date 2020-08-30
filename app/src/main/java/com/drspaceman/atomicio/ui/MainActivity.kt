@@ -15,6 +15,8 @@ import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.drawer_view_main.*
@@ -35,12 +37,15 @@ class MainActivity : AppCompatActivity() {
         identityRecyclerView = findViewById(R.id.identityRecyclerView)
 
         setupToolbar()
+        setupBottomNavigationMenu()
 
 //        fab.setOnClickListener { view ->
 //
 //        }
 
         initializeIdentityRecyclerView()
+
+
     }
 
     private fun setupToolbar() {
@@ -57,6 +62,35 @@ class MainActivity : AppCompatActivity() {
         addIdentityButton.setOnClickListener {
             drawerLayout.closeDrawer(drawerView)
             showIdentityDetailsFragment(null)
+        }
+    }
+
+    private fun setupBottomNavigationMenu() {
+        val bottomNavigation = bottomNavigation ?: return
+
+        BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            when(item.itemId) {
+                R.id.agendaPage -> {
+                    // Respond to navigation item 1 click
+                    true
+                }
+                R.id.identityPage -> {
+                    // Respond to navigation item 2 click
+                    true
+                }
+                else -> false
+            }
+        }
+
+        bottomNavigation.setOnNavigationItemReselectedListener { item ->
+            when(item.itemId) {
+                R.id.agendaPage -> {
+                    // Respond to navigation item 1 reselection
+                }
+                R.id.identityPage -> {
+                    // Respond to navigation item 2 reselection
+                }
+            }
         }
     }
 
