@@ -7,13 +7,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.ui.MainActivity
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
-import kotlinx.android.synthetic.main.identity_view_holder.view.*
 
 class IdentityRecyclerViewAdapter(
     private var identityData: List<IdentityView>?,
-    private val mainActivity: MainActivity
+    private val hostFragment: EditIdentityListener
 ) : RecyclerView.Adapter<IdentityRecyclerViewAdapter.IdentityViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IdentityViewHolder {
@@ -23,7 +21,7 @@ class IdentityRecyclerViewAdapter(
             false
         )
 
-        return IdentityViewHolder(view, mainActivity)
+        return IdentityViewHolder(view, hostFragment)
     }
 
     override fun getItemCount(): Int {
@@ -47,7 +45,7 @@ class IdentityRecyclerViewAdapter(
 
     class IdentityViewHolder(
         itemView: View,
-        private val mainActivity: MainActivity
+        private val hostFragment: EditIdentityListener
     ) : RecyclerView.ViewHolder(itemView) {
 
         var identityId: Long? = null
@@ -59,9 +57,13 @@ class IdentityRecyclerViewAdapter(
         init {
             itemView.setOnClickListener {
                 identityId?.let {
-                    mainActivity.editIdentityDetails(it)
+                    hostFragment.editIdentityDetails(it)
                 }
             }
         }
+    }
+
+    interface EditIdentityListener {
+        fun editIdentityDetails(identityId: Long?)
     }
 }

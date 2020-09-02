@@ -16,27 +16,27 @@
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/appToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/primaryColor"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <!--        <androidx.fragment.app.FragmentContainerView-->
-        <!--            android:id="@+id/mainFragmentContainer"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"/>-->
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/mainFragmentContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
 
-        <fragment
-            android:id="@+id/agendaFragment"
-            android:name="com.drspaceman.atomicio.ui.AgendaFragment"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:tag="agenda_fragment" />
+<!--        <fragment-->
+<!--            android:id="@+id/agendaFragment"-->
+<!--            android:name="com.drspaceman.atomicio.ui.AgendaFragment"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:tag="agenda_fragment" />-->
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigation"

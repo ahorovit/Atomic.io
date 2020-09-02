@@ -1,51 +1,28 @@
 package com.drspaceman.atomicio.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_main.*
-
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.drawer_view_main.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter
-    private val identityViewModel by viewModels<IdentityViewModel>()
-
     // @todo: KAE isn't working!! Why?
     private lateinit var drawerLayout: DrawerLayout
-    private lateinit var identityRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         drawerLayout = findViewById(R.id.drawerLayout)
-        identityRecyclerView = findViewById(R.id.identityRecyclerView)
 
         setupToolbar()
         setupBottomNavigationMenu()
-
-//        fab.setOnClickListener { view ->
-//
-//        }
-
-        initializeIdentityRecyclerView()
-
-
     }
 
     private fun setupToolbar() {
@@ -58,24 +35,19 @@ class MainActivity : AppCompatActivity() {
             R.string.close_drawer
         )
         toggle.syncState()
-
-        addIdentityButton.setOnClickListener {
-            drawerLayout.closeDrawer(drawerView)
-            showIdentityDetailsFragment(null)
-        }
     }
 
     private fun setupBottomNavigationMenu() {
         val bottomNavigation = bottomNavigation ?: return
 
-        BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.agendaPage -> {
-                    // Respond to navigation item 1 click
+                    openFragment(AgendaFragment.newInstance())
                     true
                 }
                 R.id.identityPage -> {
-                    // Respond to navigation item 2 click
+                    openFragment(IdentitiesFragment.newInstance())
                     true
                 }
                 else -> false
@@ -94,6 +66,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun openFragment(fragment: Fragment) {
+        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.mainFragmentContainer, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -108,33 +87,5 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun initializeIdentityRecyclerView() {
-        identityRecyclerView.layoutManager = LinearLayoutManager(this)
-        identityRecyclerViewAdapter = IdentityRecyclerViewAdapter(null, this)
-        identityRecyclerView.adapter = identityRecyclerViewAdapter
-
-        identityViewModel.getIdentityViews()?.observe(
-            this,
-            Observer<List<IdentityView>> {
-                it?.let {
-                    identityRecyclerViewAdapter.setIdentityData(it)
-                }
-            }
-        )
-    }
-
-    fun editIdentityDetails(identityId: Long?) {
-        drawerLayout.closeDrawer(drawerView)
-        showIdentityDetailsFragment(identityId)
-    }
-
-
-    private fun showIdentityDetailsFragment(identityId: Long?) {
-        val fragmentManager = supportFragmentManager
-        val identityDetailsFragment = IdentityDetailsFragment.newInstance(identityId)
-
-        identityDetailsFragment.show(fragmentManager, IdentityDetailsFragment.TAG)
     }
 }
