@@ -29,12 +29,8 @@ class IdentityRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: IdentityViewHolder, position: Int) {
-
         identityData?.let {
-            val identity = it[position]
-            holder.identityId = identity.id
-            holder.identityLabelTextView.text = identity.name
-            holder.identityTypeImageView.setImageResource(identity.typeResourceId)
+            holder.bindData(it[position])
         }
     }
 
@@ -60,6 +56,12 @@ class IdentityRecyclerViewAdapter(
                     hostFragment.editIdentityDetails(it)
                 }
             }
+        }
+
+        fun bindData(identity: IdentityView) {
+            identityId = identity.id
+            identityLabelTextView.text = identity.name
+            identityTypeImageView.setImageResource(identity.typeResourceId)
         }
     }
 

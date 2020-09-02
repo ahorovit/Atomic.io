@@ -19,28 +19,21 @@ class IdentitiesFragment : Fragment(), EditIdentityListener {
     private lateinit var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter
     private val identityViewModel by viewModels<IdentityViewModel>()
 
-    // @todo: KAE isn't working!! Why?
-    private lateinit var identityRecyclerView: RecyclerView
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_identities, container, false)
-
-        identityRecyclerView = view.findViewById(R.id.identityRecyclerView)
-        initializeIdentityRecyclerView()
-
-        return view
+        return inflater.inflate(R.layout.fragment_identities, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initializeIdentityRecyclerView()
+    }
 
     private fun initializeIdentityRecyclerView() {
         identityRecyclerView.layoutManager = LinearLayoutManager(context)
