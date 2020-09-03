@@ -1,68 +1,76 @@
 package com.drspaceman.atomicio.ui
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
-import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
-import com.drspaceman.atomicio.viewmodel.HabitViewModel
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityView
-
-import kotlinx.android.synthetic.main.activity_main.drawerLayout
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.drawer_view_main.*
-import kotlinx.android.synthetic.main.habit_sequence.*
-import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter
-    private val identityViewModel by viewModels<IdentityViewModel>()
-
-    // @todo: Move into Fragment
-    private var habitSequence: MutableList<HabitViewModel.HabitView>? = null
-    private var habitRecyclerViewAdapter: HabitRecyclerViewAdapter? = null
+    // @todo: KAE isn't working!! Why?
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        drawerLayout = findViewById(R.id.drawerLayout)
+
         setupToolbar()
-
-        initializeIdentityRecyclerView()
-        initializeHabitSequenceRecyclerView()
-
-
-        fab.setOnClickListener {
-            startHabitDetails(null)
-        }
+        setupBottomNavigationMenu()
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(toolbar)
+        setSupportActionBar(appToolbar)
         val toggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
-            toolbar,
+            appToolbar,
             R.string.open_drawer,
             R.string.close_drawer
         )
         toggle.syncState()
+    }
 
-        addIdentityButton.setOnClickListener {
-            drawerLayout.closeDrawer(drawerView)
-            startIdentityDetails(null)
+    private fun setupBottomNavigationMenu() {
+        val bottomNavigation = bottomNavigation ?: return
+
+        bottomNavigation.setOnNavigationItemSelectedListener { item ->
+            when(item.itemId) {
+                R.id.agendaPage -> {
+                    openFragment(AgendaFragment.newInstance())
+                    true
+                }
+                R.id.identityPage -> {
+                    openFragment(IdentitiesFragment.newInstance())
+                    true
+                }
+                else -> false
+            }
         }
+
+        bottomNavigation.setOnNavigationItemReselectedListener { item ->
+            when(item.itemId) {
+                R.id.agendaPage -> {
+                    // Respond to navigation item 1 reselection
+                }
+                R.id.identityPage -> {
+                    // Respond to navigation item 2 reselection
+                }
+            }
+        }
+    }
+
+    private fun openFragment(fragment: Fragment) {
+        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.mainFragmentContainer, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -79,101 +87,5 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun initializeHabitSequenceRecyclerView() {
-        val sequence = habitSequence ?: return
-
-        habitListRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        habitRecyclerViewAdapter = HabitRecyclerViewAdapter(sequence)
-        habitListRecyclerView.adapter = habitRecyclerViewAdapter
-
-//        attachItemTouchHelper()
-    }
-
-    private fun initializeIdentityRecyclerView() {
-        identityRecyclerView.layoutManager = LinearLayoutManager(this)
-        identityRecyclerViewAdapter = IdentityRecyclerViewAdapter(null, this)
-        identityRecyclerView.adapter = identityRecyclerViewAdapter
-        createIdentityObserver()
-    }
-
-    private fun createIdentityObserver() {
-        identityViewModel.getIdentities()?.observe(
-            this,
-            Observer<List<IdentityView>> {
-                it?.let {
-                    identityRecyclerViewAdapter.setIdentityData(it)
-                }
-            }
-        )
-    }
-
-    /**
-     * WIP: Make habitSequence items draggable for reordering
-     */
-    private fun attachItemTouchHelper() {
-
-
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            0
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                dragged: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-
-                habitSequence?.let {
-                    val positionDragged = dragged.adapterPosition
-                    val positionTarget = target.adapterPosition
-
-                    Collections.swap(it, positionDragged, positionTarget)
-
-                    habitRecyclerViewAdapter?.notifyItemMoved(positionDragged, positionTarget)
-                }
-
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                TODO("Not yet implemented")
-            }
-
-        })
-
-        itemTouchHelper.attachToRecyclerView(habitListRecyclerView)
-    }
-
-    fun editIdentityDetails(identityId: Long) {
-        drawerLayout.closeDrawer(drawerView)
-        startIdentityDetails(identityId)
-    }
-
-    private fun startIdentityDetails(identityId: Long?) {
-        val intent = Intent(this, IdentityDetailActivity::class.java)
-
-        if (identityId != null) {
-            intent.putExtra(EXTRA_IDENTITY_ID, identityId)
-        }
-
-        startActivity(intent)
-    }
-
-    private fun startHabitDetails(habitId: Long?) {
-        val intent = Intent(this, HabitDetailActivity::class.java)
-
-        if (habitId != null) {
-            intent.putExtra(EXTRA_HABIT_ID, habitId)
-        }
-
-        startActivity(intent)
-    }
-
-    companion object {
-        const val EXTRA_HABIT_ID = "com.drspaceman.atomicio.EXTRA_HABIT_ID"
-        const val EXTRA_IDENTITY_ID = "com.drspaceman.atomicio.EXTRA_IDENTITY_ID"
     }
 }

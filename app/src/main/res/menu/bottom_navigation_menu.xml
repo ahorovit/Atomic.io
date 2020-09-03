@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/agendaPage"
+        android:enabled="true"
+        android:icon="@drawable/ic_agenda"
+        android:title="@string/tab_agenda" />
+
+    <item
+        android:id="@+id/identityPage"
+        android:enabled="true"
+        android:icon="@drawable/ic_identities"
+        android:title="@string/tab_identities" />
+
+    <item
+        android:id="@+id/habitPage"
+        android:enabled="true"
+        android:icon="@drawable/ic_habit"
+        android:title="@string/tab_habits" />
+
+    <item
+        android:id="@+id/analyticsPage"
+        android:enabled="true"
+        android:icon="@drawable/ic_analytics"
+        android:title="@string/tab_analytics" />
+</menu>

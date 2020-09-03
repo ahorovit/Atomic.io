@@ -27,5 +27,13 @@
     <string name="habit_hint">EG: Wake up at 6am</string>
     <string name="habit_identity_label">Identity (optional)</string>
     <string name="duration_label">Duration (s)</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tab_identities">Identities</string>
+    <string name="tab_agenda">Agenda</string>
+    <string name="tab_habits">Habits</string>
+    <string name="tab_analytics">Analytics</string>
 
 </resources>
