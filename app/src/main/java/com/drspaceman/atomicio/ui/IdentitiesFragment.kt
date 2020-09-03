@@ -33,6 +33,10 @@ class IdentitiesFragment : Fragment(), EditIdentityListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeIdentityRecyclerView()
+
+        fab.setOnClickListener {
+            showIdentityDetailsFragment(null)
+        }
     }
 
     private fun initializeIdentityRecyclerView() {
@@ -40,7 +44,7 @@ class IdentitiesFragment : Fragment(), EditIdentityListener {
         identityRecyclerViewAdapter = IdentityRecyclerViewAdapter(null, this)
         identityRecyclerView.adapter = identityRecyclerViewAdapter
 
-        identityViewModel.getIdentityViews()?.observe(
+        identityViewModel.getIdentities()?.observe(
             viewLifecycleOwner,
             Observer<List<IdentityViewModel.IdentityView>> {
                 it?.let {

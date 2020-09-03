@@ -1,24 +1,35 @@
 package com.drspaceman.atomicio.ui
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.HabitViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 
-import kotlinx.android.synthetic.main.activity_habit_detail.*
+import kotlinx.android.synthetic.main.fragment_habit_details.*
 
-class HabitDetailActivity : AppCompatActivity() {
+class HabitDetailsFragment : DialogFragment() {
+    private val habitId: Long? by lazy {
+        arguments?.getLong(ARG_HABIT_ID, 0)
+    }
+
     private val habitViewModel by viewModels<HabitViewModel>()
     private var habitView: HabitViewModel.HabitView? = null
+
+    private lateinit var parentActivity: AppCompatActivity
+
 
     // @todo: multiple ViewModels? Better than duplicating IdentityViewModel functions...
     private val identityViewModel by viewModels<IdentityViewModel>()
@@ -29,29 +40,62 @@ class HabitDetailActivity : AppCompatActivity() {
     private lateinit var spinnerTypes: Spinner
     private lateinit var spinnerAdapter: ArrayAdapter<String>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_habit_detail)
-//        populateTypeSpinner()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_habit_details, container, false)
 
-        setSupportActionBar(toolbar)
-        getIntentData()
+        spinnerTypes = view.findViewById(R.id.spinnerIdentities)
+        imageViewType = view.findViewById(R.id.imageViewHabitType)
 
         saveHabitButton.setOnClickListener {
             saveHabitDetails()
         }
+
+        return view
     }
 
-    private fun getIntentData() {
-        val habitId = intent.getLongExtra(MainActivity.EXTRA_HABIT_ID, 0)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        parentActivity = context as AppCompatActivity
+    }
 
-        if (habitId != 0L) {
-            observeHabit(habitId)
-        } else {
-            habitView = habitViewModel.getNewHabitView()
-//            setSpinnerSelection()
+    override fun onStart() {
+        super.onStart()
+
+        dialog?.let {
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.MATCH_PARENT
+            it.window?.setLayout(width, height)
         }
     }
+
+
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContentView(R.layout.fragment_habit_details)
+////        populateTypeSpinner()
+//
+//        setSupportActionBar(toolbar)
+//        getIntentData()
+//
+//        saveHabitButton.setOnClickListener {
+//            saveHabitDetails()
+//        }
+//    }
+
+//    private fun getIntentData() {
+//        val habitId = intent.getLongExtra(MainActivity.EXTRA_HABIT_ID, 0)
+//
+//        if (habitId != 0L) {
+//            observeHabit(habitId)
+//        } else {
+//            habitView = habitViewModel.getNewHabitView()
+////            setSpinnerSelection()
+//        }
+//    }
 
     private fun observeHabit(habitId: Long) {
         habitViewModel.getHabit(habitId)?.observe(
@@ -75,11 +119,11 @@ class HabitDetailActivity : AppCompatActivity() {
 
     private fun populateTypeSpinner() {
         // @TODO: Figure out why KAE isn't working
-        spinnerTypes = findViewById(R.id.spinnerIdentities)
-        imageViewType = findViewById(R.id.imageViewHabitType)
+//        spinnerTypes = findViewById(R.id.spinnerIdentities)
+//        imageViewType = findViewById(R.id.imageViewHabitType)
 
         spinnerAdapter = ArrayAdapter(
-            this,
+            parentActivity,
             android.R.layout.simple_spinner_item,
 //            habitViewModel.getIdentities()
             arrayOf() // @todo: get Identities for spinner
@@ -135,6 +179,23 @@ class HabitDetailActivity : AppCompatActivity() {
             habitViewModel.insertHabit(writeHabitView)
         }
 
-        finish()
+        dismiss()
+    }
+
+    companion object {
+        const val TAG = "habit_details_fragment"
+        private const val ARG_HABIT_ID = "extra_habit_id"
+
+        fun newInstance(habitId: Long?): HabitDetailsFragment {
+            val instance = HabitDetailsFragment()
+
+            habitId?.let {
+                val args = Bundle()
+                args.putLong(ARG_HABIT_ID, habitId)
+                instance.arguments = args
+            }
+
+            return instance
+        }
     }
 }

@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_agenda.*
 import java.util.*
 
 class AgendaFragment : Fragment() {
-    private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
+    private var habitSequence: MutableList<HabitViewModel.HabitView>? = null
     private var habitRecyclerViewAdapter: HabitRecyclerViewAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,9 +58,9 @@ class AgendaFragment : Fragment() {
     // @todo: implement DB and LiveData for habitSequence
     private fun initializeData() {
         habitSequence = mutableListOf(
-            HabitViewModel.HabitViewData("wake up", "sleep", 0),
-            HabitViewModel.HabitViewData("eat breakfast", "diet", 1),
-            HabitViewModel.HabitViewData("walk dog", "exercise", 2)
+            HabitViewModel.HabitView(name="wake up", type="sleep"),
+            HabitViewModel.HabitView(name="eat breakfast", type="diet"),
+            HabitViewModel.HabitView(name="walk dog", type="exercise")
         )
     }
 
