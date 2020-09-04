@@ -19,10 +19,6 @@ class IdentitiesFragment : Fragment(), EditIdentityListener {
     private lateinit var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter
     private val identityViewModel by viewModels<IdentityViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

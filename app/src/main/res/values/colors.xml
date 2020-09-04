@@ -8,4 +8,5 @@
     <color name="secondaryDarkColor">#49a7cc</color>
     <color name="primaryTextColor">#eeeeee</color>
     <color name="secondaryTextColor">#212121</color>
+    <color name="black_overlay">#66000000</color>
 </resources>

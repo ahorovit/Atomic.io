@@ -50,6 +50,8 @@ class MainActivity : AppCompatActivity() {
                     openFragment(IdentitiesFragment.newInstance())
                     true
                 }
+//                R.id.agendaPage -> {
+//                }
                 else -> false
             }
         }

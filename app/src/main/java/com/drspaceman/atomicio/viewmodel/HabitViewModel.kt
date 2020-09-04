@@ -73,6 +73,10 @@ class HabitViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun getHabits(): LiveData<List<HabitView>> {
+        TODO("Not yet implemented")
+    }
+
     data class HabitView(
         var id: Long? = null,
         var identityId: Long? = null,
