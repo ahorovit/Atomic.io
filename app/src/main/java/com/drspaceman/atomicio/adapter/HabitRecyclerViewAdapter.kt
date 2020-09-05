@@ -2,14 +2,13 @@ package com.drspaceman.atomicio.adapter
 
 import android.view.View
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.ui.HabitsFragment
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 import com.drspaceman.atomicio.viewmodel.HabitViewModel.HabitViewData
 import kotlinx.android.synthetic.main.habit_view_holder.view.*
 
 class HabitRecyclerViewAdapter(
     items: List<HabitViewData>?,
-    hostFragment: HabitsFragment
+    hostFragment: EditItemListener
 ) : BaseRecyclerViewAdapter(items, hostFragment){
     override val layoutId: Int = R.layout.habit_view_holder
 

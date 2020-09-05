@@ -9,7 +9,7 @@ import com.drspaceman.atomicio.repository.AtomicIoRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class HabitViewModel(application: Application) : AndroidViewModel(application) {
+class HabitViewModel(application: Application) : BaseViewModel(application) {
 
     // @TODO: insert as Explicit Dependency
     private var atomicIoRepo = AtomicIoRepository(getApplication())

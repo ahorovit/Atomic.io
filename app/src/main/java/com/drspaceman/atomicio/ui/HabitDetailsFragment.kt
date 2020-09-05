@@ -20,7 +20,7 @@ import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 
 import kotlinx.android.synthetic.main.fragment_habit_details.*
 
-class HabitDetailsFragment : DialogFragment() {
+class HabitDetailsFragment : BaseDialogFragment() {
     private val habitId: Long? by lazy {
         arguments?.getLong(ARG_HABIT_ID, 0)
     }

@@ -15,7 +15,7 @@ abstract class BaseRecyclerViewAdapter(
 
     protected abstract fun createViewHolder(view: View): BaseViewHolder
 
-    protected var itemList: List<BaseViewModel.BaseViewData>? = items
+    var itemList: List<BaseViewModel.BaseViewData>? = items
         set(value) {
             field = value
             notifyDataSetChanged()

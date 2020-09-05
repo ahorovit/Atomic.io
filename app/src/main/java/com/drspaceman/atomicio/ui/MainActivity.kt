@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.identityPage -> {
-                    openFragment(IdentitiesFragment.newInstance())
+                    openFragment(IdentityPageFragment.newInstance())
                     true
                 }
 //                R.id.agendaPage -> {
