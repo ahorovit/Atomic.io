@@ -26,14 +26,14 @@ class HabitDetailsFragment : DialogFragment() {
     }
 
     private val habitViewModel by viewModels<HabitViewModel>()
-    private var habitView: HabitViewModel.HabitView? = null
+    private var habitView: HabitViewModel.HabitViewData? = null
 
     private lateinit var parentActivity: AppCompatActivity
 
 
     // @todo: multiple ViewModels? Better than duplicating IdentityViewModel functions...
     private val identityViewModel by viewModels<IdentityViewModel>()
-    private var identityViews: List<IdentityViewModel.IdentityView>? = null
+    private var identityViews: List<IdentityViewModel.IdentityViewData>? = null
 
     // @todo: KAE isn't working for these Views for some reason
     private lateinit var imageViewType: ImageView
@@ -100,7 +100,7 @@ class HabitDetailsFragment : DialogFragment() {
     private fun observeHabit(habitId: Long) {
         habitViewModel.getHabit(habitId)?.observe(
             this,
-            Observer<HabitViewModel.HabitView> {
+            Observer<HabitViewModel.HabitViewData> {
                 it?.let {
                     habitView = it
                     populateExistingValues()

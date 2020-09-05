@@ -1,7 +1,6 @@
 package com.drspaceman.atomicio.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.drspaceman.atomicio.R
@@ -10,21 +9,21 @@ import com.drspaceman.atomicio.repository.AtomicIoRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class IdentityViewModel(application: Application) : AndroidViewModel(application) {
+class IdentityViewModel(application: Application) : BaseViewModel(application) {
 
     // @TODO: insert as Explicit Dependency
     private var atomicIoRepo = AtomicIoRepository(getApplication())
-    private var identityView: LiveData<IdentityView>? = null
-    private var identities: LiveData<List<IdentityView>>? = null
+    private var identityView: LiveData<IdentityViewData>? = null
+    private var identities: LiveData<List<IdentityViewData>>? = null
 
     // @TODO: observe?
-    fun getNewIdentityView(): IdentityView {
-        val newIdentityView = IdentityView()
+    fun getNewIdentityView(): IdentityViewData {
+        val newIdentityView = IdentityViewData()
         newIdentityView.type = "Other"
         return newIdentityView
     }
 
-    fun insertIdentity(newIdentityView: IdentityView) {
+    fun insertIdentity(newIdentityView: IdentityViewData) {
         val identity = identityViewToIdentity(newIdentityView)
 
         GlobalScope.launch {
@@ -38,7 +37,7 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getIdentity(identityId: Long): LiveData<IdentityView>? {
+    fun getIdentity(identityId: Long): LiveData<IdentityViewData>? {
         if (identityView == null) {
             mapIdentityToIdentityView(identityId)
         }
@@ -46,7 +45,7 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         return identityView
     }
 
-    fun getIdentities(): LiveData<List<IdentityView>>? {
+    fun getIdentities(): LiveData<List<IdentityViewData>>? {
         if (identities == null) {
             mapIdentitiesToIdentityViews()
         }
@@ -60,7 +59,7 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun updateIdentity(identityView: IdentityView) {
+    fun updateIdentity(identityView: IdentityViewData) {
         GlobalScope.launch {
             val identity = identityViewToIdentity(identityView)
             atomicIoRepo.updateIdentity(identity)
@@ -76,8 +75,8 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    private fun identityToIdentityView(identity: Identity): IdentityView {
-        return IdentityView(
+    private fun identityToIdentityView(identity: Identity): IdentityViewData {
+        return IdentityViewData(
             identity.id,
             identity.name,
             identity.description,
@@ -86,7 +85,7 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
-    private fun identityViewToIdentity(identityView: IdentityView): Identity {
+    private fun identityViewToIdentity(identityView: IdentityViewData): Identity {
         val identity = identityView.id?.let {
             atomicIoRepo.getIdentity(it)
         } ?: atomicIoRepo.createIdentity()
@@ -107,11 +106,11 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         return atomicIoRepo.getTypeResourceId(type)
     }
 
-    data class IdentityView(
+    data class IdentityViewData(
         var id: Long? = null,
         var name: String? = "",
         var description: String? = "",
         var type: String? = "",
         var typeResourceId: Int = R.drawable.ic_other
-    )
+    ): BaseViewData()
 }

@@ -13,9 +13,9 @@ class HabitViewModel(application: Application) : AndroidViewModel(application) {
 
     // @TODO: insert as Explicit Dependency
     private var atomicIoRepo = AtomicIoRepository(getApplication())
-    private var habitView: LiveData<HabitView>? = null
+    private var habitView: LiveData<HabitViewData>? = null
 
-    fun getHabit(habitId: Long): LiveData<HabitView>? {
+    fun getHabit(habitId: Long): LiveData<HabitViewData>? {
         if (habitView == null) {
             mapHabitToHabitView(habitId)
         }
@@ -27,7 +27,7 @@ class HabitViewModel(application: Application) : AndroidViewModel(application) {
         val habit = atomicIoRepo.getLiveHabit(habitId)
         habitView = Transformations.map(habit) { repoHabit ->
             repoHabit?.let {
-                HabitView(
+                HabitViewData(
                     repoHabit.id,
                     repoHabit.identityId,
                     repoHabit.name,
@@ -37,18 +37,18 @@ class HabitViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getNewHabitView(): HabitView {
-        return HabitView()
+    fun getNewHabitView(): HabitViewData {
+        return HabitViewData()
     }
 
-    fun updateHabit(habitView: HabitView) {
+    fun updateHabit(habitView: HabitViewData) {
         GlobalScope.launch {
             val habit = habitViewToHabit(habitView)
             atomicIoRepo.updateHabit(habit)
         }
     }
 
-    private fun habitViewToHabit(habitView: HabitView): Habit {
+    private fun habitViewToHabit(habitView: HabitViewData): Habit {
         val habit = habitView.id?.let {
             atomicIoRepo.getHabit(it)
         } ?: atomicIoRepo.createHabit()
@@ -61,7 +61,7 @@ class HabitViewModel(application: Application) : AndroidViewModel(application) {
         return habit
     }
 
-    fun insertHabit(habitView: HabitView) {
+    fun insertHabit(habitView: HabitViewData) {
         val habit = habitViewToHabit(habitView)
 
         GlobalScope.launch {
@@ -73,14 +73,14 @@ class HabitViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getHabits(): LiveData<List<HabitView>> {
+    fun getHabits(): LiveData<List<HabitViewData>> {
         TODO("Not yet implemented")
     }
 
-    data class HabitView(
+    data class HabitViewData(
         var id: Long? = null,
         var identityId: Long? = null,
         var name: String? = "",
         var type: String? = ""
-    )
+    ) : BaseViewModel.BaseViewData()
 }

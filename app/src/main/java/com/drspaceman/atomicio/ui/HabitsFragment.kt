@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +12,7 @@ import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.HabitViewModel
 import kotlinx.android.synthetic.main.fragment_habits.*
 
-class HabitsFragment : Fragment() {
+class HabitsFragment : PageFragment() {
     private lateinit var habitRecyclerViewAdapter: HabitRecyclerViewAdapter
     private val habitViewModel by viewModels<HabitViewModel>()
 
@@ -40,7 +39,7 @@ class HabitsFragment : Fragment() {
 
         habitViewModel.getHabits()?.observe(
             viewLifecycleOwner,
-            Observer<List<HabitViewModel.HabitView>> {
+            Observer<List<HabitViewModel.HabitViewData>> {
                 it?.let {
                     habitRecyclerViewAdapter.setHabitData(it)
                 }

@@ -2,7 +2,6 @@ package com.drspaceman.atomicio.ui
 
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,8 +12,8 @@ import com.drspaceman.atomicio.viewmodel.HabitViewModel
 import kotlinx.android.synthetic.main.fragment_agenda.*
 import java.util.*
 
-class AgendaFragment : Fragment() {
-    private var habitSequence: MutableList<HabitViewModel.HabitView>? = null
+class AgendaFragment : PageFragment() {
+    private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
     private var habitRecyclerViewAdapter: HabitRecyclerViewAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,9 +57,9 @@ class AgendaFragment : Fragment() {
     // @todo: implement DB and LiveData for habitSequence
     private fun initializeData() {
         habitSequence = mutableListOf(
-            HabitViewModel.HabitView(name="wake up", type="sleep"),
-            HabitViewModel.HabitView(name="eat breakfast", type="diet"),
-            HabitViewModel.HabitView(name="walk dog", type="exercise")
+            HabitViewModel.HabitViewData(name="wake up", type="sleep"),
+            HabitViewModel.HabitViewData(name="eat breakfast", type="diet"),
+            HabitViewModel.HabitViewData(name="walk dog", type="exercise")
         )
     }
 

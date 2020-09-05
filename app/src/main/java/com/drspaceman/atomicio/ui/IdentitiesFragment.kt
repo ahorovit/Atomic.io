@@ -8,14 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
-import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter.EditIdentityListener
 import com.drspaceman.atomicio.viewmodel.IdentityViewModel
 import kotlinx.android.synthetic.main.fragment_identities.*
 
-class IdentitiesFragment : Fragment(), EditIdentityListener {
+class IdentitiesFragment : Fragment() {
     private lateinit var identityRecyclerViewAdapter: IdentityRecyclerViewAdapter
     private val identityViewModel by viewModels<IdentityViewModel>()
 
@@ -42,7 +40,7 @@ class IdentitiesFragment : Fragment(), EditIdentityListener {
 
         identityViewModel.getIdentities()?.observe(
             viewLifecycleOwner,
-            Observer<List<IdentityViewModel.IdentityView>> {
+            Observer<List<IdentityViewModel.IdentityViewData>> {
                 it?.let {
                     identityRecyclerViewAdapter.setIdentityData(it)
                 }

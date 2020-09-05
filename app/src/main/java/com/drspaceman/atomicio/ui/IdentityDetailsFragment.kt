@@ -21,7 +21,7 @@ class IdentityDetailsFragment : DialogFragment() {
     }
 
     private val identityViewModel by viewModels<IdentityViewModel>()
-    private var identityView: IdentityViewModel.IdentityView? = null
+    private var identityView: IdentityViewModel.IdentityViewData? = null
 
     private lateinit var parentActivity: AppCompatActivity
 
@@ -122,7 +122,7 @@ class IdentityDetailsFragment : DialogFragment() {
     private fun observeIdentity(identityId: Long) {
         identityViewModel.getIdentity(identityId)?.observe(
             this,
-            Observer<IdentityViewModel.IdentityView> {
+            Observer<IdentityViewModel.IdentityViewData> {
                 it?.let {
                     identityView = it
                     populateExistingValues()
