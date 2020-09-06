@@ -5,7 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityViewData
+import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 
 class IdentityRecyclerViewAdapter(
     items: List<IdentityViewData>?,

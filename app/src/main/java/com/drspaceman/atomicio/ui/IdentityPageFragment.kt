@@ -5,12 +5,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel
+import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
 
 import kotlinx.android.synthetic.main.fragment_identities.*
 
 class IdentityPageFragment : BasePageFragment() {
-    override val viewModel by activityViewModels<IdentityViewModel>()
+    override val viewModel by activityViewModels<IdentityPageViewModel>()
 
     override val layoutId: Int = R.layout.fragment_identities
 
@@ -21,7 +21,7 @@ class IdentityPageFragment : BasePageFragment() {
 
         viewModel.getIdentities()?.observe(
             viewLifecycleOwner,
-            Observer<List<IdentityViewModel.IdentityViewData>> {
+            Observer<List<IdentityPageViewModel.IdentityViewData>> {
                 it?.let {
                     recyclerViewAdapter.itemList = it
                 }

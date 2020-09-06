@@ -12,7 +12,7 @@ import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class IdentityViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
+class IdentityPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
 
     // @TODO: insert as Explicit Dependency
     private var atomicIoRepo = AtomicIoRepository(getApplication())

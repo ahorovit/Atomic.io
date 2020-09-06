@@ -17,6 +17,11 @@ class AtomicIoRepository(context: Context) {
             return dao.loadAllIdentities()
         }
 
+    val allHabits: LiveData<List<Habit>>
+        get() {
+            return dao.loadAllHabits()
+        }
+
     private val allTypes = buildTypes()
 
     val identityTypes: List<String>

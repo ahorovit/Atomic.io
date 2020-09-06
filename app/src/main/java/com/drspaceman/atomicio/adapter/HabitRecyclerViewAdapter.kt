@@ -3,7 +3,7 @@ package com.drspaceman.atomicio.adapter
 import android.view.View
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
-import com.drspaceman.atomicio.viewmodel.HabitViewModel.HabitViewData
+import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.android.synthetic.main.habit_view_holder.view.*
 
 class HabitRecyclerViewAdapter(

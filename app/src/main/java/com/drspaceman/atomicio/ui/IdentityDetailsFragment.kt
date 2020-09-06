@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel.IdentityViewData
+import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
+import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 
 import kotlinx.android.synthetic.main.fragment_identity_details.*
 
@@ -16,7 +16,7 @@ class IdentityDetailsFragment : BaseDialogFragment() {
         arguments?.getLong(ARG_IDENTITY_ID, 0)
     }
 
-    override val viewModel by viewModels<IdentityViewModel>()
+    override val viewModel by viewModels<IdentityPageViewModel>()
 
     override var itemViewData: IdentityViewData? = null
 

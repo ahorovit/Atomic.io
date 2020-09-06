@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
-import com.drspaceman.atomicio.viewmodel.HabitViewModel
+import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
 
 import kotlinx.android.synthetic.main.fragment_agenda.*
 import java.util.*
@@ -17,7 +17,7 @@ class AgendaFragment : BasePageFragment() {
     override val viewModel: BaseViewModel
         get() = TODO("Not yet implemented")
 
-    private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
+    private var habitSequence: MutableList<HabitPageViewModel.HabitViewData>? = null
 
 
     override fun getEditDialogFragment(id: Long?): BaseDialogFragment {
@@ -40,9 +40,9 @@ class AgendaFragment : BasePageFragment() {
     // @todo: implement DB and LiveData for habitSequence
     private fun initializeData() {
         habitSequence = mutableListOf(
-            HabitViewModel.HabitViewData(name="wake up", type="sleep"),
-            HabitViewModel.HabitViewData(name="eat breakfast", type="diet"),
-            HabitViewModel.HabitViewData(name="walk dog", type="exercise")
+            HabitPageViewModel.HabitViewData(name="wake up", type="sleep"),
+            HabitPageViewModel.HabitViewData(name="eat breakfast", type="diet"),
+            HabitPageViewModel.HabitViewData(name="walk dog", type="exercise")
         )
     }
 

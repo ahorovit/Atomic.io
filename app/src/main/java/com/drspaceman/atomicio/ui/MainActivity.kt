@@ -46,8 +46,10 @@ class MainActivity : AppCompatActivity() {
                     openFragment(IdentityPageFragment.newInstance())
                     true
                 }
-//                R.id.agendaPage -> {
-//                }
+                R.id.habitPage -> {
+                    openFragment(HabitPageFragment.newInstance())
+                    true
+                }
                 else -> false
             }
         }

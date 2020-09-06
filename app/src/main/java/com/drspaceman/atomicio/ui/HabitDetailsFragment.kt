@@ -5,9 +5,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.viewmodel.HabitViewModel
-import com.drspaceman.atomicio.viewmodel.HabitViewModel.HabitViewData
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel
+import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
+import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
+import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
 
 import kotlinx.android.synthetic.main.fragment_habit_details.*
 
@@ -19,14 +19,14 @@ class HabitDetailsFragment : BaseDialogFragment() {
         arguments?.getLong(ARG_HABIT_ID, 0)
     }
 
-    override val viewModel by viewModels<HabitViewModel>()
+    override val viewModel by viewModels<HabitPageViewModel>()
 
     override var itemViewData: HabitViewData? = null
 
 
     // @todo: multiple ViewModels? Better than duplicating IdentityViewModel functions...
-    private val identityViewModel by viewModels<IdentityViewModel>()
-    private var identityViews: List<IdentityViewModel.IdentityViewData>? = null
+    private val identityViewModel by viewModels<IdentityPageViewModel>()
+    private var identityViews: List<IdentityPageViewModel.IdentityViewData>? = null
 
 
     override fun observeItem(id: Long) {
