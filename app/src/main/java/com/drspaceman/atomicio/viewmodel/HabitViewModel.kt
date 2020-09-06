@@ -4,8 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.repository.AtomicIoRepository
+import com.drspaceman.atomicio.ui.BaseDialogFragment
+import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.BaseViewData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -81,6 +85,7 @@ class HabitViewModel(application: Application) : BaseViewModel(application) {
         var id: Long? = null,
         var identityId: Long? = null,
         var name: String? = "",
-        var type: String? = ""
-    ) : BaseViewModel.BaseViewData()
+        override var type: String? = "",
+        override var typeResourceId: Int = R.drawable.ic_other
+    ) : BaseViewData(), SpinnerItemViewData
 }

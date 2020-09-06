@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter
+import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter.EditItemListener
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 
 import kotlinx.android.synthetic.main.fragment_identities.*
 
-abstract class BasePageFragment : Fragment(), BaseRecyclerViewAdapter.EditItemListener {
+abstract class BasePageFragment : Fragment(), EditItemListener {
 
     protected abstract val layoutId: Int
 
@@ -55,7 +56,7 @@ abstract class BasePageFragment : Fragment(), BaseRecyclerViewAdapter.EditItemLi
     protected fun showEditDetailsDialog(itemId: Long?) {
         val fragmentManager = activity?.supportFragmentManager ?: return
         val editDetailsFragment = getEditDialogFragment(itemId)
-        editDetailsFragment.show(fragmentManager, IdentityDetailsFragment.TAG)
+        editDetailsFragment.show(fragmentManager, "${editDetailsFragment::class}_tag")
     }
 
     override fun editItemDetails(identityId: Long?) {

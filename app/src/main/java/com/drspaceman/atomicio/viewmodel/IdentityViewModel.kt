@@ -6,10 +6,13 @@ import androidx.lifecycle.Transformations
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
+import com.drspaceman.atomicio.ui.BaseDialogFragment
+import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
+import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class IdentityViewModel(application: Application) : BaseViewModel(application) {
+class IdentityViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
 
     // @TODO: insert as Explicit Dependency
     private var atomicIoRepo = AtomicIoRepository(getApplication())
@@ -98,11 +101,11 @@ class IdentityViewModel(application: Application) : BaseViewModel(application) {
         return identity
     }
 
-    fun getTypes(): List<String> {
+    override fun getTypes(): List<String> {
         return atomicIoRepo.identityTypes
     }
 
-    fun getTypeResourceId(type: String?): Int? {
+    override fun getTypeResourceId(type: String?): Int? {
         return atomicIoRepo.getTypeResourceId(type)
     }
 
@@ -110,7 +113,7 @@ class IdentityViewModel(application: Application) : BaseViewModel(application) {
         var id: Long? = null,
         var name: String? = "",
         var description: String? = "",
-        var type: String? = "",
-        var typeResourceId: Int = R.drawable.ic_other
-    ): BaseViewData()
+        override var type: String? = "",
+        override var typeResourceId: Int = R.drawable.ic_other
+    ): BaseViewData(), SpinnerItemViewData
 }
