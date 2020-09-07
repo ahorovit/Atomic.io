@@ -2,7 +2,9 @@ package com.drspaceman.atomicio.ui
 
 import android.os.Bundle
 import android.view.*
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter.EditItemListener
 import com.drspaceman.atomicio.viewmodel.BaseViewModel

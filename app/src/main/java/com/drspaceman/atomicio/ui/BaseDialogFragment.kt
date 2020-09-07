@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 
 // @todo remove
@@ -36,11 +37,19 @@ abstract class BaseDialogFragment: DialogFragment() {
 
     protected abstract fun getNewItem()
 
+//    override fun getTheme(): Int {
+//        return R.style.AppTheme
+//    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(layoutId, container, false)
+        return inflater.inflate(layoutId, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         populateTypeSpinner()
         loadDataItem()
@@ -48,8 +57,6 @@ abstract class BaseDialogFragment: DialogFragment() {
 //        saveIdentityButton.setOnClickListener {
 //            saveItemDetails()
 //        }
-
-        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
