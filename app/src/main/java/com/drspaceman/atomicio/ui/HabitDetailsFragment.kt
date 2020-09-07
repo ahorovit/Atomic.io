@@ -10,6 +10,7 @@ import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
 
 import kotlinx.android.synthetic.main.fragment_habit_details.*
+import kotlinx.android.synthetic.main.spinner_layout.*
 
 class HabitDetailsFragment : BaseDialogFragment() {
 
@@ -100,7 +101,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
         writeHabitView.let {
             it.name = name
-            it.type = spinnerIdentities.selectedItem as String
+            it.type = spinner.selectedItem as String
         }
 
         writeHabitView.id?.let {

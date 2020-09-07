@@ -12,7 +12,7 @@ import androidx.fragment.app.DialogFragment
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 
 // @todo remove
-import kotlinx.android.synthetic.main.fragment_identity_details.*
+import kotlinx.android.synthetic.main.spinner_layout.*
 
 abstract class BaseDialogFragment: DialogFragment() {
 
@@ -45,9 +45,9 @@ abstract class BaseDialogFragment: DialogFragment() {
         populateTypeSpinner()
         loadDataItem()
 
-        saveIdentityButton.setOnClickListener {
-            saveItemDetails()
-        }
+//        saveIdentityButton.setOnClickListener {
+//            saveItemDetails()
+//        }
 
         return view
     }
@@ -86,14 +86,14 @@ abstract class BaseDialogFragment: DialogFragment() {
         spinnerAdapter = ArrayAdapter(
             parentActivity,
             android.R.layout.simple_spinner_item,
-            spinnerViewModel.getTypes()
+            spinnerViewModel.getSpinnerItems()
         )
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerTypes.adapter = spinnerAdapter
+        spinner.adapter = spinnerAdapter
 
-        spinnerTypes.post {
-            spinnerTypes.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinner.post {
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>,
                     view: View?,
@@ -101,9 +101,9 @@ abstract class BaseDialogFragment: DialogFragment() {
                     id: Long
                 ) {
                     val type = parent.getItemAtPosition(position) as String
-                    val resourceId = spinnerViewModel.getTypeResourceId(type)
+                    val resourceId = spinnerViewModel.getSpinnerItemResourceId(type)
                     resourceId?.let {
-                        imageViewType.setImageResource(it)
+                        spinnerImage.setImageResource(it)
                     }
                 }
 
@@ -118,14 +118,14 @@ abstract class BaseDialogFragment: DialogFragment() {
         itemViewData?.let {
             it as SpinnerItemViewData
             val type = it.type ?: return
-            spinnerTypes.setSelection(spinnerAdapter.getPosition(type))
-            imageViewType.setImageResource(it.typeResourceId)
+            spinner.setSelection(spinnerAdapter.getPosition(type))
+            spinnerImage.setImageResource(it.typeResourceId)
         }
     }
 
     interface SpinnerViewModel {
-        fun getTypes(): List<String>
-        fun getTypeResourceId(type: String?): Int?
+        fun getSpinnerItems(): List<String>
+        fun getSpinnerItemResourceId(type: String?): Int?
     }
 
     interface SpinnerItemViewData {

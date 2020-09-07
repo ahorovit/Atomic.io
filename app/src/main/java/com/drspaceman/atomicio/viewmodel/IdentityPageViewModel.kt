@@ -101,11 +101,11 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
         return identity
     }
 
-    override fun getTypes(): List<String> {
+    override fun getSpinnerItems(): List<String> {
         return atomicIoRepo.identityTypes
     }
 
-    override fun getTypeResourceId(type: String?): Int? {
+    override fun getSpinnerItemResourceId(type: String?): Int? {
         return atomicIoRepo.getTypeResourceId(type)
     }
 

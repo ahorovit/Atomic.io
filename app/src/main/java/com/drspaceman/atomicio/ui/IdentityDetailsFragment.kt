@@ -8,6 +8,7 @@ import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 
 import kotlinx.android.synthetic.main.fragment_identity_details.*
+import kotlinx.android.synthetic.main.spinner_layout.*
 
 class IdentityDetailsFragment : BaseDialogFragment() {
     override val layoutId = R.layout.fragment_identity_details
@@ -53,7 +54,7 @@ class IdentityDetailsFragment : BaseDialogFragment() {
 
         writeIdentityView.let {
             it.name = name
-            it.type = spinnerTypes.selectedItem as String
+            it.type = spinner.selectedItem as String
         }
 
         writeIdentityView.id?.let {

@@ -6,17 +6,26 @@ import androidx.lifecycle.Transformations
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.repository.AtomicIoRepository
+import com.drspaceman.atomicio.ui.BaseDialogFragment
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
+import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class HabitPageViewModel(application: Application) : BaseViewModel(application) {
+class HabitPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
 
     // @TODO: insert as Explicit Dependency
     private var atomicIoRepo = AtomicIoRepository(getApplication())
     private var oneHabit: LiveData<HabitViewData>? = null
     private var allHabits: LiveData<List<HabitViewData>>? = null
 
+    override fun getSpinnerItems(): List<String> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getSpinnerItemResourceId(type: String?): Int? {
+        TODO("Not yet implemented")
+    }
 
     fun getHabit(habitId: Long): LiveData<HabitViewData>? {
         if (oneHabit == null) {
