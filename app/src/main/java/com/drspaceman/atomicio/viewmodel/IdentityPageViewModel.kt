@@ -69,6 +69,13 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
+    override fun deleteItem(itemViewData: BaseViewData) {
+        GlobalScope.launch {
+            val identity = identityViewToIdentity(itemViewData as IdentityViewData)
+            atomicIoRepo.deleteIdentity(identity)
+        }
+    }
+
     private fun mapIdentityToIdentityView(identityId: Long) {
         val identity = atomicIoRepo.getLiveIdentity(identityId)
         identityView = Transformations.map(identity) { repoIdentity ->
@@ -110,10 +117,11 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     data class IdentityViewData(
-        var id: Long? = null,
+        override var id: Long? = null,
         var name: String? = "",
         var description: String? = "",
         override var type: String? = "",
         override var typeResourceId: Int = R.drawable.ic_other
     ): BaseViewData(), SpinnerItemViewData
+
 }

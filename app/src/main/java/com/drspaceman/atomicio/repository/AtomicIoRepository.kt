@@ -52,6 +52,10 @@ class AtomicIoRepository(context: Context) {
         return dao.loadIdentity(identityId)
     }
 
+    fun deleteIdentity(identity: Identity) {
+        dao.deleteIdentity(identity)
+    }
+
     private fun buildTypes(): HashMap<String, Int> {
         return hashMapOf(
             "Academic" to R.drawable.ic_academic,

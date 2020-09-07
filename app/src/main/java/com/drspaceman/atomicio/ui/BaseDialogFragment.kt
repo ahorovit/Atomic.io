@@ -9,11 +9,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 
 // @todo remove
 import kotlinx.android.synthetic.main.spinner_layout.*
+import kotlinx.android.synthetic.main.crud_buttons.*
 
 abstract class BaseDialogFragment: DialogFragment() {
 
@@ -54,9 +54,13 @@ abstract class BaseDialogFragment: DialogFragment() {
         populateTypeSpinner()
         loadDataItem()
 
-//        saveIdentityButton.setOnClickListener {
-//            saveItemDetails()
-//        }
+        saveButton.setOnClickListener {
+            saveItemDetails()
+        }
+
+        deleteButton.setOnClickListener {
+            deleteSelectedItem()
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -85,6 +89,16 @@ abstract class BaseDialogFragment: DialogFragment() {
             getNewItem()
             setSpinnerSelection()
         }
+    }
+
+    protected fun deleteSelectedItem() {
+        val item = itemViewData
+
+        item?.id?.let {
+            viewModel.deleteItem(item)
+        }
+
+        dismiss()
     }
 
     protected fun populateTypeSpinner() {

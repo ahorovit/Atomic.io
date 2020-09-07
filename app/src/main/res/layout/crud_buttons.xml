@@ -16,7 +16,6 @@
         android:src="@drawable/ic_save"
         android:contentDescription="@string/save_button" />
 
-
     <ImageButton
         android:id="@+id/deleteButton"
         android:layout_width="0dp"

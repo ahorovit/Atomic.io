@@ -4,5 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 
 abstract class BaseViewModel(application: Application): AndroidViewModel(application) {
-    abstract class BaseViewData
+
+    abstract fun deleteItem(itemViewData: BaseViewData)
+
+    abstract class BaseViewData {
+        abstract var id: Long?
+    }
 }

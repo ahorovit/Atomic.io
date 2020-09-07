@@ -86,6 +86,11 @@ class HabitPageViewModel(application: Application) : BaseViewModel(application),
         }
     }
 
+
+    override fun deleteItem(itemViewData: BaseViewData) {
+        TODO("Not yet implemented")
+    }
+
     private fun habitViewDataToHabit(habitView: HabitViewData): Habit {
         val habit = habitView.id?.let {
             atomicIoRepo.getHabit(it)
@@ -110,10 +115,11 @@ class HabitPageViewModel(application: Application) : BaseViewModel(application),
     }
 
     data class HabitViewData(
-        var id: Long? = null,
+        override var id: Long? = null,
         var identityId: Long? = null,
         var name: String? = "",
         override var type: String? = "",
         override var typeResourceId: Int = R.drawable.ic_other
     ) : BaseViewData(), SpinnerItemViewData
+
 }
