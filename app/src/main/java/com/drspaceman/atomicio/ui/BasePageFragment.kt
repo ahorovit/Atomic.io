@@ -2,22 +2,22 @@ package com.drspaceman.atomicio.ui
 
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter.EditItemListener
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
-
-import kotlinx.android.synthetic.main.fragment_identities.*
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 abstract class BasePageFragment : Fragment(), EditItemListener {
 
     protected abstract val layoutId: Int
 
+    protected abstract val viewModel: BaseViewModel
+
     protected lateinit var recyclerViewAdapter: BaseRecyclerViewAdapter
 
-    protected abstract val viewModel: BaseViewModel
+    protected lateinit var fab: FloatingActionButton
 
     protected abstract fun getEditDialogFragment(id: Long?): BaseDialogFragment
 
@@ -33,6 +33,8 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeRecyclerView()
+
+        fab = view.findViewById(R.id.fab)
 
         fab.setOnClickListener {
             showEditDetailsDialog(null)
