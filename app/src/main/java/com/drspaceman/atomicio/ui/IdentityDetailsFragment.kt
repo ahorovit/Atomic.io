@@ -82,6 +82,8 @@ class IdentityDetailsFragment : BaseDialogFragment() {
                 }
             }
         }
+
+        loadDataItem()
     }
 
     override fun setSpinnerSelection() {

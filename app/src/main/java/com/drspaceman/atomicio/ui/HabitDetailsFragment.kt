@@ -43,7 +43,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
     override fun populateExistingValues() {
         itemViewData?.let { habitView ->
-            textViewHabitName.text = habitView.name
+            editTextHabitName.setText(habitView.name)
             setSpinnerSelection()
         }
     }
@@ -58,6 +58,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
         habit.identityId?.let { parentIdentityId ->
             val position = spinnerAdapter.getIdentityPosition(parentIdentityId)
 
+            // @todo: figure out why occasionally image is [NA] null while selection text is correct
             position?.let {
                 spinner.setSelection(it)
                 spinnerImage.setImageResource(habit.typeResourceId)
@@ -104,6 +105,10 @@ class HabitDetailsFragment : BaseDialogFragment() {
             Observer<List<IdentityViewData>> {
                 it?.let {
                     spinnerAdapter.setSpinnerItems(it)
+
+                    // This needs to run again in case the Fragment loaded before identities
+                    // were loaded
+                    setSpinnerSelection()
                 }
             }
         )

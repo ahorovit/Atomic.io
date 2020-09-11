@@ -7,6 +7,8 @@ import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 
+import kotlinx.android.synthetic.main.identity_view_holder.view.*
+
 class IdentityRecyclerViewAdapter(
     items: List<IdentityViewData>?,
     hostFragment: EditItemListener
@@ -24,10 +26,8 @@ class IdentityRecyclerViewAdapter(
     ) : BaseViewHolder(itemView) {
 
         var identityId: Long? = null
-
-        // @todo: KAE isn't working!! Why?
-        val identityLabelTextView: TextView = itemView.findViewById(R.id.identityLabelTextView)
-        val identityTypeImageView: ImageView = itemView.findViewById(R.id.identityTypeImageView)
+        val identityLabelTextView: TextView = itemView.identityLabelTextView
+        val identityTypeImageView: ImageView = itemView.identityTypeImageView
 
         init {
             itemView.setOnClickListener {
