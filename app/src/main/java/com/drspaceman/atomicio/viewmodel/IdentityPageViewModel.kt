@@ -1,30 +1,33 @@
 package com.drspaceman.atomicio.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
+import com.drspaceman.atomicio.ui.BaseDialogFragment
+import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
+import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
+import kotlinx.android.synthetic.main.spinner_layout.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class IdentityViewModel(application: Application) : AndroidViewModel(application) {
+class IdentityPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
 
     // @TODO: insert as Explicit Dependency
     private var atomicIoRepo = AtomicIoRepository(getApplication())
-    private var identityView: LiveData<IdentityView>? = null
-    private var identities: LiveData<List<IdentityView>>? = null
+    private var identityView: LiveData<IdentityViewData>? = null
+    private var identities: LiveData<List<IdentityViewData>>? = null
 
     // @TODO: observe?
-    fun getNewIdentityView(): IdentityView {
-        val newIdentityView = IdentityView()
+    fun getNewIdentityView(): IdentityViewData {
+        val newIdentityView = IdentityViewData()
         newIdentityView.type = "Other"
         return newIdentityView
     }
 
-    fun insertIdentity(newIdentityView: IdentityView) {
+    fun insertIdentity(newIdentityView: IdentityViewData) {
         val identity = identityViewToIdentity(newIdentityView)
 
         GlobalScope.launch {
@@ -38,7 +41,7 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getIdentity(identityId: Long): LiveData<IdentityView>? {
+    fun getIdentity(identityId: Long): LiveData<IdentityViewData>? {
         if (identityView == null) {
             mapIdentityToIdentityView(identityId)
         }
@@ -46,7 +49,7 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         return identityView
     }
 
-    fun getIdentities(): LiveData<List<IdentityView>>? {
+    fun getIdentities(): LiveData<List<IdentityViewData>>? {
         if (identities == null) {
             mapIdentitiesToIdentityViews()
         }
@@ -60,10 +63,17 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun updateIdentity(identityView: IdentityView) {
+    fun updateIdentity(identityView: IdentityViewData) {
         GlobalScope.launch {
             val identity = identityViewToIdentity(identityView)
             atomicIoRepo.updateIdentity(identity)
+        }
+    }
+
+    override fun deleteItem(itemViewData: BaseViewData) {
+        GlobalScope.launch {
+            val identity = identityViewToIdentity(itemViewData as IdentityViewData)
+            atomicIoRepo.deleteIdentity(identity)
         }
     }
 
@@ -76,8 +86,8 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    private fun identityToIdentityView(identity: Identity): IdentityView {
-        return IdentityView(
+    private fun identityToIdentityView(identity: Identity): IdentityViewData {
+        return IdentityViewData(
             identity.id,
             identity.name,
             identity.description,
@@ -86,7 +96,7 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
-    private fun identityViewToIdentity(identityView: IdentityView): Identity {
+    private fun identityViewToIdentity(identityView: IdentityViewData): Identity {
         val identity = identityView.id?.let {
             atomicIoRepo.getIdentity(it)
         } ?: atomicIoRepo.createIdentity()
@@ -99,19 +109,28 @@ class IdentityViewModel(application: Application) : AndroidViewModel(application
         return identity
     }
 
-    fun getTypes(): List<String> {
+    /**
+     * Identity spinner is a simple list of identity types (strings)
+     */
+    fun getSpinnerItems(): List<String> {
         return atomicIoRepo.identityTypes
     }
 
-    fun getTypeResourceId(type: String?): Int? {
+    override fun getSpinnerItemResourceId(type: String?): Int? {
         return atomicIoRepo.getTypeResourceId(type)
     }
 
-    data class IdentityView(
-        var id: Long? = null,
+    data class IdentityViewData(
+        override var id: Long? = null,
         var name: String? = "",
         var description: String? = "",
-        var type: String? = "",
-        var typeResourceId: Int = R.drawable.ic_other
-    )
+        override var type: String? = "",
+        override var typeResourceId: Int = R.drawable.ic_other
+    ): BaseViewData(), SpinnerItemViewData {
+
+        // Required to support Spinner display of Identity
+        override fun toString(): String {
+            return name ?: ""
+        }
+    }
 }

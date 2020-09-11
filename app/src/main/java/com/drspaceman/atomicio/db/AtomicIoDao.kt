@@ -50,6 +50,9 @@ interface AtomicIoDao {
     @Delete
     fun deleteIdentity(identity: Identity)
 
+    @Query("DELETE FROM Identity WHERE id = :identityId")
+    fun deleteIdentityById(identityId: Long)
+
 
     // @TODO: Break up DAOs?
 

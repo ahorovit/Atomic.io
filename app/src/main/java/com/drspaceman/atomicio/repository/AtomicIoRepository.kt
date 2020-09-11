@@ -17,6 +17,11 @@ class AtomicIoRepository(context: Context) {
             return dao.loadAllIdentities()
         }
 
+    val allHabits: LiveData<List<Habit>>
+        get() {
+            return dao.loadAllHabits()
+        }
+
     private val allTypes = buildTypes()
 
     val identityTypes: List<String>
@@ -45,6 +50,10 @@ class AtomicIoRepository(context: Context) {
 
     fun getIdentity(identityId: Long): Identity {
         return dao.loadIdentity(identityId)
+    }
+
+    fun deleteIdentity(identity: Identity) {
+        dao.deleteIdentity(identity)
     }
 
     private fun buildTypes(): HashMap<String, Int> {
@@ -91,4 +100,7 @@ class AtomicIoRepository(context: Context) {
         return newId
     }
 
+    fun deleteHabit(habit: Habit) {
+        dao.deleteHabit(habit)
+    }
 }

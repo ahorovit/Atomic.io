@@ -1,197 +1,145 @@
 package com.drspaceman.atomicio.ui
 
-import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Spinner
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.viewmodel.HabitViewModel
-import com.drspaceman.atomicio.viewmodel.IdentityViewModel
+import com.drspaceman.atomicio.adapter.IdentitySpinnerAdapter
+import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
+import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
+import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 
 import kotlinx.android.synthetic.main.fragment_habit_details.*
+import kotlinx.android.synthetic.main.spinner_layout.*
 
-class HabitDetailsFragment : DialogFragment() {
-    private val habitId: Long? by lazy {
+class HabitDetailsFragment : BaseDialogFragment() {
+    override val layoutId: Int = R.layout.fragment_habit_details
+
+    override val itemId: Long? by lazy {
         arguments?.getLong(ARG_HABIT_ID, 0)
     }
 
-    private val habitViewModel by viewModels<HabitViewModel>()
-    private var habitView: HabitViewModel.HabitView? = null
+    override val viewModel by viewModels<HabitPageViewModel>()
 
-    private lateinit var parentActivity: AppCompatActivity
+    override var itemViewData: HabitViewData? = null
 
-
-    // @todo: multiple ViewModels? Better than duplicating IdentityViewModel functions...
-    private val identityViewModel by viewModels<IdentityViewModel>()
-    private var identityViews: List<IdentityViewModel.IdentityView>? = null
-
-    // @todo: KAE isn't working for these Views for some reason
-    private lateinit var imageViewType: ImageView
-    private lateinit var spinnerTypes: Spinner
-    private lateinit var spinnerAdapter: ArrayAdapter<String>
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_habit_details, container, false)
-
-        spinnerTypes = view.findViewById(R.id.spinnerIdentities)
-        imageViewType = view.findViewById(R.id.imageViewHabitType)
-
-        saveHabitButton.setOnClickListener {
-            saveHabitDetails()
-        }
-
-        return view
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        parentActivity = context as AppCompatActivity
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        dialog?.let {
-            val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = ViewGroup.LayoutParams.MATCH_PARENT
-            it.window?.setLayout(width, height)
-        }
-    }
+    private lateinit var spinnerAdapter: IdentitySpinnerAdapter
 
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.fragment_habit_details)
-////        populateTypeSpinner()
-//
-//        setSupportActionBar(toolbar)
-//        getIntentData()
-//
-//        saveHabitButton.setOnClickListener {
-//            saveHabitDetails()
-//        }
-//    }
-
-//    private fun getIntentData() {
-//        val habitId = intent.getLongExtra(MainActivity.EXTRA_HABIT_ID, 0)
-//
-//        if (habitId != 0L) {
-//            observeHabit(habitId)
-//        } else {
-//            habitView = habitViewModel.getNewHabitView()
-////            setSpinnerSelection()
-//        }
-//    }
-
-    private fun observeHabit(habitId: Long) {
-        habitViewModel.getHabit(habitId)?.observe(
+    override fun observeItem(id: Long) {
+        viewModel.getHabit(id)?.observe(
             this,
-            Observer<HabitViewModel.HabitView> {
+            Observer<HabitViewData> {
                 it?.let {
-                    habitView = it
+                    itemViewData = it
                     populateExistingValues()
                 }
             }
         )
     }
 
-    private fun populateExistingValues() {
-        TODO("not yet implemented")
-//        habitView?.let { habitView ->
-//            editTextName.setText(habitView.name)
-//            setSpinnerSelection()
-//        }
+    override fun populateExistingValues() {
+        itemViewData?.let { habitView ->
+            textViewHabitName.text = habitView.name
+            setSpinnerSelection()
+        }
     }
 
-    private fun populateTypeSpinner() {
-        // @TODO: Figure out why KAE isn't working
-//        spinnerTypes = findViewById(R.id.spinnerIdentities)
-//        imageViewType = findViewById(R.id.imageViewHabitType)
+    override fun getNewItem() {
+        itemViewData = viewModel.getNewHabitView()
+    }
 
-        spinnerAdapter = ArrayAdapter(
-            parentActivity,
-            android.R.layout.simple_spinner_item,
-//            habitViewModel.getIdentities()
-            arrayOf() // @todo: get Identities for spinner
-        )
+    override fun setSpinnerSelection() {
+        val habit = itemViewData ?: return
 
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerTypes.adapter = spinnerAdapter
+        habit.identityId?.let { parentIdentityId ->
+            val position = spinnerAdapter.getIdentityPosition(parentIdentityId)
 
-        spinnerTypes.post {
-            spinnerTypes.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            position?.let {
+                spinner.setSelection(it)
+                spinnerImage.setImageResource(habit.typeResourceId)
+            }
+        }
+    }
+
+    override fun populateTypeSpinner() {
+        initializeSpinnerAdapter()
+
+        spinner.post {
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>,
                     view: View?,
                     position: Int,
                     id: Long
                 ) {
-                    TODO("Not yet implemented")
+                    val identity = parent.getItemAtPosition(position) as IdentityViewData
+                    spinnerImage.setImageResource(identity.typeResourceId)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    // Required by OnItemSelectedListener interface, but not needed
+                    // @todo: provide option to add identity if none exist yet
                 }
             }
         }
     }
 
-    private fun setSpinnerSelection(position: Int) {
-        val parentIdentity = identityViews?.get(position) ?: return
+    /**
+     * Habit Spinner is a list of Identity names, so we must observe any changes to the
+     * saved Identities in the DB
+     */
+    private fun initializeSpinnerAdapter() {
+        spinnerAdapter = IdentitySpinnerAdapter(
+            parentActivity,
+            android.R.layout.simple_spinner_item
+        )
 
-        parentIdentity.let {
-            val type = it.type ?: return
-            spinnerTypes.setSelection(position)
-            imageViewType.setImageResource(it.typeResourceId)
-        }
+        spinner.adapter = spinnerAdapter
+
+        viewModel.getSpinnerItems()?.observe(
+            viewLifecycleOwner,
+            Observer<List<IdentityViewData>> {
+                it?.let {
+                    spinnerAdapter.setSpinnerItems(it)
+                }
+            }
+        )
     }
 
-    private fun saveHabitDetails() {
-        val writeHabitView = habitView?: return
+    override fun saveItemDetails() {
+        val writeHabitView = itemViewData ?: return
 
         val name = editTextHabitName.text.toString()
         if (name.isEmpty()) {
             return
         }
 
-        writeHabitView.let {
-            it.name = name
-            it.type = spinnerTypes.selectedItem as String
-        }
+        val parentIdentity = spinner.selectedItem as IdentityViewData
+        writeHabitView.name = name
+        writeHabitView.identityId = parentIdentity.id
+        writeHabitView.type = parentIdentity.type
 
         writeHabitView.id?.let {
-            habitViewModel.updateHabit(writeHabitView)
+            viewModel.updateHabit(writeHabitView)
         } ?: run {
-            habitViewModel.insertHabit(writeHabitView)
+            viewModel.insertHabit(writeHabitView)
         }
 
         dismiss()
     }
 
     companion object {
-        const val TAG = "habit_details_fragment"
         private const val ARG_HABIT_ID = "extra_habit_id"
 
-        fun newInstance(habitId: Long?): HabitDetailsFragment {
+        fun newInstance(itemId: Long?): HabitDetailsFragment {
             val instance = HabitDetailsFragment()
 
-            habitId?.let {
+            itemId?.let {
                 val args = Bundle()
-                args.putLong(ARG_HABIT_ID, habitId)
+                args.putLong(ARG_HABIT_ID, itemId)
                 instance.arguments = args
             }
 
