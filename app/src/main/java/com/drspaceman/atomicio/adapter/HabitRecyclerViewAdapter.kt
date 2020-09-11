@@ -13,17 +13,31 @@ class HabitRecyclerViewAdapter(
     override val layoutId: Int = R.layout.habit_view_holder
 
     override fun createViewHolder(view: View): BaseViewHolder {
-        return HabitViewHolder(view)
+        return HabitViewHolder(view, hostFragment)
     }
 
-    class HabitViewHolder(itemView: View) : BaseViewHolder(itemView) {
+    class HabitViewHolder(
+        itemView: View,
+        private val hostFragment: EditItemListener
+    ) : BaseViewHolder(itemView) {
+
+        var habitId: Long? = null
         val habitLabelTextView = itemView.habitLabelTextView
         val habitTypeImageView = itemView.habitTypeImageView
 
-        override fun bindViewData(viewData: BaseViewModel.BaseViewData) {
-            val dataItem = viewData as HabitViewData
+        init {
+            itemView.setOnClickListener {
+                habitId?.let {
+                    hostFragment.editItemDetails(it)
+                }
+            }
+        }
 
-            habitLabelTextView.text = dataItem.name
+        override fun bindViewData(viewData: BaseViewModel.BaseViewData) {
+            val habit = viewData as HabitViewData
+            habitId = habit.id
+            habitLabelTextView.text = habit.name
+            habitTypeImageView.setImageResource(habit.typeResourceId)
         }
     }
 }
