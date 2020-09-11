@@ -27,8 +27,6 @@ abstract class BaseDialogFragment: DialogFragment() {
 
     protected lateinit var parentActivity: AppCompatActivity
 
-    protected lateinit var spinnerAdapter: ArrayAdapter<String>
-
     protected abstract fun observeItem(id: Long)
 
     protected abstract fun populateExistingValues()
@@ -36,6 +34,10 @@ abstract class BaseDialogFragment: DialogFragment() {
     protected abstract fun saveItemDetails()
 
     protected abstract fun getNewItem()
+
+    protected abstract fun setSpinnerSelection()
+
+    protected abstract fun populateTypeSpinner()
 
 //    override fun getTheme(): Int {
 //        return R.style.AppTheme
@@ -101,51 +103,8 @@ abstract class BaseDialogFragment: DialogFragment() {
         dismiss()
     }
 
-    protected fun populateTypeSpinner() {
-        val spinnerViewModel = viewModel as SpinnerViewModel
-
-        spinnerAdapter = ArrayAdapter(
-            parentActivity,
-            android.R.layout.simple_spinner_item,
-            spinnerViewModel.getSpinnerItems()
-        )
-
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = spinnerAdapter
-
-        spinner.post {
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val type = parent.getItemAtPosition(position) as String
-                    val resourceId = spinnerViewModel.getSpinnerItemResourceId(type)
-                    resourceId?.let {
-                        spinnerImage.setImageResource(it)
-                    }
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    // Required by OnItemSelectedListener interface, but not needed
-                }
-            }
-        }
-    }
-
-    protected fun setSpinnerSelection() {
-        itemViewData?.let {
-            it as SpinnerItemViewData
-            val type = it.type ?: return
-            spinner.setSelection(spinnerAdapter.getPosition(type))
-            spinnerImage.setImageResource(it.typeResourceId)
-        }
-    }
-
     interface SpinnerViewModel {
-        fun getSpinnerItems(): List<String>
+//        fun getSpinnerItems(): Any
         fun getSpinnerItemResourceId(type: String?): Int?
     }
 

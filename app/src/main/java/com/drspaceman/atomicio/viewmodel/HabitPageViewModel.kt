@@ -5,22 +5,53 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Habit
+import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
-import com.drspaceman.atomicio.ui.BaseDialogFragment
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
+import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class HabitPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
+class HabitPageViewModel(application: Application)
+    : BaseViewModel(application), SpinnerViewModel {
 
     // @TODO: insert as Explicit Dependency
     private var atomicIoRepo = AtomicIoRepository(getApplication())
     private var oneHabit: LiveData<HabitViewData>? = null
     private var allHabits: LiveData<List<HabitViewData>>? = null
 
-    override fun getSpinnerItems(): List<String> {
-        TODO("Not yet implemented")
+    private var allIdentities: LiveData<List<IdentityViewData>>? = null
+
+    /**
+     * Habit Spinner is a list of parent Identities, so we need to observe with
+     * LiveData
+     */
+    fun getSpinnerItems(): LiveData<List<IdentityViewData>>?
+    {
+        if (allIdentities == null) {
+            mapIdentitiesToIdentityViews()
+        }
+
+        return allIdentities
+    }
+
+    // @todo: this is duplicated from IdentityPageViewModel
+    private fun mapIdentitiesToIdentityViews() {
+        allIdentities = Transformations.map(atomicIoRepo.allIdentities) { repoIdentities ->
+            repoIdentities.map { identityToIdentityView(it) }
+        }
+    }
+
+    // @todo: this is duplicated from IdentityPageViewModel
+    private fun identityToIdentityView(identity: Identity): IdentityViewData {
+        return IdentityViewData(
+            identity.id,
+            identity.name,
+            identity.description,
+            identity.type,
+            atomicIoRepo.getTypeResourceId(identity.type)
+        )
     }
 
     override fun getSpinnerItemResourceId(type: String?): Int? {
@@ -88,7 +119,10 @@ class HabitPageViewModel(application: Application) : BaseViewModel(application),
 
 
     override fun deleteItem(itemViewData: BaseViewData) {
-        TODO("Not yet implemented")
+        GlobalScope.launch {
+            val habit = habitViewDataToHabit(itemViewData as HabitViewData)
+            atomicIoRepo.deleteHabit(habit)
+        }
     }
 
     private fun habitViewDataToHabit(habitView: HabitViewData): Habit {

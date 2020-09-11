@@ -100,4 +100,7 @@ class AtomicIoRepository(context: Context) {
         return newId
     }
 
+    fun deleteHabit(habit: Habit) {
+        dao.deleteHabit(habit)
+    }
 }

@@ -9,6 +9,7 @@ import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
+import kotlinx.android.synthetic.main.spinner_layout.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -108,7 +109,10 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
         return identity
     }
 
-    override fun getSpinnerItems(): List<String> {
+    /**
+     * Identity spinner is a simple list of identity types (strings)
+     */
+    fun getSpinnerItems(): List<String> {
         return atomicIoRepo.identityTypes
     }
 
@@ -122,6 +126,11 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
         var description: String? = "",
         override var type: String? = "",
         override var typeResourceId: Int = R.drawable.ic_other
-    ): BaseViewData(), SpinnerItemViewData
+    ): BaseViewData(), SpinnerItemViewData {
 
+        // Required to support Spinner display of Identity
+        override fun toString(): String {
+            return name ?: ""
+        }
+    }
 }
