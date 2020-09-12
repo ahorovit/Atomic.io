@@ -1,5 +1,8 @@
 <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
+
+<!--    Material Design Color Tool  -->
+
     <color name="primaryColor">#90a4ae</color>
     <color name="primaryLightColor">#c1d5e0</color>
     <color name="primaryDarkColor">#62757f</color>
@@ -9,4 +12,8 @@
     <color name="primaryTextColor">#eeeeee</color>
     <color name="secondaryTextColor">#212121</color>
     <color name="black_overlay">#66000000</color>
+
+    <!-- DayView Colors -->
+    <color name="hour_divider">#b0b0b0</color>
+    <color name="half_hour_divider">#e0e0e0</color>
 </resources>
