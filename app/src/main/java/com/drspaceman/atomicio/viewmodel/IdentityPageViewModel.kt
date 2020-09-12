@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 class IdentityPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
 
     // @TODO: insert as Explicit Dependency
-    private var atomicIoRepo = AtomicIoRepository(getApplication())
     private var identityView: LiveData<IdentityViewData>? = null
     private var identities: LiveData<List<IdentityViewData>>? = null
 

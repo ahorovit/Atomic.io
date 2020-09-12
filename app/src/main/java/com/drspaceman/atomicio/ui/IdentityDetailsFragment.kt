@@ -88,7 +88,6 @@ class IdentityDetailsFragment : BaseDialogFragment() {
 
     override fun setSpinnerSelection() {
         itemViewData?.let {
-            it as SpinnerItemViewData
             val type = it.type ?: return
             spinner.setSelection(spinnerAdapter.getPosition(type))
             spinnerImage.setImageResource(it.typeResourceId)

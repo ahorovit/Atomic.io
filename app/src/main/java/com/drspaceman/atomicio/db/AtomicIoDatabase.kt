@@ -4,18 +4,20 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.drspaceman.atomicio.model.Habit
-import com.drspaceman.atomicio.model.HabitSequence
-import com.drspaceman.atomicio.model.Identity
+import androidx.room.TypeConverters
+import com.drspaceman.atomicio.model.*
 
 @Database(
     entities = [
         Identity::class,
-        HabitSequence::class,
-        Habit::class
+        Habit::class,
+        Agenda::class,
+        TaskChain::class,
+        Task::class
     ],
     version = 1
 )
+@TypeConverters(Converters::class)
 abstract class AtomicIoDatabase : RoomDatabase() {
 
     abstract fun atomicIoDao(): AtomicIoDao

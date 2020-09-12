@@ -6,6 +6,7 @@ import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.db.AtomicIoDatabase
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
+import com.drspaceman.atomicio.model.Task
 
 class AtomicIoRepository(context: Context) {
 
@@ -103,4 +104,40 @@ class AtomicIoRepository(context: Context) {
     fun deleteHabit(habit: Habit) {
         dao.deleteHabit(habit)
     }
+
+
+
+
+    fun createTask(): Task {
+        return Task()
+    }
+
+    fun addTask(task: Task): Long? {
+        val newId = dao.insertTask(task)
+        task.id = newId
+
+        return newId
+    }
+
+    fun getLiveTask(taskId: Long): LiveData<Task> {
+        return dao.loadLiveTask(taskId)
+    }
+
+    fun updateTask(task: Task) {
+        dao.updateTask(task)
+    }
+
+    fun getTask(taskId: Long): Task {
+        return dao.loadTask(taskId)
+    }
+
+
+
+    fun deleteTask(task: Task) {
+        dao.deleteTask(task)
+    }
+
+
+
+
 }

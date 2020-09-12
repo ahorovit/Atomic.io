@@ -17,7 +17,6 @@ class HabitPageViewModel(application: Application)
     : BaseViewModel(application), SpinnerViewModel {
 
     // @TODO: insert as Explicit Dependency
-    private var atomicIoRepo = AtomicIoRepository(getApplication())
     private var oneHabit: LiveData<HabitViewData>? = null
     private var allHabits: LiveData<List<HabitViewData>>? = null
 
