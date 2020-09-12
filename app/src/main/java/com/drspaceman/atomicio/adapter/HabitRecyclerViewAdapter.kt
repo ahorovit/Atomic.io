@@ -12,9 +12,7 @@ class HabitRecyclerViewAdapter(
 ) : BaseRecyclerViewAdapter(items, hostFragment){
     override val layoutId: Int = R.layout.habit_view_holder
 
-    override fun createViewHolder(view: View): BaseViewHolder {
-        return HabitViewHolder(view, hostFragment)
-    }
+    override fun createViewHolder(view: View) = HabitViewHolder(view, hostFragment)
 
     class HabitViewHolder(
         itemView: View,
