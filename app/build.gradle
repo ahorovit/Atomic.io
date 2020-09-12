@@ -65,6 +65,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation "com.appspector:android-sdk:1.+"
     implementation 'androidx.fragment:fragment-ktx:1.2.5'
+    implementation 'com.linkedin.android.tachyon:tachyon:1.0.2'
 
 
     testImplementation 'junit:junit:4.13'
