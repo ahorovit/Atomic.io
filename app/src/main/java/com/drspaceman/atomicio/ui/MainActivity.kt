@@ -5,21 +5,17 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.drspaceman.atomicio.R
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    // @todo: KAE isn't working!! Why?
-    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        drawerLayout = findViewById(R.id.drawerLayout)
 
         setupToolbar()
         setupBottomNavigationMenu()
@@ -47,7 +43,11 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.identityPage -> {
-                    openFragment(IdentitiesFragment.newInstance())
+                    openFragment(IdentityPageFragment.newInstance())
+                    true
+                }
+                R.id.habitPage -> {
+                    openFragment(HabitPageFragment.newInstance())
                     true
                 }
                 else -> false

@@ -3,8 +3,8 @@ package com.drspaceman.atomicio.repository
 import android.content.Context
 import androidx.lifecycle.LiveData
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.db.AtomicIoDao
 import com.drspaceman.atomicio.db.AtomicIoDatabase
+import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 
 class AtomicIoRepository(context: Context) {
@@ -15,6 +15,11 @@ class AtomicIoRepository(context: Context) {
     val allIdentities: LiveData<List<Identity>>
         get() {
             return dao.loadAllIdentities()
+        }
+
+    val allHabits: LiveData<List<Habit>>
+        get() {
+            return dao.loadAllHabits()
         }
 
     private val allTypes = buildTypes()
@@ -44,7 +49,11 @@ class AtomicIoRepository(context: Context) {
     }
 
     fun getIdentity(identityId: Long): Identity {
-        return dao.getIdentity(identityId)
+        return dao.loadIdentity(identityId)
+    }
+
+    fun deleteIdentity(identity: Identity) {
+        dao.deleteIdentity(identity)
     }
 
     private fun buildTypes(): HashMap<String, Int> {
@@ -65,5 +74,33 @@ class AtomicIoRepository(context: Context) {
 
     fun getTypeResourceId(type: String?): Int {
         return type?.let { allTypes[type] } ?: allTypes["Other"]!!
+    }
+
+
+    fun getLiveHabit(habitId: Long): LiveData<Habit> {
+        return dao.loadLiveHabit(habitId)
+    }
+
+    fun updateHabit(habit: Habit) {
+        dao.updateHabit(habit)
+    }
+
+    fun getHabit(habitId: Long): Habit {
+        return dao.loadHabit(habitId)
+    }
+
+    fun createHabit(): Habit {
+        return Habit()
+    }
+
+    fun addHabit(habit: Habit): Long? {
+        val newId = dao.insertHabit(habit)
+        habit.id = newId
+
+        return newId
+    }
+
+    fun deleteHabit(habit: Habit) {
+        dao.deleteHabit(habit)
     }
 }

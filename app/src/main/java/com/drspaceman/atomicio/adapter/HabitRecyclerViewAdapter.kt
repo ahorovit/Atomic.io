@@ -1,42 +1,43 @@
 package com.drspaceman.atomicio.adapter
 
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.viewmodel.HabitViewModel
+import com.drspaceman.atomicio.viewmodel.BaseViewModel
+import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.android.synthetic.main.habit_view_holder.view.*
 
 class HabitRecyclerViewAdapter(
-    val habitSequence: MutableList<HabitViewModel.HabitViewData>
-) : RecyclerView.Adapter<HabitRecyclerViewAdapter.HabitViewHolder>(){
+    items: List<HabitViewData>?,
+    hostFragment: EditItemListener
+) : BaseRecyclerViewAdapter(items, hostFragment){
+    override val layoutId: Int = R.layout.habit_view_holder
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(
-            R.layout.habit_view_holder,
-            parent,
-            false
-        )
-
-        return HabitViewHolder(view)
+    override fun createViewHolder(view: View): BaseViewHolder {
+        return HabitViewHolder(view, hostFragment)
     }
 
-    override fun getItemCount(): Int {
-        return habitSequence.count()
-    }
+    class HabitViewHolder(
+        itemView: View,
+        private val hostFragment: EditItemListener
+    ) : BaseViewHolder(itemView) {
 
-    override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
-        holder.habitLabelTextView.text = habitSequence[position].name
-//
-//        holder.parentLayout.setOnClickListener {
-//
-//        }
-    }
-
-    class HabitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var habitId: Long? = null
         val habitLabelTextView = itemView.habitLabelTextView
         val habitTypeImageView = itemView.habitTypeImageView
-        val parentLayout = itemView.parentLayout
+
+        init {
+            itemView.setOnClickListener {
+                habitId?.let {
+                    hostFragment.editItemDetails(it)
+                }
+            }
+        }
+
+        override fun bindViewData(viewData: BaseViewModel.BaseViewData) {
+            val habit = viewData as HabitViewData
+            habitId = habit.id
+            habitLabelTextView.text = habit.name
+            habitTypeImageView.setImageResource(habit.typeResourceId)
+        }
     }
 }

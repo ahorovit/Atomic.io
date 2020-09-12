@@ -1,85 +1,55 @@
 package com.drspaceman.atomicio.ui
 
-import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
-import com.drspaceman.atomicio.viewmodel.HabitViewModel
+import com.drspaceman.atomicio.viewmodel.BaseViewModel
+import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
 
 import kotlinx.android.synthetic.main.fragment_agenda.*
 import java.util.*
 
-class AgendaFragment : Fragment() {
-    private var habitSequence: MutableList<HabitViewModel.HabitViewData>? = null
-    private var habitRecyclerViewAdapter: HabitRecyclerViewAdapter? = null
+class AgendaFragment : BasePageFragment() {
+    override val layoutId: Int = R.layout.fragment_agenda
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override val viewModel: BaseViewModel
+        get() = TODO("Not yet implemented")
 
-        // @todo: required if adding to the options menu
-//        setHasOptionsMenu(true)
+    private var habitSequence: MutableList<HabitPageViewModel.HabitViewData>? = null
+
+
+    override fun getEditDialogFragment(id: Long?): BaseDialogFragment {
+        TODO("Not yet implemented")
     }
 
-    // @todo: add options to menu
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    // @todo handle menu option selection
-    // NOTE: Activity will run onOptionsItemSelected first, and must not handle items specific to this fragment
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
-    }
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_agenda, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun initializeRecyclerView() {
         initializeData()
-        initializeHabitSequenceRecyclerView(view)
+        val sequence = habitSequence ?: return
 
-    }
+        habitSequenceRecyclerView.layoutManager = LinearLayoutManager(this.context)
+        recyclerViewAdapter = HabitRecyclerViewAdapter(sequence, this)
+        habitSequenceRecyclerView.adapter = recyclerViewAdapter
 
-    override fun onPause() {
-        super.onPause()
-    }
+//        attachItemTouchHelper()
+        }
+
+
 
     // @todo: implement DB and LiveData for habitSequence
     private fun initializeData() {
         habitSequence = mutableListOf(
-            HabitViewModel.HabitViewData("wake up", "sleep", 0),
-            HabitViewModel.HabitViewData("eat breakfast", "diet", 1),
-            HabitViewModel.HabitViewData("walk dog", "exercise", 2)
+            HabitPageViewModel.HabitViewData(name="wake up", type="sleep"),
+            HabitPageViewModel.HabitViewData(name="eat breakfast", type="diet"),
+            HabitPageViewModel.HabitViewData(name="walk dog", type="exercise")
         )
-    }
-
-    private fun initializeHabitSequenceRecyclerView(view: View) {
-        val sequence = habitSequence ?: return
-
-        habitSequenceRecyclerView.layoutManager = LinearLayoutManager(this.context)
-        habitRecyclerViewAdapter = HabitRecyclerViewAdapter(sequence)
-        habitSequenceRecyclerView.adapter = habitRecyclerViewAdapter
-
-//        attachItemTouchHelper()
     }
 
     /**
      * WIP: Make habitSequence items draggable for reordering
      */
     private fun attachItemTouchHelper() {
-
-
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             0
@@ -96,7 +66,7 @@ class AgendaFragment : Fragment() {
 
                     Collections.swap(it, positionDragged, positionTarget)
 
-                    habitRecyclerViewAdapter?.notifyItemMoved(positionDragged, positionTarget)
+                    recyclerViewAdapter?.notifyItemMoved(positionDragged, positionTarget)
                 }
 
                 return false

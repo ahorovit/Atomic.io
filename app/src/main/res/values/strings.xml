@@ -23,6 +23,11 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="add_identity">Add Identity</string>
     <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="habit_name_label">Habit Name</string>
+    <string name="habit_hint">EG: Wake up at 6am</string>
+    <string name="habit_identity_label">Identity (optional)</string>
+    <string name="duration_label">Duration (s)</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -31,5 +36,7 @@
     <string name="tab_agenda">Agenda</string>
     <string name="tab_habits">Habits</string>
     <string name="tab_analytics">Analytics</string>
+    <string name="save_button">Save Button</string>
+    <string name="delete_button">Delete Button</string>
 
 </resources>
