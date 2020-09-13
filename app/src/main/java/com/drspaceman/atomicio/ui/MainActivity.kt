@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.agendaPage -> {
-                    openFragment(AgendaFragment.newInstance())
+                    openFragment(AgendaPageFragment.newInstance())
                     true
                 }
                 R.id.identityPage -> {

@@ -21,7 +21,7 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
 
     protected abstract fun getEditDialogFragment(id: Long?): BaseDialogFragment
 
-    protected abstract fun initializeRecyclerView()
+    protected abstract fun loadPageData()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +32,7 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializeRecyclerView()
+        loadPageData()
 
         fab = view.findViewById(R.id.fab)
 

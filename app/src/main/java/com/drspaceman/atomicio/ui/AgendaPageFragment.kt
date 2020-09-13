@@ -4,28 +4,28 @@ package com.drspaceman.atomicio.ui
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.collection.LongSparseArray
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
-import com.drspaceman.atomicio.viewmodel.BaseViewModel
-import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
-import com.linkedin.android.tachyon.DayView.EventTimeRange
+import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.AgendaViewData
+import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import kotlinx.android.synthetic.main.fragment_agenda.*
 import java.text.DateFormat
 import java.util.*
 
-class AgendaFragment : BasePageFragment() {
+class AgendaPageFragment : BasePageFragment() {
     override val layoutId: Int = R.layout.fragment_agenda
 
     override val viewModel by activityViewModels<AgendaPageViewModel>()
 
+    var todaysAgenda: AgendaViewData? = null
+    var todaysTasks: List<TaskViewData>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         renderDayViewBackground()
-
     }
 
     private fun renderDayViewBackground() {
@@ -57,19 +57,25 @@ class AgendaFragment : BasePageFragment() {
         TODO("Not yet implemented")
     }
 
-    override fun initializeRecyclerView() {
-//        initializeData()
-//        val sequence = habitSequence ?: return
-//
-//        habitSequenceRecyclerView.layoutManager = LinearLayoutManager(this.context)
-//        recyclerViewAdapter = HabitRecyclerViewAdapter(sequence, this)
-//        habitSequenceRecyclerView.adapter = recyclerViewAdapter
-//
-////        attachItemTouchHelper()
-        }
+    override fun loadPageData() {
+        viewModel.todaysTasks?.observe(
+            viewLifecycleOwner,
+                Observer<List<TaskViewData>> {
+                    it?.let {
+                        todaysTasks = it
+                        onAgendaChange()
+                    }
+                }
+            )
+    }
+
+    private fun onAgendaChange() {
+
+
+    }
 
 
     companion object {
-        fun newInstance() = AgendaFragment()
+        fun newInstance() = AgendaPageFragment()
     }
 }

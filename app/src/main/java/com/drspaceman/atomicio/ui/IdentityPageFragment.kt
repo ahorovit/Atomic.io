@@ -15,7 +15,7 @@ class IdentityPageFragment : BasePageFragment() {
 
     override val layoutId: Int = R.layout.fragment_identities
 
-    override fun initializeRecyclerView() {
+    override fun loadPageData() {
         identityRecyclerView.layoutManager = LinearLayoutManager(context)
         recyclerViewAdapter = IdentityRecyclerViewAdapter(null, this)
         identityRecyclerView.adapter = recyclerViewAdapter

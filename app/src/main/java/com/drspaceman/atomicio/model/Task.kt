@@ -1,7 +1,7 @@
 package com.drspaceman.atomicio.model
 
 import androidx.room.*
-import java.util.*
+import java.time.LocalTime
 
 @Entity(
     foreignKeys = [
@@ -19,7 +19,6 @@ data class Task(
     var habitId: Long? = null,
     var title: String? = "",
     var location: String? = "",
-    var hour: Int? = null,
-    var minute: Int? = null,
+    var startTime: LocalTime? = null,
     var duration: Int? = null
 )
