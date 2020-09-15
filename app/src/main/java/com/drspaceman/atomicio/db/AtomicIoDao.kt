@@ -99,5 +99,5 @@ interface AtomicIoDao {
     suspend fun getAgenda(date: LocalDate): Agenda?
 
     @Insert(onConflict = IGNORE)
-    suspend fun insertAgenda(agenda: Agenda): Long
+    suspend fun insertAgenda(agenda: Agenda): Long?
 }
