@@ -1,8 +1,8 @@
 package com.drspaceman.atomicio.db
 
 import androidx.room.TypeConverter
-import com.drspaceman.atomicio.util.DateUtil
-import java.time.LocalDate
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 import java.util.*
 
 class Converters {
@@ -25,6 +25,8 @@ class Converters {
     @TypeConverter
     fun dateStringToLocalDate(dateString: String?): LocalDate?
     {
-        return DateUtil.dateStringToLocalDate(dateString)
+        return dateString?.let {
+            LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE)
+        }
     }
 }

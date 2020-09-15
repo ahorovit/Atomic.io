@@ -1,7 +1,7 @@
 package com.drspaceman.atomicio.model
 
 import androidx.room.*
-import java.time.LocalTime
+import org.threeten.bp.LocalTime
 
 @Entity(
     foreignKeys = [

@@ -5,7 +5,7 @@ import androidx.room.*
 import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
 import com.drspaceman.atomicio.model.*
-import java.time.LocalDate
+import org.threeten.bp.LocalDate
 
 @Dao
 interface AtomicIoDao {

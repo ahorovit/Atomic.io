@@ -8,7 +8,7 @@ import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.model.Task
-import java.time.LocalDate
+import org.threeten.bp.LocalDate
 
 class AtomicIoRepository(context: Context) {
 

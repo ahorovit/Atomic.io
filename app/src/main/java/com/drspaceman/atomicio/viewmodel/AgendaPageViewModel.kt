@@ -1,15 +1,10 @@
 package com.drspaceman.atomicio.viewmodel
 
 import android.app.Application
-import android.os.Build.VERSION.SDK_INT
-import android.os.Build.VERSION_CODES.O
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
 import com.drspaceman.atomicio.model.Agenda
-import com.drspaceman.atomicio.util.DateUtil
-import kotlinx.coroutines.launch
-import java.time.DayOfWeek
-import java.time.LocalDate
+import org.threeten.bp.DayOfWeek
+import org.threeten.bp.LocalDate
 
 class AgendaPageViewModel(application: Application) : BaseViewModel(application) {
 
@@ -38,11 +33,13 @@ class AgendaPageViewModel(application: Application) : BaseViewModel(application)
 
     private fun loadOrCreateAgenda(date: LocalDate): Agenda
     {
-        viewModelScope.launch {
-            val agenda: Agenda = atomicIoRepo.getAgendaForDate(date)
+        TODO("Not yet implemented")
 
-
-        }
+//        viewModelScope.launch {
+//            val agenda: Agenda = atomicIoRepo.getAgendaForDate(date)
+//
+//
+//        }
     }
 
 
@@ -54,7 +51,7 @@ class AgendaPageViewModel(application: Application) : BaseViewModel(application)
         return AgendaViewData(
             agenda.id,
             agenda.date,
-            agenda.date?.let { DateUtil.getDayOfWeek(it) }
+            agenda.date?.dayOfWeek
         )
     }
 
