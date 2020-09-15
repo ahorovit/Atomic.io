@@ -4,9 +4,10 @@ import android.app.Application
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.viewModelScope
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.util.DateUtil
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -35,25 +36,25 @@ class AgendaPageViewModel(application: Application) : BaseViewModel(application)
             return field
         }
 
+    private fun loadOrCreateAgenda(date: LocalDate): Agenda
+    {
+        viewModelScope.launch {
+            val agenda: Agenda = atomicIoRepo.getAgendaForDate(date)
+
+
+        }
+    }
+
+
     override fun deleteItem(itemViewData: BaseViewData) {
         TODO("Not yet implemented")
     }
 
     fun agendaToAgendaViewData(agenda: Agenda): AgendaViewData {
-        val dayOfWeek: DayOfWeek? = if (SDK_INT < O) {
-            agenda.date?.let {
-                DateUtil.getDayOfWeek(it)
-            }
-        } else {
-            agenda.date?.let {
-                it.dayOfWeek
-            }
-        }
-
         return AgendaViewData(
             agenda.id,
             agenda.date,
-            dayOfWeek
+            agenda.date?.let { DateUtil.getDayOfWeek(it) }
         )
     }
 

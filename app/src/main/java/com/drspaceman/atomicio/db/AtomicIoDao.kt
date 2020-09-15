@@ -4,10 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
-import com.drspaceman.atomicio.model.Habit
-import com.drspaceman.atomicio.model.TaskChain
-import com.drspaceman.atomicio.model.Identity
-import com.drspaceman.atomicio.model.Task
+import com.drspaceman.atomicio.model.*
+import java.time.LocalDate
 
 @Dao
 interface AtomicIoDao {
@@ -94,4 +92,12 @@ interface AtomicIoDao {
 
     @Delete
     fun deleteTask(task: Task)
+
+
+
+    @Query("SELECT * from Agenda WHERE date = :date")
+    suspend fun getAgenda(date: LocalDate): Agenda?
+
+    @Insert(onConflict = IGNORE)
+    suspend fun insertAgenda(agenda: Agenda): Long
 }

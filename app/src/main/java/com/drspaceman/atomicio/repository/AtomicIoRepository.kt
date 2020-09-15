@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.db.AtomicIoDatabase
+import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.model.Task
+import java.time.LocalDate
 
 class AtomicIoRepository(context: Context) {
 
@@ -137,7 +139,15 @@ class AtomicIoRepository(context: Context) {
         dao.deleteTask(task)
     }
 
+    suspend fun getAgendaForDate(date: LocalDate): Agenda {
+        return dao.getAgenda(date) ?: createAgendaForDate(date)
+    }
 
+    private suspend fun createAgendaForDate(date: LocalDate): Agenda {
+        val agenda = Agenda(null, date)
+        agenda.id = dao.insertAgenda(agenda)
+        return agenda
+    }
 
 
 }
