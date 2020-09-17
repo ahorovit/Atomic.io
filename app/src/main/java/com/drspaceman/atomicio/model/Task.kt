@@ -17,6 +17,7 @@ import org.threeten.bp.LocalTime
 data class Task(
     @PrimaryKey(autoGenerate = true) var id: Long? = null,
     var habitId: Long? = null,
+    var agendaId: Long? = null,
     var title: String? = "",
     var location: String? = "",
     var startTime: LocalTime? = null,

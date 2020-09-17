@@ -2,44 +2,55 @@ package com.drspaceman.atomicio.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.viewModelScope
 import com.drspaceman.atomicio.model.Agenda
+import com.drspaceman.atomicio.model.Task
+import kotlinx.coroutines.launch
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalTime
 
 class AgendaPageViewModel(application: Application) : BaseViewModel(application) {
 
-    var todaysAgenda: LiveData<AgendaViewData>? = null
-        private set
-        get() {
-//            if (field == null) {
-//                field = Transformations.map(atomicIoRepo.getAgendaForDate(LocalDate.now()))
-//            }
-            return field
-        }
+    private lateinit var agenda: Agenda
 
-    var todaysTasks: LiveData<List<TaskViewData>>? = null
-        private set
+    var tasks: LiveData<List<TaskViewData>>? = null
         get() {
-//            if (todaysAgenda == null) {
-//
-//            }
-//
-//            if (field == null) {
-//                field = Transformations.map(atomicIoRepo.)
-//            }
+            if(field == null) {
+                loadTasks()
+            }
 
             return field
         }
 
-    private fun loadOrCreateAgenda(date: LocalDate): Agenda
+    fun loadTasks() {
+        viewModelScope.launch {
+            agenda = atomicIoRepo.getAgendaForDate(LocalDate.now())
+
+            println(agenda.toString())
+
+            agenda.id?.let{ agendaId ->
+                tasks = Transformations.map(atomicIoRepo.getTasksForAgenda(agendaId)) { repoTasks ->
+                    repoTasks.map {
+                        taskToTaskViewData(it)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun taskToTaskViewData(task: Task) : TaskViewData
     {
-        TODO("Not yet implemented")
-
-//        viewModelScope.launch {
-//            val agenda: Agenda = atomicIoRepo.getAgendaForDate(date)
-//
-//
-//        }
+        return TaskViewData(
+            task.id,
+            task.habitId,
+            task.agendaId,
+            task.title,
+            task.location,
+            task.startTime,
+            task.duration
+        )
     }
 
 
@@ -57,10 +68,11 @@ class AgendaPageViewModel(application: Application) : BaseViewModel(application)
 
     data class TaskViewData(
         override var id: Long? = null,
+        var habitId: Long? = null,
+        var agendaId: Long? = null,
         var title: String? = "",
         var location: String? = "",
-        var hour: Int? = null,
-        var minute: Int? = null,
+        var startTime: LocalTime? = null,
         var duration: Int? = null
     ) : BaseViewData()
 

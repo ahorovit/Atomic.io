@@ -8,6 +8,8 @@ import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.model.Task
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.threeten.bp.LocalDate
 
 class AtomicIoRepository(context: Context) {
@@ -108,8 +110,6 @@ class AtomicIoRepository(context: Context) {
     }
 
 
-
-
     fun createTask(): Task {
         return Task()
     }
@@ -134,13 +134,12 @@ class AtomicIoRepository(context: Context) {
     }
 
 
-
     fun deleteTask(task: Task) {
         dao.deleteTask(task)
     }
 
-    suspend fun getAgendaForDate(date: LocalDate): Agenda {
-        return dao.getAgenda(date) ?: createAgendaForDate(date)
+    suspend fun getAgendaForDate(date: LocalDate) = withContext(Dispatchers.IO) {
+        dao.getAgenda(date) ?: createAgendaForDate(date)
     }
 
     private suspend fun createAgendaForDate(date: LocalDate): Agenda {
@@ -149,5 +148,7 @@ class AtomicIoRepository(context: Context) {
         return agenda
     }
 
-
+    suspend fun getTasksForAgenda(agendaId: Long) = withContext(Dispatchers.IO) {
+        dao.getTasksForAgenda(agendaId)
+    }
 }

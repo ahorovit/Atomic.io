@@ -58,7 +58,7 @@ class AgendaPageFragment : BasePageFragment() {
     }
 
     override fun loadPageData() {
-        viewModel.todaysTasks?.observe(
+        viewModel.tasks?.observe(
             viewLifecycleOwner,
                 Observer<List<TaskViewData>> {
                     it?.let {
@@ -73,6 +73,9 @@ class AgendaPageFragment : BasePageFragment() {
 
 
     }
+
+
+
 
 
     companion object {

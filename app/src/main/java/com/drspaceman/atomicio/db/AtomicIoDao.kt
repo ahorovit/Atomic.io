@@ -87,6 +87,9 @@ interface AtomicIoDao {
     @Query("SELECT * FROM Task WHERE id = :taskId")
     fun loadTask(taskId: Long): Task
 
+    @Query("SELECT * FROM Task WHERE agendaId = :agendaId")
+    fun getTasksForAgenda(agendaId: Long?): LiveData<List<Task>>
+
     @Update(onConflict = REPLACE)
     fun updateTask(task: Task)
 
@@ -94,10 +97,13 @@ interface AtomicIoDao {
     fun deleteTask(task: Task)
 
 
+    // @TODO: Break up DAOs?
+
 
     @Query("SELECT * from Agenda WHERE date = :date")
     suspend fun getAgenda(date: LocalDate): Agenda?
 
     @Insert(onConflict = IGNORE)
     suspend fun insertAgenda(agenda: Agenda): Long?
+
 }
