@@ -56,7 +56,7 @@ class AgendaPageViewModel(
             task.title,
             task.location,
             task.startTime,
-            task.duration
+            task.endTime
         )
     }
 
@@ -117,6 +117,14 @@ class AgendaPageViewModel(
         return TaskViewData()
     }
 
+    fun updateTask(writeTaskView: TaskViewData) {
+        TODO("Not yet implemented")
+    }
+
+    fun insertTask(writeTaskView: TaskViewData) {
+        TODO("Not yet implemented")
+    }
+
 
     data class TaskViewData(
         override var id: Long? = null,
@@ -125,7 +133,7 @@ class AgendaPageViewModel(
         var title: String? = "",
         var location: String? = "",
         var startTime: LocalTime? = null,
-        var duration: Int? = null
+        var endTime: LocalTime? = null
     ) : BaseViewData()
 
     data class AgendaViewData(

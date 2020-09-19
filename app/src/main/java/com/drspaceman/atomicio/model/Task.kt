@@ -21,5 +21,5 @@ data class Task(
     var title: String? = "",
     var location: String? = "",
     var startTime: LocalTime? = null,
-    var duration: Int? = null
+    var endTime: LocalTime? = null
 )

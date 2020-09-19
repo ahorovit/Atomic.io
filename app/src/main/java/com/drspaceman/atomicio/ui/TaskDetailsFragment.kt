@@ -31,6 +31,8 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
     private lateinit var spinnerAdapter: ViewDataSpinnerAdapter
 
+    // If title has been manually edited, don't autofill habit name
+    private var isTitleEdited = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,6 +43,11 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
         editEndTime.setOnClickListener {
             showTimePickerDialog(TimePickerFragment.END_TIME_CODE)
+        }
+
+        editTextTaskName.setOnKeyListener { _, _, _ ->
+            isTitleEdited = true
+            false
         }
     }
 
@@ -58,20 +65,29 @@ class TaskDetailsFragment : BaseDialogFragment() {
             return
         }
 
-        val time = LocalTime.parse(data.extras?.getString(TimePickerFragment.TIME_PICKER_RESULT))
-        var displayTime = time.format(DateTimeFormatter.ofPattern("hh:mm a"))
-        if (displayTime[0] == '0'){
-            displayTime = displayTime.substring(1)
-        }
+        val pickedTime = LocalTime.parse(data.extras?.getString(TimePickerFragment.TIME_PICKER_RESULT))
 
         when (requestCode) {
             TimePickerFragment.START_TIME_CODE -> {
-                editStartTime.setText(displayTime)
+                editStartTime.setText(formatTime(pickedTime))
             }
             TimePickerFragment.END_TIME_CODE -> {
-                editEndTime.setText(displayTime)
+                editEndTime.setText(formatTime(pickedTime))
             }
         }
+    }
+
+    private fun formatTime(time: LocalTime?): String {
+        var displayTime: String = ""
+
+        time?.let{
+            displayTime = it.format(DateTimeFormatter.ofPattern("hh:mm a"))
+            if (displayTime[0] == '0'){
+                displayTime = displayTime.substring(1)
+            }
+        }
+
+        return displayTime
     }
 
     override fun observeItem(id: Long) {
@@ -88,20 +104,40 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
     override fun populateExistingValues() {
         itemViewData?.let {
-//            editTextTaskName.setText(it.title)
-//            editTextDuration.setText(it.duration.toString())
+            editTextTaskName.setText(it.title)
+            editStartTime.setText(formatTime(it.startTime))
+            editStartTime.setText(formatTime(it.endTime))
             setSpinnerSelection()
         }
     }
 
     override fun saveItemDetails() {
-        itemViewData = viewModel.getNewTaskView()
+        if (
+            editTextTaskName.text.isEmpty()
+            || editStartTime.text.isEmpty()
+            || editEndTime.text.isEmpty()
+        ) {
+            return
+        }
+
+        val writeTaskView = itemViewData ?: return
+
+        writeTaskView.title = editTextTaskName.text.toString()
+        writeTaskView.startTime = LocalTime.parse(editStartTime.text.toString())
+        writeTaskView.endTime = LocalTime.parse(editEndTime.text.toString())
+
+        writeTaskView.id?.let {
+            viewModel.updateTask(writeTaskView)
+        } ?: run {
+            viewModel.insertTask(writeTaskView)
+        }
     }
 
     override fun getNewItem() {
-
+        itemViewData = viewModel.getNewTaskView()
     }
 
+    // @TODO: (mostly) duplicated from HabitDetailsFragment
     override fun setSpinnerSelection() {
         val task = itemViewData ?: return
 
@@ -110,14 +146,20 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
             // @todo: figure out why occasionally image is [NA] null while selection text is correct
             position?.let {
-                val parentHabit = spinnerAdapter.getItem(it) as HabitViewData
+                val habit = spinnerAdapter.getItem(it) as HabitViewData
 
                 spinner.setSelection(it)
-                spinnerImage.setImageResource(parentHabit.typeResourceId)
+                spinnerImage.setImageResource(habit.typeResourceId)
+
+                if(!isTitleEdited){
+                    editTextTaskName.setText(habit.name)
+                }
+
             }
         }
     }
 
+    // @TODO: (mostly) duplicated from HabitDetailsFragment
     override fun populateTypeSpinner() {
         initializeSpinnerAdapter()
 
@@ -131,6 +173,9 @@ class TaskDetailsFragment : BaseDialogFragment() {
                 ) {
                     val habit = parent.getItemAtPosition(position) as HabitViewData
                     spinnerImage.setImageResource(habit.typeResourceId)
+                    if(!isTitleEdited){
+                        editTextTaskName.setText(habit.name)
+                    }
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -140,6 +185,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
         }
     }
 
+    // @TODO: duplicated from HabitDetailsFragment
     private fun initializeSpinnerAdapter() {
         spinnerAdapter = ViewDataSpinnerAdapter(
             parentActivity,
