@@ -114,19 +114,20 @@ class TaskDetailsFragment : BaseDialogFragment() {
     }
 
     override fun saveItemDetails() {
+        val writeTaskView = itemViewData ?: return
+
+        // @todo: validate end > start
         if (
             editTextTaskName.text.isEmpty()
             || editStartTime.text.isEmpty()
             || editEndTime.text.isEmpty()
         ) {
+            // @todo alert user of issue
             return
         }
 
-        val writeTaskView = itemViewData ?: return
 
         writeTaskView.title = editTextTaskName.text.toString()
-//        writeTaskView.startTime = LocalTime.parse(editStartTime.text.toString())
-//        writeTaskView.endTime = LocalTime.parse(editEndTime.text.toString())
 
         writeTaskView.id?.let {
             viewModel.updateTask(writeTaskView)
@@ -154,6 +155,9 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
                 spinner.setSelection(it)
                 spinnerImage.setImageResource(habit.typeResourceId)
+                itemViewData?.let { task ->
+                    task.habitId = habit.id
+                }
 
                 if(!isTitleEdited){
                     editTextTaskName.setText(habit.name)
@@ -214,6 +218,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
 
     companion object {
+        // @todo: could be communicated simply through the shared viewModel?
         private const val ARG_TASK_ID = "extra_task_id"
 
         fun newInstance(itemId: Long?): TaskDetailsFragment {

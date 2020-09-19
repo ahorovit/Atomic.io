@@ -25,7 +25,7 @@ class AgendaPageViewModel(
 
     var tasks: LiveData<List<TaskViewData>>? = null
         get() {
-            if(field == null) {
+            if (field == null) {
                 loadTasks()
             }
 
@@ -38,7 +38,7 @@ class AgendaPageViewModel(
 
             println(agenda.toString())
 
-            agenda.id?.let{ agendaId ->
+            agenda.id?.let { agendaId ->
                 tasks = Transformations.map(atomicIoRepo.getTasksForAgenda(agendaId)) { repoTasks ->
                     repoTasks.map {
                         taskToTaskViewData(it)
@@ -48,8 +48,7 @@ class AgendaPageViewModel(
         }
     }
 
-    private fun taskToTaskViewData(task: Task) : TaskViewData
-    {
+    private fun taskToTaskViewData(task: Task): TaskViewData {
         return TaskViewData(
             task.id,
             task.habitId,
@@ -82,8 +81,7 @@ class AgendaPageViewModel(
      * Habit Spinner is a list of parent Identities, so we need to observe with
      * LiveData
      */
-    fun getSpinnerItems(): LiveData<List<HabitViewData>>?
-    {
+    fun getSpinnerItems(): LiveData<List<HabitViewData>>? {
         if (allHabits == null) {
             mapHabitsToHabitViews()
         }
@@ -119,13 +117,11 @@ class AgendaPageViewModel(
 
     fun insertTask(newTaskViewData: TaskViewData) {
         val task = taskViewDataToTask(newTaskViewData)
+        task.agendaId = agenda.id
 
         GlobalScope.launch {
-            val taskId = atomicIoRepo.addTask(task)
-
-            // @todo sync with a LiveData object?
+            atomicIoRepo.addTask(task)
         }
-
     }
 
     private fun taskViewDataToTask(taskViewData: TaskViewData): Task {
