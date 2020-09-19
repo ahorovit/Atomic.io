@@ -9,6 +9,7 @@ import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Task
 import com.drspaceman.atomicio.ui.BaseDialogFragment
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
@@ -31,7 +32,7 @@ class AgendaPageViewModel(
             return field
         }
 
-    fun loadTasks() {
+    private fun loadTasks() {
         viewModelScope.launch {
             agenda = atomicIoRepo.getAgendaForDate(LocalDate.now())
 
@@ -58,11 +59,6 @@ class AgendaPageViewModel(
             task.startTime,
             task.endTime
         )
-    }
-
-
-    override fun deleteItem(itemViewData: BaseViewData) {
-        TODO("Not yet implemented")
     }
 
     fun agendaToAgendaViewData(agenda: Agenda): AgendaViewData {
@@ -121,10 +117,35 @@ class AgendaPageViewModel(
         TODO("Not yet implemented")
     }
 
-    fun insertTask(writeTaskView: TaskViewData) {
-        TODO("Not yet implemented")
+    fun insertTask(newTaskViewData: TaskViewData) {
+        val task = taskViewDataToTask(newTaskViewData)
+
+        GlobalScope.launch {
+            val taskId = atomicIoRepo.addTask(task)
+
+            // @todo sync with a LiveData object?
+        }
+
     }
 
+    private fun taskViewDataToTask(taskViewData: TaskViewData): Task {
+        return Task(
+            taskViewData.id,
+            taskViewData.habitId,
+            taskViewData.agendaId,
+            taskViewData.title,
+            taskViewData.location,
+            taskViewData.startTime,
+            taskViewData.endTime
+        )
+    }
+
+    override fun deleteItem(itemViewData: BaseViewData) {
+        GlobalScope.launch {
+            val task = taskViewDataToTask(itemViewData as TaskViewData)
+            atomicIoRepo.deleteTask(task)
+        }
+    }
 
     data class TaskViewData(
         override var id: Long? = null,

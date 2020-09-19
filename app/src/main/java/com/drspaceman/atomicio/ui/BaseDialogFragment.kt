@@ -23,6 +23,7 @@ abstract class BaseDialogFragment: DialogFragment() {
 
     protected abstract val viewModel: BaseViewModel
 
+     // @todo: make lateinit instead of nullable
     protected abstract val itemViewData: BaseViewModel.BaseViewData?
 
     protected lateinit var parentActivity: AppCompatActivity

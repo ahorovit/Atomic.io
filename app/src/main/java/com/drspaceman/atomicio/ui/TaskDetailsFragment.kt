@@ -70,9 +70,11 @@ class TaskDetailsFragment : BaseDialogFragment() {
         when (requestCode) {
             TimePickerFragment.START_TIME_CODE -> {
                 editStartTime.setText(formatTime(pickedTime))
+                itemViewData?.startTime = pickedTime
             }
             TimePickerFragment.END_TIME_CODE -> {
                 editEndTime.setText(formatTime(pickedTime))
+                itemViewData?.endTime = pickedTime
             }
         }
     }
@@ -123,14 +125,16 @@ class TaskDetailsFragment : BaseDialogFragment() {
         val writeTaskView = itemViewData ?: return
 
         writeTaskView.title = editTextTaskName.text.toString()
-        writeTaskView.startTime = LocalTime.parse(editStartTime.text.toString())
-        writeTaskView.endTime = LocalTime.parse(editEndTime.text.toString())
+//        writeTaskView.startTime = LocalTime.parse(editStartTime.text.toString())
+//        writeTaskView.endTime = LocalTime.parse(editEndTime.text.toString())
 
         writeTaskView.id?.let {
             viewModel.updateTask(writeTaskView)
         } ?: run {
             viewModel.insertTask(writeTaskView)
         }
+
+        dismiss()
     }
 
     override fun getNewItem() {
