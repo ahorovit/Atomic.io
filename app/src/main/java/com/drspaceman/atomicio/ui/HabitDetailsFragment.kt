@@ -7,7 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.adapter.IdentitySpinnerAdapter
+import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
@@ -26,7 +26,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
     override var itemViewData: HabitViewData? = null
 
-    private lateinit var spinnerAdapter: IdentitySpinnerAdapter
+    private lateinit var spinnerAdapter: ViewDataSpinnerAdapter
 
 
     override fun observeItem(id: Long) {
@@ -56,7 +56,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
         val habit = itemViewData ?: return
 
         habit.identityId?.let { parentIdentityId ->
-            val position = spinnerAdapter.getIdentityPosition(parentIdentityId)
+            val position = spinnerAdapter.getViewDatumPosition(parentIdentityId)
 
             // @todo: figure out why occasionally image is [NA] null while selection text is correct
             position?.let {
@@ -93,7 +93,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
      * saved Identities in the DB
      */
     private fun initializeSpinnerAdapter() {
-        spinnerAdapter = IdentitySpinnerAdapter(
+        spinnerAdapter = ViewDataSpinnerAdapter(
             parentActivity,
             android.R.layout.simple_spinner_item
         )

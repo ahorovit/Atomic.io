@@ -22,7 +22,6 @@ class AgendaPageFragment : BasePageFragment() {
 
     override val viewModel by activityViewModels<AgendaPageViewModel>()
 
-    var todaysAgenda: AgendaViewData? = null
     var todaysTasks: List<TaskViewData>? = null
 
 
@@ -63,7 +62,7 @@ class AgendaPageFragment : BasePageFragment() {
 
 
     override fun getEditDialogFragment(id: Long?): BaseDialogFragment {
-        TODO("Not yet implemented")
+        return TaskDetailsFragment.newInstance(id)
     }
 
     override fun loadPageData() {

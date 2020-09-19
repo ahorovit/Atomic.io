@@ -5,15 +5,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.drspaceman.atomicio.model.Agenda
+import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Task
+import com.drspaceman.atomicio.ui.BaseDialogFragment
+import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.coroutines.launch
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 
-class AgendaPageViewModel(application: Application) : BaseViewModel(application) {
+class AgendaPageViewModel(
+    application: Application
+) : BaseViewModel(application), BaseDialogFragment.SpinnerViewModel {
 
     private lateinit var agenda: Agenda
+
+    private var allHabits: LiveData<List<HabitViewData>>? = null
 
     var tasks: LiveData<List<TaskViewData>>? = null
         get() {
@@ -65,6 +72,51 @@ class AgendaPageViewModel(application: Application) : BaseViewModel(application)
             agenda.date?.dayOfWeek
         )
     }
+
+    fun getTask(taskId: Long): LiveData<TaskViewData>? {
+        TODO("Not yet implemented")
+    }
+
+
+    override fun getSpinnerItemResourceId(type: String?): Int? {
+        TODO("Not yet implemented")
+    }
+
+    /**
+     * Habit Spinner is a list of parent Identities, so we need to observe with
+     * LiveData
+     */
+    fun getSpinnerItems(): LiveData<List<HabitViewData>>?
+    {
+        if (allHabits == null) {
+            mapHabitsToHabitViews()
+        }
+
+        return allHabits
+    }
+
+    // @todo: this is duplicated from IdentityPageViewModel
+    private fun mapHabitsToHabitViews() {
+        allHabits = Transformations.map(atomicIoRepo.allHabits) { repoHabits ->
+            repoHabits.map { habitToHabitView(it) }
+        }
+    }
+
+    // @todo: this is duplicated from IdentityPageViewModel
+    private fun habitToHabitView(habit: Habit): HabitViewData {
+        return HabitViewData(
+            habit.id,
+            habit.identityId,
+            habit.name,
+            habit.type,
+            atomicIoRepo.getTypeResourceId(habit.type)
+        )
+    }
+
+    fun getNewTaskView(): TaskViewData {
+        return TaskViewData()
+    }
+
 
     data class TaskViewData(
         override var id: Long? = null,

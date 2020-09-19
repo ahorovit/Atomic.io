@@ -153,6 +153,9 @@ class HabitPageViewModel(application: Application)
         var name: String? = "",
         override var type: String? = "",
         override var typeResourceId: Int = R.drawable.ic_other
-    ) : BaseViewData(), SpinnerItemViewData
-
+    ) : BaseViewData(), SpinnerItemViewData {
+        override fun toString(): String {
+            return name ?: ""
+        }
+    }
 }
