@@ -108,7 +108,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
         itemViewData?.let {
             editTextTaskName.setText(it.title)
             editStartTime.setText(formatTime(it.startTime))
-            editStartTime.setText(formatTime(it.endTime))
+            editEndTime.setText(formatTime(it.endTime))
             setSpinnerSelection()
         }
     }

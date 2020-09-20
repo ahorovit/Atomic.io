@@ -2,6 +2,7 @@ package com.drspaceman.atomicio.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.drspaceman.atomicio.model.Agenda
@@ -11,7 +12,6 @@ import com.drspaceman.atomicio.ui.BaseDialogFragment
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 import org.threeten.bp.temporal.ChronoUnit
@@ -37,45 +37,24 @@ class AgendaPageViewModel(
         viewModelScope.launch {
             agenda = atomicIoRepo.getAgendaForDate(LocalDate.now())
 
-            println(agenda.toString())
-
             agenda.id?.let { agendaId ->
                 tasks = Transformations.map(atomicIoRepo.getTasksForAgenda(agendaId)) { repoTasks ->
                     repoTasks.map {
-                        taskToTaskViewData(it)
+                        TaskViewData.of(it)
                     }
                 }
             }
         }
     }
 
-    private fun taskToTaskViewData(task: Task): TaskViewData {
-        return TaskViewData(
-            task.id,
-            task.habitId,
-            task.agendaId,
-            task.title,
-            task.location,
-            task.startTime,
-            task.endTime
-        )
-    }
-
-    fun agendaToAgendaViewData(agenda: Agenda): AgendaViewData {
-        return AgendaViewData(
-            agenda.id,
-            agenda.date,
-            agenda.date?.dayOfWeek
-        )
-    }
-
     fun getTask(taskId: Long): LiveData<TaskViewData>? {
-        TODO("Not yet implemented")
-    }
+        val task = MutableLiveData(TaskViewData())
 
+        viewModelScope.launch {
+            task.value = TaskViewData.of(atomicIoRepo.getTask(taskId))
+        }
 
-    override fun getSpinnerItemResourceId(type: String?): Int? {
-        TODO("Not yet implemented")
+        return task
     }
 
     /**
@@ -113,11 +92,13 @@ class AgendaPageViewModel(
     }
 
     fun updateTask(writeTaskView: TaskViewData) {
-        TODO("Not yet implemented")
+        GlobalScope.launch {
+            atomicIoRepo.updateTask(writeTaskView.toModel())
+        }
     }
 
     fun insertTask(newTaskViewData: TaskViewData) {
-        val task = taskViewDataToTask(newTaskViewData)
+        val task = newTaskViewData.toModel()
         task.agendaId = agenda.id
 
         GlobalScope.launch {
@@ -125,24 +106,18 @@ class AgendaPageViewModel(
         }
     }
 
-    private fun taskViewDataToTask(taskViewData: TaskViewData): Task {
-        return Task(
-            taskViewData.id,
-            taskViewData.habitId,
-            taskViewData.agendaId,
-            taskViewData.title,
-            taskViewData.location,
-            taskViewData.startTime,
-            taskViewData.endTime
-        )
-    }
-
     override fun deleteItem(itemViewData: BaseViewData) {
         GlobalScope.launch {
-            val task = taskViewDataToTask(itemViewData as TaskViewData)
+            val task = (itemViewData as TaskViewData).toModel()
             atomicIoRepo.deleteTask(task)
         }
     }
+
+
+    override fun getSpinnerItemResourceId(type: String?): Int? {
+        TODO("Not yet implemented")
+    }
+
 
     data class TaskViewData(
         override var id: Long? = null,
@@ -155,14 +130,30 @@ class AgendaPageViewModel(
     ) : BaseViewData() {
         override fun toString() = title ?: ""
 
+        fun toModel() = Task(
+            id,
+            habitId,
+            agendaId,
+            title,
+            location,
+            startTime,
+            endTime
+        )
+
         fun getDuration(): Int? {
             return startTime?.until(endTime, ChronoUnit.MINUTES)?.toInt()
         }
-    }
 
-    data class AgendaViewData(
-        override var id: Long?,
-        var date: LocalDate? = null,
-        var dayOfWeek: DayOfWeek? = null
-    ) : BaseViewData()
+        companion object {
+            fun of(task: Task) = TaskViewData(
+                task.id,
+                task.habitId,
+                task.agendaId,
+                task.title,
+                task.location,
+                task.startTime,
+                task.endTime
+            )
+        }
+    }
 }

@@ -125,25 +125,18 @@ class AtomicIoRepository(context: Context) {
         return dao.loadLiveTask(taskId)
     }
 
-    fun updateTask(task: Task) {
-        dao.updateTask(task)
-    }
+    suspend fun updateTask(task: Task) = withContext(Dispatchers.IO) { dao.updateTask(task) }
 
-    fun getTask(taskId: Long): Task {
-        return dao.loadTask(taskId)
-    }
+    suspend fun getTask(taskId: Long) = withContext(Dispatchers.IO) { dao.loadTask(taskId) }
 
-
-    fun deleteTask(task: Task) {
-        dao.deleteTask(task)
-    }
+    suspend fun deleteTask(task: Task) = withContext(Dispatchers.IO) { dao.deleteTask(task) }
 
     suspend fun getAgendaForDate(date: LocalDate) = withContext(Dispatchers.IO) {
         dao.getAgenda(date) ?: createAgendaForDate(date)
     }
 
     private suspend fun createAgendaForDate(date: LocalDate): Agenda {
-        val agenda = Agenda(null, date)
+        val agenda = Agenda(date = date)
         agenda.id = dao.insertAgenda(agenda)
         return agenda
     }

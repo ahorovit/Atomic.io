@@ -124,26 +124,10 @@ class AgendaPageFragment : BasePageFragment() {
             taskView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
 
             // When an event is clicked, start a new draft event and show the edit event dialog
-//            // @todo: implement this without !! or Calendar
-//            taskView.setOnClickListener {
-//                editTaskDraft = task
-//                editEventDate = day.clone() as Calendar
-//                editEventStartTime = Calendar.getInstance().apply {
-//                    this.set(Calendar.HOUR_OF_DAY, editTaskDraft!!.startTime!!.hour)
-//                    this.set(Calendar.MINUTE, editTaskDraft!!.startTime!!.minute)
-//                    this.set(Calendar.SECOND, 0)
-//                    this.set(Calendar.MILLISECOND, 0)
-//                }
-//
-//                editEventEndTime = editEventStartTime!!.clone() as Calendar
-//                editEventEndTime!!.add(Calendar.MINUTE, editTaskDraft!!.getDuration()!!)
-////                showEditEventDialog(
-////                    true,
-////                    editEventDraft.title,
-////                    editEventDraft.location,
-////                    editEventDraft.color
-////                )
-//            }
+            // @todo: implement this without !! or Calendar
+            taskView.setOnClickListener {
+                showEditDetailsDialog(task.id)
+            }
             taskViews.add(taskView)
 
             // The day view needs the event time ranges in the start minute/end minute format,

@@ -55,7 +55,7 @@ abstract class BaseDialogFragment: DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         populateTypeSpinner()
-        loadDataItem()
+        loadDataItem() // @todo: Move into onCreateView to avoid subtle lifecycle bugs?
 
         saveButton.setOnClickListener {
             saveItemDetails()
