@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
+import org.threeten.bp.temporal.ChronoUnit
 
 class AgendaPageViewModel(
     application: Application
@@ -151,7 +152,13 @@ class AgendaPageViewModel(
         var location: String? = "",
         var startTime: LocalTime? = null,
         var endTime: LocalTime? = null
-    ) : BaseViewData()
+    ) : BaseViewData() {
+        override fun toString() = title ?: ""
+
+        fun getDuration(): Int? {
+            return startTime?.until(endTime, ChronoUnit.MINUTES)?.toInt()
+        }
+    }
 
     data class AgendaViewData(
         override var id: Long?,

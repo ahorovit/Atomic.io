@@ -1,6 +1,7 @@
 package com.drspaceman.atomicio.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -12,6 +13,13 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    /*
+
+    adb shell "run-as com.drspaceman.atomicio cat /data/user/0/com.drspaceman.atomicio/databases/AtomicIo" > app/src/main/assets/seed_data.db
+
+     */
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
