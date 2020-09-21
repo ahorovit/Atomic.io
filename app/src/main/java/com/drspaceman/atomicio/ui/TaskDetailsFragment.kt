@@ -29,6 +29,11 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
     override var itemViewData: TaskViewData? = null
 
+
+    override fun setObservers() {
+        TODO("Not yet implemented")
+    }
+
     private lateinit var spinnerAdapter: ViewDataSpinnerAdapter
 
     // If title has been manually edited, don't autofill habit name
@@ -92,7 +97,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
         return displayTime
     }
 
-    override fun observeItem(id: Long) {
+    override fun loadExistingItem(id: Long) {
         viewModel.getTask(id)?.observe(
             this,
             Observer<TaskViewData> {

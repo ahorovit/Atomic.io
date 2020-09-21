@@ -26,10 +26,17 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
     override var itemViewData: HabitViewData? = null
 
+
+
+
+    override fun setObservers() {
+        TODO("Not yet implemented")
+    }
+
     private lateinit var spinnerAdapter: ViewDataSpinnerAdapter
 
 
-    override fun observeItem(id: Long) {
+    override fun loadExistingItem(id: Long) {
         viewModel.getHabit(id)?.observe(
             this,
             Observer<HabitViewData> {

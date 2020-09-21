@@ -1,8 +1,7 @@
 package com.drspaceman.atomicio.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
@@ -11,14 +10,36 @@ import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class IdentityPageViewModel(application: Application) : BaseViewModel(application),
-    SpinnerViewModel {
+class IdentityPageViewModel(
+    application: Application
+) : BaseViewModel(application), SpinnerViewModel {
 
-    // @TODO: insert as Explicit Dependency
-    private var identityView: LiveData<IdentityViewData>? = null
-    private var identities: LiveData<List<IdentityViewData>>? = null
+    private val _identities = MediatorLiveData<List<IdentityViewData>>()
+    val identities: LiveData<List<IdentityViewData>>
+        get() = _identities
 
-    // @TODO: observe?
+    private val _identity = MutableLiveData<IdentityViewData>()
+    val identity: LiveData<IdentityViewData>
+        get() = _identity
+
+    init {
+        viewModelScope.launch {
+            _identities.addSource(Transformations.map(atomicIoRepo.allIdentities) { repoIdentities ->
+                repoIdentities.map { identity ->
+                    IdentityViewData.of(identity)
+                }
+            }) { identityViewData ->
+                _identities.value = identityViewData
+            }
+        }
+    }
+
+    fun loadIdentity(identityId: Long) {
+        viewModelScope.launch {
+            _identity.value = IdentityViewData.of(atomicIoRepo.getIdentity(identityId))
+        }
+    }
+
     fun getNewIdentityView(): IdentityViewData {
         val newIdentityView = IdentityViewData()
         newIdentityView.type = "Other"
@@ -26,61 +47,20 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     fun insertIdentity(newIdentityView: IdentityViewData) {
-        val identity = newIdentityView.toModel()
-
         GlobalScope.launch {
-            val identityId = atomicIoRepo.addIdentity(identity)
-
-            // @TODO: this might be unnecessary, because when we save a new Identity, we also finis() the
-            // IdentityDetailActivity --> So we're synching UI unnecessarily here maybe?
-            identityId?.let {
-                mapIdentityToIdentityView(identityId)
-            }
-        }
-    }
-
-    fun getIdentity(identityId: Long): LiveData<IdentityViewData>? {
-        if (identityView == null) {
-            mapIdentityToIdentityView(identityId)
-        }
-
-        return identityView
-    }
-
-    fun getIdentities(): LiveData<List<IdentityViewData>>? {
-        if (identities == null) {
-            mapIdentitiesToIdentityViews()
-        }
-
-        return identities
-    }
-
-    private fun mapIdentitiesToIdentityViews() {
-        identities = Transformations.map(atomicIoRepo.allIdentities) { repoIdentities ->
-            repoIdentities.map { IdentityViewData.of(it) }
+            atomicIoRepo.addIdentity(newIdentityView.toModel())
         }
     }
 
     fun updateIdentity(identityViewData: IdentityViewData) {
         GlobalScope.launch {
-            val identity = identityViewData.toModel()
-            atomicIoRepo.updateIdentity(identity)
+            atomicIoRepo.updateIdentity(identityViewData.toModel())
         }
     }
 
     override fun deleteItem(itemViewData: BaseViewData) {
         GlobalScope.launch {
-            val identity = (itemViewData as IdentityViewData).toModel()
-            atomicIoRepo.deleteIdentity(identity)
-        }
-    }
-
-    private fun mapIdentityToIdentityView(identityId: Long) {
-        val identity = atomicIoRepo.getLiveIdentity(identityId)
-        identityView = Transformations.map(identity) { repoIdentity ->
-            repoIdentity?.let {
-                IdentityViewData.of(repoIdentity)
-            }
+            atomicIoRepo.deleteIdentity((itemViewData as IdentityViewData).toModel())
         }
     }
 
@@ -102,7 +82,7 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
         override var type: String? = "",
         override var typeResourceId: Int = R.drawable.ic_other
     ) : BaseViewData(), SpinnerItemViewData {
-        // Required to support Spinner display of Identity
+
         override fun toString(): String {
             return name ?: ""
         }

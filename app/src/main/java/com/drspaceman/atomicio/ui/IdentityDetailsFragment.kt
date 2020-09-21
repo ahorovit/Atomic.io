@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
@@ -25,22 +24,24 @@ class IdentityDetailsFragment : BaseDialogFragment() {
 
     override val viewModel by viewModels<IdentityPageViewModel>()
 
-    override var itemViewData: IdentityViewData? = null
+    override lateinit var itemViewData: IdentityViewData
 
-    override fun observeItem(id: Long) {
-        viewModel.getIdentity(id)?.observe(
+    override fun setObservers() {
+        viewModel.identity.observe(
             this,
-            Observer<IdentityViewData> {
-                it?.let {
-                    itemViewData = it
-                    populateExistingValues()
-                }
+            {
+                itemViewData = it
+                populateExistingValues()
             }
         )
     }
 
+    override fun loadExistingItem(id: Long) {
+        viewModel.loadIdentity(id)
+    }
+
     override fun populateExistingValues() {
-        itemViewData?.let {
+        itemViewData.let {
             editTextName.setText(it.name)
             setSpinnerSelection()
         }
@@ -87,15 +88,13 @@ class IdentityDetailsFragment : BaseDialogFragment() {
     }
 
     override fun setSpinnerSelection() {
-        itemViewData?.let {
-            val type = it.type ?: return
-            spinner.setSelection(spinnerAdapter.getPosition(type))
-            spinnerImage.setImageResource(it.typeResourceId)
-        }
+        val type = itemViewData.type ?: return
+        spinner.setSelection(spinnerAdapter.getPosition(type))
+        spinnerImage.setImageResource(itemViewData.typeResourceId)
     }
 
     override fun saveItemDetails() {
-        val writeIdentityView = itemViewData?: return
+        val writeIdentityView = itemViewData ?: return
 
         val name = editTextName.text.toString()
         if (name.isEmpty()) {

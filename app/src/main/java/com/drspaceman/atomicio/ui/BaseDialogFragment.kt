@@ -5,14 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 
 // @todo remove
-import kotlinx.android.synthetic.main.spinner_layout.*
 import kotlinx.android.synthetic.main.crud_buttons.*
 
 abstract class BaseDialogFragment: DialogFragment() {
@@ -28,7 +25,9 @@ abstract class BaseDialogFragment: DialogFragment() {
 
     protected lateinit var parentActivity: AppCompatActivity
 
-    protected abstract fun observeItem(id: Long)
+    protected abstract fun setObservers()
+
+    protected abstract fun loadExistingItem(id: Long)
 
     protected abstract fun populateExistingValues()
 
@@ -48,6 +47,7 @@ abstract class BaseDialogFragment: DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setObservers()
         return inflater.inflate(layoutId, container, false)
     }
 
@@ -87,7 +87,7 @@ abstract class BaseDialogFragment: DialogFragment() {
 
     protected fun loadDataItem() {
         itemId?.let {
-            observeItem(it)
+            loadExistingItem(it)
         } ?: run {
             getNewItem()
             setSpinnerSelection()

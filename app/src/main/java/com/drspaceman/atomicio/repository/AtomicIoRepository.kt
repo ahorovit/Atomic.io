@@ -17,6 +17,7 @@ class AtomicIoRepository(context: Context) {
     private var db = AtomicIoDatabase.getInstance(context)
     private var dao = db.atomicIoDao()
 
+    // @todo: standardize
     val allIdentities: LiveData<List<Identity>>
         get() {
             return dao.loadAllIdentities()
@@ -46,8 +47,8 @@ class AtomicIoRepository(context: Context) {
         dao.updateIdentity(identity)
     }
 
-    fun getIdentity(identityId: Long): Identity {
-        return dao.loadIdentity(identityId)
+    suspend fun getIdentity(identityId: Long) = withContext(Dispatchers.IO) {
+        dao.loadIdentity(identityId)
     }
 
     fun deleteIdentity(identity: Identity) {
