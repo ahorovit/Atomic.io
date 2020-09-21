@@ -1,8 +1,7 @@
 package com.drspaceman.atomicio.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.repository.AtomicIoRepository
@@ -12,14 +11,35 @@ import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class HabitPageViewModel(application: Application)
-    : BaseViewModel(application), SpinnerViewModel {
+class HabitPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
 
-    // @TODO: insert as Explicit Dependency
-    private var oneHabit: LiveData<HabitViewData>? = null
-    private var allHabits: LiveData<List<HabitViewData>>? = null
+    private val _habits = MediatorLiveData<List<HabitViewData>>()
+    val habits: LiveData<List<HabitViewData>>
+        get() = _habits
+
+    private val _habit = MutableLiveData<HabitViewData>()
+    val habit
+        get() = _habit
+
+    init {
+        viewModelScope.launch {
+            _habits.addSource(Transformations.map(atomicIoRepo.allHabits) { repoHabits ->
+                repoHabits.map { habit ->
+                    HabitViewData.of(habit)
+                }
+            }) { habitViewData -> _habits.value = habitViewData }
+        }
+    }
+
 
     private var allIdentities: LiveData<List<IdentityViewData>>? = null
+
+
+    fun loadHabit(habitId: Long) {
+        viewModelScope.launch {
+            _habit.value = HabitViewData.of(atomicIoRepo.getHabit(habitId))
+        }
+    }
 
     /**
      * Habit Spinner is a list of parent Identities, so we need to observe with
@@ -45,45 +65,11 @@ class HabitPageViewModel(application: Application)
         TODO("Not yet implemented")
     }
 
-    fun getHabit(habitId: Long): LiveData<HabitViewData>? {
-        if (oneHabit == null) {
-            mapHabitToHabitViewData(habitId)
-        }
 
-        return oneHabit
-    }
 
-    private fun mapHabitToHabitViewData(habitId: Long) {
-        val habit = atomicIoRepo.getLiveHabit(habitId)
-        oneHabit = Transformations.map(habit) { repoHabit ->
-            repoHabit?.let {
-                HabitViewData(
-                    repoHabit.id,
-                    repoHabit.identityId,
-                    repoHabit.name,
-                    repoHabit.type
-                )
-            }
-        }
-    }
 
-    fun getHabits(): LiveData<List<HabitViewData>>? {
-        if (allHabits == null) {
-            mapAllHabitsToHabitViewData()
-        }
 
-        return allHabits
-    }
-
-    private fun mapAllHabitsToHabitViewData() {
-        allHabits = Transformations.map(atomicIoRepo.allHabits) { repoHabits ->
-            repoHabits.map { HabitViewData.of(it) }
-        }
-    }
-
-    fun getNewHabitView(): HabitViewData {
-        return HabitViewData()
-    }
+    fun getNewHabitViewData() = HabitViewData()
 
     fun updateHabit(habitViewData: HabitViewData) {
         GlobalScope.launch {
@@ -93,14 +79,8 @@ class HabitPageViewModel(application: Application)
     }
 
     fun insertHabit(habitViewData: HabitViewData) {
-        val habit = habitViewData.toModel()
-
         GlobalScope.launch {
-            val habitId = atomicIoRepo.addHabit(habit)
-
-            habitId?.let {
-                mapHabitToHabitViewData(it)
-            }
+            atomicIoRepo.addHabit(habitViewData.toModel())
         }
     }
 

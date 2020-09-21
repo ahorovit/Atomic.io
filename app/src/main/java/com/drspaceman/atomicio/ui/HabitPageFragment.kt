@@ -1,7 +1,6 @@
 package com.drspaceman.atomicio.ui
 
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
@@ -17,12 +16,10 @@ class HabitPageFragment : BasePageFragment() {
         recyclerViewAdapter = HabitRecyclerViewAdapter(null, this)
         habitRecyclerView.adapter = recyclerViewAdapter
 
-        this.viewModel.getHabits()?.observe(
+        this.viewModel.habits.observe(
             viewLifecycleOwner,
-            Observer<List<HabitPageViewModel.HabitViewData>> {
-                it?.let {
-                    recyclerViewAdapter.itemList = it
-                }
+            {
+                recyclerViewAdapter.itemList = it
             }
         )
     }

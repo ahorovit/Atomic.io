@@ -63,9 +63,7 @@ class AtomicIoRepository(context: Context) {
         dao.updateHabit(habit)
     }
 
-    fun getHabit(habitId: Long): Habit {
-        return dao.loadHabit(habitId)
-    }
+    suspend fun getHabit(habitId: Long) = withContext(Dispatchers.IO) { dao.loadHabit(habitId) }
 
     fun createHabit(): Habit {
         return Habit()

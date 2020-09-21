@@ -24,22 +24,14 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
     override val viewModel by viewModels<HabitPageViewModel>()
 
-    override var itemViewData: HabitViewData? = null
-
-
-
-
-    override fun setObservers() {
-        TODO("Not yet implemented")
-    }
+    override lateinit var itemViewData: HabitViewData
 
     private lateinit var spinnerAdapter: ViewDataSpinnerAdapter
 
-
-    override fun loadExistingItem(id: Long) {
-        viewModel.getHabit(id)?.observe(
-            this,
-            Observer<HabitViewData> {
+    override fun setObservers() {
+        viewModel.habit.observe(
+            viewLifecycleOwner,
+            {
                 it?.let {
                     itemViewData = it
                     populateExistingValues()
@@ -48,27 +40,27 @@ class HabitDetailsFragment : BaseDialogFragment() {
         )
     }
 
+    override fun loadExistingItem(id: Long) {
+        viewModel.loadHabit(id)
+    }
+
     override fun populateExistingValues() {
-        itemViewData?.let { habitView ->
-            editTextHabitName.setText(habitView.name)
-            setSpinnerSelection()
-        }
+        editTextHabitName.setText(itemViewData.name)
+        setSpinnerSelection()
     }
 
     override fun getNewItem() {
-        itemViewData = viewModel.getNewHabitView()
+        itemViewData = viewModel.getNewHabitViewData()
     }
 
     override fun setSpinnerSelection() {
-        val habit = itemViewData ?: return
-
-        habit.identityId?.let { parentIdentityId ->
+        itemViewData.identityId?.let { parentIdentityId ->
             val position = spinnerAdapter.getViewDatumPosition(parentIdentityId)
 
             // @todo: figure out why occasionally image is [NA] null while selection text is correct
             position?.let {
                 spinner.setSelection(it)
-                spinnerImage.setImageResource(habit.typeResourceId)
+                spinnerImage.setImageResource(itemViewData.typeResourceId)
             }
         }
     }

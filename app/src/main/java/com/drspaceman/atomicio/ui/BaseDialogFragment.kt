@@ -27,12 +27,14 @@ abstract class BaseDialogFragment: DialogFragment() {
 
     protected abstract fun setObservers()
 
+    // @todo: pull generic implementation down into base class
     protected abstract fun loadExistingItem(id: Long)
 
     protected abstract fun populateExistingValues()
 
     protected abstract fun saveItemDetails()
 
+    // @todo: pull generic implementation into base class
     protected abstract fun getNewItem()
 
     protected abstract fun setSpinnerSelection()

@@ -10,9 +10,7 @@ import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class IdentityPageViewModel(
-    application: Application
-) : BaseViewModel(application), SpinnerViewModel {
+class IdentityPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
 
     private val _identities = MediatorLiveData<List<IdentityViewData>>()
     val identities: LiveData<List<IdentityViewData>>
@@ -40,11 +38,7 @@ class IdentityPageViewModel(
         }
     }
 
-    fun getNewIdentityView(): IdentityViewData {
-        val newIdentityView = IdentityViewData()
-        newIdentityView.type = "Other"
-        return newIdentityView
-    }
+    fun getNewIdentityView() = IdentityViewData(type = "Other")
 
     fun insertIdentity(newIdentityView: IdentityViewData) {
         GlobalScope.launch {
