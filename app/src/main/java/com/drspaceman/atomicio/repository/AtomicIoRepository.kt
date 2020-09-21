@@ -27,13 +27,6 @@ class AtomicIoRepository(context: Context) {
             return dao.loadAllHabits()
         }
 
-    private val allTypes = buildTypes()
-
-    val identityTypes: List<String>
-        get() {
-            return ArrayList(allTypes.keys.sorted())
-        }
-
     fun createIdentity(): Identity {
         return Identity()
     }
@@ -60,27 +53,6 @@ class AtomicIoRepository(context: Context) {
     fun deleteIdentity(identity: Identity) {
         dao.deleteIdentity(identity)
     }
-
-    private fun buildTypes(): HashMap<String, Int> {
-        return hashMapOf(
-            "Academic" to R.drawable.ic_academic,
-            "Artistic" to R.drawable.ic_artistic,
-            "Family" to R.drawable.ic_family,
-            "Financial" to R.drawable.ic_financial,
-            "Friendship" to R.drawable.ic_friendship,
-            "Wellness" to R.drawable.ic_health,
-            "Mindset" to R.drawable.ic_mindset,
-            "Other" to R.drawable.ic_other,
-            "Productivity" to R.drawable.ic_productivity,
-            "Professional" to R.drawable.ic_professional,
-            "Romantic" to R.drawable.ic_romantic
-        )
-    }
-
-    fun getTypeResourceId(type: String?): Int {
-        return type?.let { allTypes[type] } ?: allTypes["Other"]!!
-    }
-
 
     fun getLiveHabit(habitId: Long): LiveData<Habit> {
         return dao.loadLiveHabit(habitId)
@@ -143,5 +115,28 @@ class AtomicIoRepository(context: Context) {
 
     suspend fun getTasksForAgenda(agendaId: Long) = withContext(Dispatchers.IO) {
         dao.getTasksForAgenda(agendaId)
+    }
+
+    companion object {
+        private val allTypes = hashMapOf(
+            "Academic" to R.drawable.ic_academic,
+            "Artistic" to R.drawable.ic_artistic,
+            "Family" to R.drawable.ic_family,
+            "Financial" to R.drawable.ic_financial,
+            "Friendship" to R.drawable.ic_friendship,
+            "Wellness" to R.drawable.ic_health,
+            "Mindset" to R.drawable.ic_mindset,
+            "Other" to R.drawable.ic_other,
+            "Productivity" to R.drawable.ic_productivity,
+            "Professional" to R.drawable.ic_professional,
+            "Romantic" to R.drawable.ic_romantic
+        )
+
+        val identityTypes: List<String>
+            get() = ArrayList(allTypes.keys.sorted())
+
+        fun getTypeResourceId(type: String?): Int {
+            return type?.let { allTypes[type] } ?: allTypes["Other"]!!
+        }
     }
 }

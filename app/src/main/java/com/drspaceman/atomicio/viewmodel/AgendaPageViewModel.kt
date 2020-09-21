@@ -65,19 +65,8 @@ class AgendaPageViewModel(
     // @todo: this is duplicated from IdentityPageViewModel
     private fun mapHabitsToHabitViews() {
         allHabits = Transformations.map(atomicIoRepo.allHabits) { repoHabits ->
-            repoHabits.map { habitToHabitView(it) }
+            repoHabits.map { HabitViewData.of(it) }
         }
-    }
-
-    // @todo: this is duplicated from IdentityPageViewModel
-    private fun habitToHabitView(habit: Habit): HabitViewData {
-        return HabitViewData(
-            habit.id,
-            habit.identityId,
-            habit.name,
-            habit.type,
-            atomicIoRepo.getTypeResourceId(habit.type)
-        )
     }
 
     fun getNewTaskView(): TaskViewData {
@@ -123,7 +112,7 @@ class AgendaPageViewModel(
     ) : BaseViewData() {
         override fun toString() = title ?: ""
 
-        fun toModel() = Task(
+        override fun toModel() = Task(
             id,
             habitId,
             agendaId,

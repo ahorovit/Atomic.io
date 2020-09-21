@@ -13,6 +13,6 @@ abstract class BaseViewModel(application: Application): AndroidViewModel(applica
     abstract class BaseViewData {
         abstract var id: Long?
 
-//        abstract fun toModel(): Any // @todo: standardize + companion object
+        abstract fun toModel(): Any
     }
 }

@@ -6,14 +6,13 @@ import androidx.lifecycle.Transformations
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
-import com.drspaceman.atomicio.ui.BaseDialogFragment
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
-import kotlinx.android.synthetic.main.spinner_layout.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class IdentityPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
+class IdentityPageViewModel(application: Application) : BaseViewModel(application),
+    SpinnerViewModel {
 
     // @TODO: insert as Explicit Dependency
     private var identityView: LiveData<IdentityViewData>? = null
@@ -27,7 +26,7 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     fun insertIdentity(newIdentityView: IdentityViewData) {
-        val identity = identityViewToIdentity(newIdentityView)
+        val identity = newIdentityView.toModel()
 
         GlobalScope.launch {
             val identityId = atomicIoRepo.addIdentity(identity)
@@ -58,20 +57,20 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
 
     private fun mapIdentitiesToIdentityViews() {
         identities = Transformations.map(atomicIoRepo.allIdentities) { repoIdentities ->
-            repoIdentities.map { identityToIdentityView(it) }
+            repoIdentities.map { IdentityViewData.of(it) }
         }
     }
 
-    fun updateIdentity(identityView: IdentityViewData) {
+    fun updateIdentity(identityViewData: IdentityViewData) {
         GlobalScope.launch {
-            val identity = identityViewToIdentity(identityView)
+            val identity = identityViewData.toModel()
             atomicIoRepo.updateIdentity(identity)
         }
     }
 
     override fun deleteItem(itemViewData: BaseViewData) {
         GlobalScope.launch {
-            val identity = identityViewToIdentity(itemViewData as IdentityViewData)
+            val identity = (itemViewData as IdentityViewData).toModel()
             atomicIoRepo.deleteIdentity(identity)
         }
     }
@@ -80,43 +79,20 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
         val identity = atomicIoRepo.getLiveIdentity(identityId)
         identityView = Transformations.map(identity) { repoIdentity ->
             repoIdentity?.let {
-                identityToIdentityView(repoIdentity)
+                IdentityViewData.of(repoIdentity)
             }
         }
-    }
-
-    private fun identityToIdentityView(identity: Identity): IdentityViewData {
-        return IdentityViewData(
-            identity.id,
-            identity.name,
-            identity.description,
-            identity.type,
-            atomicIoRepo.getTypeResourceId(identity.type)
-        )
-    }
-
-    private fun identityViewToIdentity(identityView: IdentityViewData): Identity {
-        val identity = identityView.id?.let {
-            atomicIoRepo.getIdentity(it)
-        } ?: atomicIoRepo.createIdentity()
-
-        identity.id = identityView.id
-        identity.name = identityView.name
-        identity.type = identityView.type
-        identity.description = identityView.description
-
-        return identity
     }
 
     /**
      * Identity spinner is a simple list of identity types (strings)
      */
     fun getSpinnerItems(): List<String> {
-        return atomicIoRepo.identityTypes
+        return AtomicIoRepository.identityTypes
     }
 
     override fun getSpinnerItemResourceId(type: String?): Int? {
-        return atomicIoRepo.getTypeResourceId(type)
+        return AtomicIoRepository.getTypeResourceId(type)
     }
 
     data class IdentityViewData(
@@ -125,11 +101,27 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
         var description: String? = "",
         override var type: String? = "",
         override var typeResourceId: Int = R.drawable.ic_other
-    ): BaseViewData(), SpinnerItemViewData {
-
+    ) : BaseViewData(), SpinnerItemViewData {
         // Required to support Spinner display of Identity
         override fun toString(): String {
             return name ?: ""
+        }
+
+        override fun toModel() = Identity(
+            id,
+            name,
+            type,
+            description
+        )
+
+        companion object {
+            fun of(identity: Identity) = IdentityViewData(
+                identity.id,
+                identity.name,
+                identity.description,
+                identity.type,
+                AtomicIoRepository.getTypeResourceId(identity.type)
+            )
         }
     }
 }

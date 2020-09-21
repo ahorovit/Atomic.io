@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Habit
-import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
@@ -38,19 +37,8 @@ class HabitPageViewModel(application: Application)
     // @todo: this is duplicated from IdentityPageViewModel
     private fun mapIdentitiesToIdentityViews() {
         allIdentities = Transformations.map(atomicIoRepo.allIdentities) { repoIdentities ->
-            repoIdentities.map { identityToIdentityView(it) }
+            repoIdentities.map { IdentityViewData.of(it) }
         }
-    }
-
-    // @todo: this is duplicated from IdentityPageViewModel
-    private fun identityToIdentityView(identity: Identity): IdentityViewData {
-        return IdentityViewData(
-            identity.id,
-            identity.name,
-            identity.description,
-            identity.type,
-            atomicIoRepo.getTypeResourceId(identity.type)
-        )
     }
 
     override fun getSpinnerItemResourceId(type: String?): Int? {
@@ -89,7 +77,7 @@ class HabitPageViewModel(application: Application)
 
     private fun mapAllHabitsToHabitViewData() {
         allHabits = Transformations.map(atomicIoRepo.allHabits) { repoHabits ->
-            repoHabits.map { habitToHabitViewData(it) }
+            repoHabits.map { HabitViewData.of(it) }
         }
     }
 
@@ -97,15 +85,15 @@ class HabitPageViewModel(application: Application)
         return HabitViewData()
     }
 
-    fun updateHabit(habitView: HabitViewData) {
+    fun updateHabit(habitViewData: HabitViewData) {
         GlobalScope.launch {
-            val habit = habitViewDataToHabit(habitView)
+            val habit = habitViewData.toModel()
             atomicIoRepo.updateHabit(habit)
         }
     }
 
-    fun insertHabit(habitView: HabitViewData) {
-        val habit = habitViewDataToHabit(habitView)
+    fun insertHabit(habitViewData: HabitViewData) {
+        val habit = habitViewData.toModel()
 
         GlobalScope.launch {
             val habitId = atomicIoRepo.addHabit(habit)
@@ -119,32 +107,9 @@ class HabitPageViewModel(application: Application)
 
     override fun deleteItem(itemViewData: BaseViewData) {
         GlobalScope.launch {
-            val habit = habitViewDataToHabit(itemViewData as HabitViewData)
+            val habit = (itemViewData as HabitViewData).toModel()
             atomicIoRepo.deleteHabit(habit)
         }
-    }
-
-    private fun habitViewDataToHabit(habitView: HabitViewData): Habit {
-        val habit = habitView.id?.let {
-            atomicIoRepo.getHabit(it)
-        } ?: atomicIoRepo.createHabit()
-
-        habit.id = habitView.id
-        habit.identityId = habitView.identityId
-        habit.name = habitView.name
-        habit.type = habitView.type
-
-        return habit
-    }
-
-    private fun habitToHabitViewData(habit: Habit): HabitViewData {
-        return HabitViewData(
-            habit.id,
-            habit.identityId,
-            habit.name,
-            habit.type,
-            atomicIoRepo.getTypeResourceId(habit.type)
-        )
     }
 
     data class HabitViewData(
@@ -156,6 +121,23 @@ class HabitPageViewModel(application: Application)
     ) : BaseViewData(), SpinnerItemViewData {
         override fun toString(): String {
             return name ?: ""
+        }
+
+        override fun toModel() = Habit(
+            id,
+            identityId,
+            name,
+            type
+        )
+
+        companion object {
+            fun of(habit: Habit) = HabitViewData(
+                habit.id,
+                habit.identityId,
+                habit.name,
+                habit.type,
+                AtomicIoRepository.getTypeResourceId(habit.type)
+            )
         }
     }
 }
