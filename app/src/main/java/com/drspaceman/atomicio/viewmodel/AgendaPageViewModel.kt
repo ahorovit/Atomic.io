@@ -1,10 +1,7 @@
 package com.drspaceman.atomicio.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Task
@@ -12,6 +9,7 @@ import com.drspaceman.atomicio.ui.BaseDialogFragment
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 import org.threeten.bp.temporal.ChronoUnit
@@ -24,25 +22,20 @@ class AgendaPageViewModel(
 
     private var allHabits: LiveData<List<HabitViewData>>? = null
 
-    var tasks: LiveData<List<TaskViewData>>? = null
-        get() {
-            if (field == null) {
-                loadTasks()
-            }
+    private var _tasks = MediatorLiveData<List<TaskViewData>>()
+    val tasks: LiveData<List<TaskViewData>>
+        get() = _tasks
 
-            return field
-        }
-
-    private fun loadTasks() {
+    init {
         viewModelScope.launch {
             agenda = atomicIoRepo.getAgendaForDate(LocalDate.now())
 
             agenda.id?.let { agendaId ->
-                tasks = Transformations.map(atomicIoRepo.getTasksForAgenda(agendaId)) { repoTasks ->
+                _tasks.addSource(Transformations.map(atomicIoRepo.getTasksForAgenda(agendaId)) { repoTasks ->
                     repoTasks.map {
                         TaskViewData.of(it)
                     }
-                }
+                }) { _tasks.value = it }
             }
         }
     }

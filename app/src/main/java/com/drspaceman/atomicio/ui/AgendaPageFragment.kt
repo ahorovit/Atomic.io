@@ -66,25 +66,14 @@ class AgendaPageFragment : BasePageFragment() {
     }
 
     override fun loadPageData() {
-        viewModel.tasks?.observe(
+        viewModel.tasks.observe(
             viewLifecycleOwner,
             Observer<List<TaskViewData>> {
-                it?.let {
-                    todaysTasks = it
-                    onAgendaChange()
-                }
+                todaysTasks = it
+                onAgendaChange()
             }
         )
     }
-
-
-    // @todo: get rid of Calendar
-    private var editEventDate: Calendar? = null
-    private var editEventStartTime: Calendar? = null
-    private var editEventEndTime: Calendar? = null
-
-
-    private var editTaskDraft: TaskViewData? = null
 
     private fun onAgendaChange() {
         // The day view needs a list of event views and a corresponding list of event time ranges
