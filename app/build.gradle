@@ -2,11 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.appspector.sdk'
+apply plugin: 'com.appspector.sdk' // @todo: remove
+apply plugin: 'dagger.hilt.android.plugin'
 
 repositories {
     maven {
-        url "https://maven.appspector.com/artifactory/android-sdk"
+        url "https://maven.appspector.com/artifactory/android-sdk" // @todo: remove
     }
 }
 
@@ -67,13 +68,13 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     implementation 'com.linkedin.android.tachyon:tachyon:1.0.2'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
-    implementation "com.appspector:android-sdk:$appspector_version"
-
-
+    implementation "com.appspector:android-sdk:$appspector_version" // @todo: remove
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     testImplementation 'junit:junit:4.13'
     testImplementation "androidx.room:room-testing:$room_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    releaseImplementation "com.appspector:android-sdk-noop:$appspector_version"
+    releaseImplementation "com.appspector:android-sdk-noop:$appspector_version" // @todo: remove
 }
