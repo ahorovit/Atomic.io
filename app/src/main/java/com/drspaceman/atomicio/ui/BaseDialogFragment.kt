@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModel
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 
 // @todo remove
@@ -21,7 +22,7 @@ abstract class BaseDialogFragment: DialogFragment() {
     protected abstract val viewModel: BaseViewModel
 
      // @todo: make lateinit instead of nullable
-    protected abstract val itemViewData: BaseViewModel.BaseViewData?
+    protected abstract val itemViewData: BaseViewModel.BaseViewData
 
     protected lateinit var parentActivity: AppCompatActivity
 
@@ -106,10 +107,10 @@ abstract class BaseDialogFragment: DialogFragment() {
         dismiss()
     }
 
-    interface SpinnerViewModel {
-//        fun getSpinnerItems(): Any
-        fun getSpinnerItemResourceId(type: String?): Int?
-    }
+//    interface SpinnerViewModel {
+////        fun getSpinnerItems(): Any
+//        fun getSpinnerItemResourceId(type: String?): Int?
+//    }
 
     interface SpinnerItemViewData {
         var type: String?

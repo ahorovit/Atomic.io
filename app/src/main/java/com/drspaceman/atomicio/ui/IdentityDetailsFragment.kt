@@ -4,14 +4,17 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
+import com.drspaceman.atomicio.viewmodel.SpinnerViewModelInterface
+import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.android.synthetic.main.fragment_identity_details.*
 import kotlinx.android.synthetic.main.spinner_layout.*
 
+@AndroidEntryPoint
 class IdentityDetailsFragment : BaseDialogFragment() {
 
     private lateinit var spinnerAdapter: ArrayAdapter<String>
@@ -22,7 +25,7 @@ class IdentityDetailsFragment : BaseDialogFragment() {
         arguments?.getLong(ARG_IDENTITY_ID, 0)
     }
 
-    override val viewModel by viewModels<IdentityPageViewModel>()
+    override val viewModel by activityViewModels<IdentityPageViewModel>()
 
     override lateinit var itemViewData: IdentityViewData
 
@@ -52,7 +55,7 @@ class IdentityDetailsFragment : BaseDialogFragment() {
     }
 
     override fun populateTypeSpinner() {
-        val spinnerViewModel = viewModel as SpinnerViewModel
+        val spinnerViewModel = viewModel as SpinnerViewModelInterface
 
         spinnerAdapter = ArrayAdapter(
             parentActivity,

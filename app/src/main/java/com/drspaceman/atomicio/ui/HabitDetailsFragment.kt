@@ -3,18 +3,19 @@ package com.drspaceman.atomicio.ui
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.fragment.app.activityViewModels
 
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
+import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.android.synthetic.main.fragment_habit_details.*
 import kotlinx.android.synthetic.main.spinner_layout.*
 
+@AndroidEntryPoint
 class HabitDetailsFragment : BaseDialogFragment() {
     override val layoutId: Int = R.layout.fragment_habit_details
 
@@ -22,7 +23,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
         arguments?.getLong(ARG_HABIT_ID, 0)
     }
 
-    override val viewModel by viewModels<HabitPageViewModel>()
+    override val viewModel by activityViewModels<HabitPageViewModel>()
 
     override lateinit var itemViewData: HabitViewData
 
@@ -32,10 +33,8 @@ class HabitDetailsFragment : BaseDialogFragment() {
         viewModel.habit.observe(
             viewLifecycleOwner,
             {
-                it?.let {
-                    itemViewData = it
-                    populateExistingValues()
-                }
+                itemViewData = it
+                populateExistingValues()
             }
         )
     }
@@ -99,16 +98,14 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
         spinner.adapter = spinnerAdapter
 
-        viewModel.getSpinnerItems()?.observe(
+        viewModel.getSpinnerItems().observe(
             viewLifecycleOwner,
-            Observer<List<IdentityViewData>> {
-                it?.let {
-                    spinnerAdapter.setSpinnerItems(it)
+            {
+                spinnerAdapter.setSpinnerItems(it)
 
-                    // This needs to run again in case the Fragment loaded before identities
-                    // were loaded
-                    setSpinnerSelection()
-                }
+                // This needs to run again in case the Fragment loaded before identities
+                // were loaded
+                setSpinnerSelection()
             }
         )
     }

@@ -1,12 +1,12 @@
 package com.drspaceman.atomicio.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 
-abstract class BaseViewModel(application: Application): AndroidViewModel(application) {
+abstract class BaseViewModel(
+    protected var atomicIoRepo: AtomicIoRepository
+): ViewModel() {
 
-    protected var atomicIoRepo = AtomicIoRepository(this.getApplication())
 
     abstract fun deleteItem(itemViewData: BaseViewData)
 

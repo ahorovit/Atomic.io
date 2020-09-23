@@ -1,10 +1,12 @@
 package com.drspaceman.atomicio.viewmodel
 
 import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Task
+import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.coroutines.GlobalScope
@@ -14,9 +16,11 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 import org.threeten.bp.temporal.ChronoUnit
 
-class AgendaPageViewModel(
-    application: Application
-) : BaseViewModel(application), BaseDialogFragment.SpinnerViewModel {
+class AgendaPageViewModel
+@ViewModelInject
+constructor(
+    atomicIoRepo: AtomicIoRepository,
+) : BaseViewModel(atomicIoRepo), SpinnerViewModelInterface {
 
     private lateinit var agenda: Agenda
 

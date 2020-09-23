@@ -27,7 +27,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
     override val viewModel by activityViewModels<AgendaPageViewModel>()
 
-    override var itemViewData: TaskViewData? = null
+    override lateinit var itemViewData: TaskViewData
 
 
     override fun setObservers() {

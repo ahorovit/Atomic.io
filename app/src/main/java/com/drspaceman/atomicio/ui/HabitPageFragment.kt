@@ -5,8 +5,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.HabitRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_habits.*
 
+@AndroidEntryPoint
 class HabitPageFragment : BasePageFragment() {
     override val viewModel by activityViewModels<HabitPageViewModel>()
     override val layoutId: Int = R.layout.fragment_habits
