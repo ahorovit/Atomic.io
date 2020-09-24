@@ -1,10 +1,8 @@
 package com.drspaceman.atomicio.repository
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.db.AtomicIoDao
-import com.drspaceman.atomicio.db.AtomicIoDatabase
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity

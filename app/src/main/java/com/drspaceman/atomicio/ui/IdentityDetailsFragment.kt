@@ -97,7 +97,7 @@ class IdentityDetailsFragment : BaseDialogFragment() {
     }
 
     override fun saveItemDetails() {
-        val writeIdentityView = itemViewData ?: return
+        val writeIdentityView = itemViewData
 
         val name = editTextName.text.toString()
         if (name.isEmpty()) {

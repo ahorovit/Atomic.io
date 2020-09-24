@@ -43,7 +43,7 @@ class IdentityPageViewModel
         }
     }
 
-    override fun deleteItem(itemViewData: BaseViewModel.BaseViewData) {
+    override fun deleteItem(itemViewData: BaseViewData) {
         GlobalScope.launch {
             atomicIoRepo.deleteIdentity((itemViewData as IdentityViewData).toModel())
         }
@@ -63,7 +63,7 @@ class IdentityPageViewModel
         var description: String? = "",
         override var type: String? = "",
         override var typeResourceId: Int = R.drawable.ic_other
-    ) : BaseViewModel.BaseViewData(), SpinnerItemViewData {
+    ) : BaseViewData(), SpinnerItemViewData {
 
         override fun toString(): String {
             return name ?: ""

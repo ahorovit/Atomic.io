@@ -111,7 +111,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
     }
 
     override fun saveItemDetails() {
-        val writeHabitView = itemViewData ?: return
+        val writeHabitView = itemViewData
 
         val name = editTextHabitName.text.toString()
         if (name.isEmpty()) {

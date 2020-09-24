@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModel
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 
 // @todo remove
@@ -69,10 +68,6 @@ abstract class BaseDialogFragment: DialogFragment() {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         parentActivity = context as AppCompatActivity
@@ -97,10 +92,10 @@ abstract class BaseDialogFragment: DialogFragment() {
         }
     }
 
-    protected fun deleteSelectedItem() {
+    private fun deleteSelectedItem() {
         val item = itemViewData
 
-        item?.id?.let {
+        item.id?.let {
             viewModel.deleteItem(item)
         }
 

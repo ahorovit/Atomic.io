@@ -17,7 +17,7 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
 
     protected lateinit var recyclerViewAdapter: BaseRecyclerViewAdapter
 
-    protected lateinit var fab: FloatingActionButton
+    private lateinit var fab: FloatingActionButton
 
     protected abstract fun getEditDialogFragment(id: Long?): BaseDialogFragment
 
@@ -39,10 +39,6 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
         fab.setOnClickListener {
             showEditDetailsDialog(null)
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
     // @todo: add options to menu
