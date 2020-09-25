@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.drspaceman.atomicio.R
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

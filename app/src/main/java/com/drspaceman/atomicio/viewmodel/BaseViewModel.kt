@@ -7,8 +7,8 @@ abstract class BaseViewModel(
     protected var atomicIoRepo: AtomicIoRepository
 ): ViewModel() {
 
-
     abstract fun deleteItem(itemViewData: BaseViewData)
+    abstract fun clearItem()
 
     abstract class BaseViewData {
         abstract var id: Long?

@@ -47,6 +47,10 @@ constructor(
         _task.value = TaskViewData.of(atomicIoRepo.getTask(taskId))
     }
 
+    override fun clearItem() {
+        _task.value = getNewTaskView()
+    }
+
     fun getNewTaskView(): TaskViewData {
         return TaskViewData()
     }

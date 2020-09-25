@@ -29,6 +29,10 @@ class IdentityPageViewModel
         }
     }
 
+    override fun clearItem() {
+        _identity.value = getNewIdentityView()
+    }
+
     fun getNewIdentityView() = IdentityViewData(type = "Other")
 
     fun insertIdentity(newIdentityView: IdentityViewData) {

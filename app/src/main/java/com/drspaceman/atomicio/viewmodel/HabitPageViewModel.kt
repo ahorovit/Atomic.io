@@ -48,6 +48,10 @@ constructor(
         TODO("Not yet implemented")
     }
 
+    override fun clearItem() {
+        _habit.value = getNewHabitViewData()
+    }
+
     fun getNewHabitViewData() = HabitViewData()
 
     fun updateHabit(habitViewData: HabitViewData) {

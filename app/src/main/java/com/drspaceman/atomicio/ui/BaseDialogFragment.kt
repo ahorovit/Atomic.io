@@ -1,7 +1,9 @@
 package com.drspaceman.atomicio.ui
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,7 +59,7 @@ abstract class BaseDialogFragment: DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         populateTypeSpinner()
-        loadDataItem() // @todo: Move into onCreateView to avoid subtle lifecycle bugs?
+        loadDataItem()
 
         saveButton.setOnClickListener {
             saveItemDetails()
@@ -83,6 +85,17 @@ abstract class BaseDialogFragment: DialogFragment() {
         }
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        viewModel.clearItem()
+        super.onCancel(dialog)
+    }
+
+    override fun dismiss() {
+        viewModel.clearItem()
+        super.dismiss()
+    }
+
+    // @todo: move conditional logic into viewModel
     protected fun loadDataItem() {
         itemId?.let {
             loadExistingItem(it)
@@ -101,11 +114,6 @@ abstract class BaseDialogFragment: DialogFragment() {
 
         dismiss()
     }
-
-//    interface SpinnerViewModel {
-////        fun getSpinnerItems(): Any
-//        fun getSpinnerItemResourceId(type: String?): Int?
-//    }
 
     interface SpinnerItemViewData {
         var type: String?
