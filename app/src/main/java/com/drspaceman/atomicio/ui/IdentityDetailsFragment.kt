@@ -107,6 +107,7 @@ class IdentityDetailsFragment : BaseDialogFragment() {
         writeIdentityView.let {
             it.name = name
             it.type = spinner.selectedItem as String
+            it.description = spinner.selectedItem as String // @todo get rid of redundant fields
         }
 
         writeIdentityView.id?.let {
