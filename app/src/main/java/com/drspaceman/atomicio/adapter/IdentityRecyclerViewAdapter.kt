@@ -14,7 +14,7 @@ class IdentityRecyclerViewAdapter(
     hostFragment: EditItemListener
 ) : BaseRecyclerViewAdapter(items, hostFragment){
 
-    override val layoutId: Int = R.layout.identity_view_holder
+    override val layoutId: Int = R.layout.identity_header
 
     override fun createViewHolder(view: View) = IdentityViewHolder(view, hostFragment)
 
