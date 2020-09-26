@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/agendaFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/habitSequenceRecyclerView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.linkedin.android.tachyon.DayView
+            android:id="@+id/dayView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/large_padding"
+            app:dividerHeight="@dimen/divider_height"
+            app:endHour="@integer/end_hour"
+            app:eventMargin="@dimen/small_padding"
+            app:halfHourDividerColor="@color/half_hour_divider"
+            app:halfHourHeight="@dimen/half_hour_height"
+            app:hourDividerColor="@color/hour_divider"
+            app:hourLabelMarginEnd="@dimen/large_padding"
+            app:hourLabelWidth="@dimen/hour_label_width"
+            app:startHour="@integer/start_hour" />
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -25,4 +37,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_habit" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

@@ -2,27 +2,21 @@ package com.drspaceman.atomicio
 
 import android.app.Application
 import com.appspector.sdk.AppSpector
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 class AtomicIoApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // We recommend to start AppSpector from Application#onCreate method
-
-        // You can start all monitors
+        // Enables monitoring app with AppSpector
+        // @todo: hide API KEY
         AppSpector
             .build(this)
             .withDefaultMonitors()
             .run("android_MWZiYmIwOWYtNGI1Ny00ZGMwLTg2MTAtNjBmOTZjNTgxMGY5")
 
-        // Or you can select monitors that you want to use
-        AppSpector
-            .build(this)
-            .addPerformanceMonitor()
-            .addHttpMonitor() // If specific monitor is not added then this kind of data won't be tracked and available on the web
-            .addLogMonitor()
-            .addScreenshotMonitor()
-            .addSQLMonitor()
-            .run("android_MWZiYmIwOWYtNGI1Ny00ZGMwLTg2MTAtNjBmOTZjNTgxMGY5")
+        // Initialize timezone information for ThreeTen Android Backport library support
+        // NOTE: This provides JSR-310 Date classes for legacy Android devices (SDK < OREO/26)
+        AndroidThreeTen.init(this)
     }
 }

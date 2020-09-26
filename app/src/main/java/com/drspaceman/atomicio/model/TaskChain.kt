@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class HabitSequence(
+data class TaskChain(
     @PrimaryKey(autoGenerate = true) var id: Long? = null,
     var name: String? = "",
     var startTime: String? = "",

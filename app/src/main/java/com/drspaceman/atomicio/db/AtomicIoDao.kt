@@ -4,29 +4,28 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
-import com.drspaceman.atomicio.model.Habit
-import com.drspaceman.atomicio.model.HabitSequence
-import com.drspaceman.atomicio.model.Identity
+import com.drspaceman.atomicio.model.*
+import org.threeten.bp.LocalDate
 
 @Dao
 interface AtomicIoDao {
-    @Query("SELECT * FROM HabitSequence")
-    fun loadAllHabitSequences(): LiveData<List<HabitSequence>>
+    @Query("SELECT * FROM TaskChain")
+    fun loadAllTaskChains(): LiveData<List<TaskChain>>
 
-    @Query("SELECT * FROM HabitSequence WHERE id = :sequenceId")
-    fun loadHabitSequence(sequenceId: Long): HabitSequence
+    @Query("SELECT * FROM TaskChain WHERE id = :sequenceId")
+    fun loadTaskChain(sequenceId: Long): TaskChain
 
-    @Query("SELECT * FROM HabitSequence WHERE id = :sequenceId")
-    fun loadLiveHabitSequence(sequenceId: Long): LiveData<HabitSequence>
+    @Query("SELECT * FROM TaskChain WHERE id = :sequenceId")
+    fun loadLiveTaskChain(sequenceId: Long): LiveData<TaskChain>
 
     @Insert(onConflict = IGNORE)
-    fun insertHabitSequence(sequence: HabitSequence)
+    fun insertTaskChain(sequence: TaskChain)
 
     @Update(onConflict = REPLACE)
-    fun updateHabitSequence(sequence: HabitSequence)
+    fun updateTaskChain(sequence: TaskChain)
 
     @Delete
-    fun deleteHabitSequence(sequence: HabitSequence)
+    fun deleteTaskChain(sequence: TaskChain)
 
 
     // @TODO: Break up DAOs?
@@ -74,4 +73,37 @@ interface AtomicIoDao {
 
     @Delete
     fun deleteHabit(habit: Habit)
+
+
+    // @TODO: Break up DAOs?
+
+
+    @Insert(onConflict = IGNORE)
+    fun insertTask(task: Task): Long?
+
+    @Query("SELECT * FROM Task WHERE id = :taskId")
+    fun loadLiveTask(taskId: Long): LiveData<Task>
+
+    @Query("SELECT * FROM Task WHERE id = :taskId")
+    fun loadTask(taskId: Long): Task
+
+    @Query("SELECT * FROM Task WHERE agendaId = :agendaId")
+    fun getTasksForAgenda(agendaId: Long?): LiveData<List<Task>>
+
+    @Update(onConflict = REPLACE)
+    fun updateTask(task: Task)
+
+    @Delete
+    fun deleteTask(task: Task)
+
+
+    // @TODO: Break up DAOs?
+
+
+    @Query("SELECT * from Agenda WHERE date = :date")
+    suspend fun getAgenda(date: LocalDate): Agenda?
+
+    @Insert(onConflict = IGNORE)
+    suspend fun insertAgenda(agenda: Agenda): Long?
+
 }

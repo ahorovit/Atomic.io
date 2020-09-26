@@ -7,7 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.adapter.IdentitySpinnerAdapter
+import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
@@ -24,15 +24,14 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
     override val viewModel by viewModels<HabitPageViewModel>()
 
-    override var itemViewData: HabitViewData? = null
+    override lateinit var itemViewData: HabitViewData
 
-    private lateinit var spinnerAdapter: IdentitySpinnerAdapter
+    private lateinit var spinnerAdapter: ViewDataSpinnerAdapter
 
-
-    override fun observeItem(id: Long) {
-        viewModel.getHabit(id)?.observe(
-            this,
-            Observer<HabitViewData> {
+    override fun setObservers() {
+        viewModel.habit.observe(
+            viewLifecycleOwner,
+            {
                 it?.let {
                     itemViewData = it
                     populateExistingValues()
@@ -41,27 +40,27 @@ class HabitDetailsFragment : BaseDialogFragment() {
         )
     }
 
+    override fun loadExistingItem(id: Long) {
+        viewModel.loadHabit(id)
+    }
+
     override fun populateExistingValues() {
-        itemViewData?.let { habitView ->
-            editTextHabitName.setText(habitView.name)
-            setSpinnerSelection()
-        }
+        editTextHabitName.setText(itemViewData.name)
+        setSpinnerSelection()
     }
 
     override fun getNewItem() {
-        itemViewData = viewModel.getNewHabitView()
+        itemViewData = viewModel.getNewHabitViewData()
     }
 
     override fun setSpinnerSelection() {
-        val habit = itemViewData ?: return
-
-        habit.identityId?.let { parentIdentityId ->
-            val position = spinnerAdapter.getIdentityPosition(parentIdentityId)
+        itemViewData.identityId?.let { parentIdentityId ->
+            val position = spinnerAdapter.getViewDatumPosition(parentIdentityId)
 
             // @todo: figure out why occasionally image is [NA] null while selection text is correct
             position?.let {
                 spinner.setSelection(it)
-                spinnerImage.setImageResource(habit.typeResourceId)
+                spinnerImage.setImageResource(itemViewData.typeResourceId)
             }
         }
     }
@@ -93,7 +92,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
      * saved Identities in the DB
      */
     private fun initializeSpinnerAdapter() {
-        spinnerAdapter = IdentitySpinnerAdapter(
+        spinnerAdapter = ViewDataSpinnerAdapter(
             parentActivity,
             android.R.layout.simple_spinner_item
         )
