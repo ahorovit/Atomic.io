@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
@@ -21,7 +20,7 @@ class AgendaPageFragment : BasePageFragment() {
 
     override val viewModel by activityViewModels<AgendaPageViewModel>()
 
-    var todaysTasks: List<TaskViewData>? = null
+    private var todaysTasks: List<TaskViewData>? = null
 
 
     // @todo: implement without Calendar class
@@ -68,7 +67,7 @@ class AgendaPageFragment : BasePageFragment() {
     override fun loadPageData() {
         viewModel.tasks.observe(
             viewLifecycleOwner,
-            Observer<List<TaskViewData>> {
+            {
                 todaysTasks = it
                 onAgendaChange()
             }
@@ -77,8 +76,8 @@ class AgendaPageFragment : BasePageFragment() {
 
     private fun onAgendaChange() {
         // The day view needs a list of event views and a corresponding list of event time ranges
-        var taskViews: MutableList<View?>? = null
-        var taskTimeRanges: MutableList<EventTimeRange?>? = null
+        var taskViews: MutableList<View?>?
+        var taskTimeRanges: MutableList<EventTimeRange?>?
         val tasks: List<TaskViewData> = todaysTasks ?: return
 
 

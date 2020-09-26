@@ -1,26 +1,29 @@
 package com.drspaceman.atomicio.viewmodel
 
-import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.model.Agenda
-import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Task
-import com.drspaceman.atomicio.ui.BaseDialogFragment
-import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
+import com.drspaceman.atomicio.repository.AtomicIoRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
 import org.threeten.bp.temporal.ChronoUnit
 
-class AgendaPageViewModel(
-    application: Application
-) : BaseViewModel(application), BaseDialogFragment.SpinnerViewModel {
+class AgendaPageViewModel
+@ViewModelInject
+constructor(
+    atomicIoRepo: AtomicIoRepository,
+    private val habitsDelegate: HabitsDelegate,
+) : BaseViewModel(atomicIoRepo), HabitsViewModelInterface by habitsDelegate {
 
     private lateinit var agenda: Agenda
 
-    private var allHabits: LiveData<List<HabitViewData>>? = null
+    private val _task = MutableLiveData<TaskViewData>()
+    val task
+        get() = _task
+
 
     private var _tasks = MediatorLiveData<List<TaskViewData>>()
     val tasks: LiveData<List<TaskViewData>>
@@ -40,33 +43,12 @@ class AgendaPageViewModel(
         }
     }
 
-    fun getTask(taskId: Long): LiveData<TaskViewData>? {
-        val task = MutableLiveData(TaskViewData())
-
-        viewModelScope.launch {
-            task.value = TaskViewData.of(atomicIoRepo.getTask(taskId))
-        }
-
-        return task
+    fun loadTask(taskId: Long) = viewModelScope.launch {
+        _task.value = TaskViewData.of(atomicIoRepo.getTask(taskId))
     }
 
-    /**
-     * Habit Spinner is a list of parent Identities, so we need to observe with
-     * LiveData
-     */
-    fun getSpinnerItems(): LiveData<List<HabitViewData>>? {
-        if (allHabits == null) {
-            mapHabitsToHabitViews()
-        }
-
-        return allHabits
-    }
-
-    // @todo: this is duplicated from IdentityPageViewModel
-    private fun mapHabitsToHabitViews() {
-        allHabits = Transformations.map(atomicIoRepo.allHabits) { repoHabits ->
-            repoHabits.map { HabitViewData.of(it) }
-        }
+    override fun clearItem() {
+        _task.value = getNewTaskView()
     }
 
     fun getNewTaskView(): TaskViewData {
@@ -94,12 +76,6 @@ class AgendaPageViewModel(
             atomicIoRepo.deleteTask(task)
         }
     }
-
-
-    override fun getSpinnerItemResourceId(type: String?): Int? {
-        TODO("Not yet implemented")
-    }
-
 
     data class TaskViewData(
         override var id: Long? = null,

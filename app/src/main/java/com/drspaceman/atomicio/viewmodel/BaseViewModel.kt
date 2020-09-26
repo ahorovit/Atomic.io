@@ -1,14 +1,14 @@
 package com.drspaceman.atomicio.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 
-abstract class BaseViewModel(application: Application): AndroidViewModel(application) {
-
-    protected var atomicIoRepo = AtomicIoRepository(this.getApplication())
+abstract class BaseViewModel(
+    protected var atomicIoRepo: AtomicIoRepository
+): ViewModel() {
 
     abstract fun deleteItem(itemViewData: BaseViewData)
+    abstract fun clearItem()
 
     abstract class BaseViewData {
         abstract var id: Long?

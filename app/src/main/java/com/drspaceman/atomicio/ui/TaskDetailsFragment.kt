@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
@@ -27,17 +26,35 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
     override val viewModel by activityViewModels<AgendaPageViewModel>()
 
-    override var itemViewData: TaskViewData? = null
+    override lateinit var itemViewData: TaskViewData
 
-
-    override fun setObservers() {
-        TODO("Not yet implemented")
-    }
-
-    private lateinit var spinnerAdapter: ViewDataSpinnerAdapter
+    private var spinnerAdapter: ViewDataSpinnerAdapter? = null
 
     // If title has been manually edited, don't autofill habit name
     private var isTitleEdited = false
+
+    override fun setObservers() {
+        viewModel.task.observe(
+            this,
+            {
+                itemViewData = it
+                populateExistingValues()
+            }
+        )
+
+        viewModel.habits.observe(
+            viewLifecycleOwner,
+            { habitViewData ->
+                spinnerAdapter?.let {
+                    it.setSpinnerItems(habitViewData)
+
+                    // This needs to run again in case the Fragment loaded before identities
+                    // were loaded
+                    setSpinnerSelection()
+                }
+            }
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,26 +87,28 @@ class TaskDetailsFragment : BaseDialogFragment() {
             return
         }
 
-        val pickedTime = LocalTime.parse(data.extras?.getString(TimePickerFragment.TIME_PICKER_RESULT))
+        val pickedTime = LocalTime.parse(
+            data.extras?.getString(TimePickerFragment.TIME_PICKER_RESULT)
+        )
 
         when (requestCode) {
             TimePickerFragment.START_TIME_CODE -> {
                 editStartTime.setText(formatTime(pickedTime))
-                itemViewData?.startTime = pickedTime
+                itemViewData.startTime = pickedTime
             }
             TimePickerFragment.END_TIME_CODE -> {
                 editEndTime.setText(formatTime(pickedTime))
-                itemViewData?.endTime = pickedTime
+                itemViewData.endTime = pickedTime
             }
         }
     }
 
     private fun formatTime(time: LocalTime?): String {
-        var displayTime: String = ""
+        var displayTime = ""
 
-        time?.let{
+        time?.let {
             displayTime = it.format(DateTimeFormatter.ofPattern("hh:mm a"))
-            if (displayTime[0] == '0'){
+            if (displayTime[0] == '0') {
                 displayTime = displayTime.substring(1)
             }
         }
@@ -98,19 +117,11 @@ class TaskDetailsFragment : BaseDialogFragment() {
     }
 
     override fun loadExistingItem(id: Long) {
-        viewModel.getTask(id)?.observe(
-            this,
-            Observer<TaskViewData> {
-                it?.let {
-                    itemViewData = it
-                    populateExistingValues()
-                }
-            }
-        )
+        viewModel.loadTask(id)
     }
 
     override fun populateExistingValues() {
-        itemViewData?.let {
+        itemViewData.let {
             editTextTaskName.setText(it.title)
             editStartTime.setText(formatTime(it.startTime))
             editEndTime.setText(formatTime(it.endTime))
@@ -119,7 +130,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
     }
 
     override fun saveItemDetails() {
-        val writeTaskView = itemViewData ?: return
+        val writeTaskView = itemViewData
 
         // @todo: validate end > start
         if (
@@ -149,22 +160,20 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
     // @TODO: (mostly) duplicated from HabitDetailsFragment
     override fun setSpinnerSelection() {
-        val task = itemViewData ?: return
+        val task = itemViewData
 
         task.habitId?.let { parentHabitId ->
-            val position = spinnerAdapter.getViewDatumPosition(parentHabitId)
+            val position = spinnerAdapter?.getViewDatumPosition(parentHabitId)
 
             // @todo: figure out why occasionally image is [NA] null while selection text is correct
             position?.let {
-                val habit = spinnerAdapter.getItem(it) as HabitViewData
+                val habit = spinnerAdapter?.getItem(it) as HabitViewData
 
                 spinner.setSelection(it)
                 spinnerImage.setImageResource(habit.typeResourceId)
-                itemViewData?.let { task ->
-                    task.habitId = habit.id
-                }
+                itemViewData.habitId = habit.id
 
-                if(!isTitleEdited){
+                if (!isTitleEdited) {
                     editTextTaskName.setText(habit.name)
                 }
 
@@ -186,7 +195,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
                 ) {
                     val habit = parent.getItemAtPosition(position) as HabitViewData
                     spinnerImage.setImageResource(habit.typeResourceId)
-                    if(!isTitleEdited){
+                    if (!isTitleEdited) {
                         editTextTaskName.setText(habit.name)
                     }
                 }
@@ -206,21 +215,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
         )
 
         spinner.adapter = spinnerAdapter
-
-        viewModel.getSpinnerItems()?.observe(
-            viewLifecycleOwner,
-            Observer<List<HabitViewData>> {
-                it?.let {
-                    spinnerAdapter.setSpinnerItems(it)
-
-                    // This needs to run again in case the Fragment loaded before identities
-                    // were loaded
-                    setSpinnerSelection()
-                }
-            }
-        )
     }
-
 
     companion object {
         // @todo: could be communicated simply through the shared viewModel?

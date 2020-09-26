@@ -5,9 +5,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.IdentityRecyclerViewAdapter
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.android.synthetic.main.fragment_identities.*
 
+@AndroidEntryPoint
 class IdentityPageFragment : BasePageFragment() {
     override val viewModel by activityViewModels<IdentityPageViewModel>()
 

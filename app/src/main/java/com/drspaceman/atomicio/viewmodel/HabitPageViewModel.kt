@@ -1,39 +1,34 @@
 package com.drspaceman.atomicio.viewmodel
 
-import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
-import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class HabitPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
-
-    private val _habits = MediatorLiveData<List<HabitViewData>>()
-    val habits: LiveData<List<HabitViewData>>
-        get() = _habits
-
+class HabitPageViewModel
+@ViewModelInject
+constructor(
+    atomicIoRepo: AtomicIoRepository,
+    private val identitiesDelegate: IdentitiesDelegate,
+    private val habitsDelegate: HabitsDelegate,
+    private val spinnerDelegate: SpinnerDelegate
+) : BaseViewModel(atomicIoRepo),
+    IdentitiesViewModelInterface by identitiesDelegate,
+    HabitsViewModelInterface by habitsDelegate,
+    SpinnerViewModelInterface by spinnerDelegate
+{
     private val _habit = MutableLiveData<HabitViewData>()
     val habit
         get() = _habit
 
     init {
-        viewModelScope.launch {
-            _habits.addSource(Transformations.map(atomicIoRepo.allHabits) { repoHabits ->
-                repoHabits.map { habit ->
-                    HabitViewData.of(habit)
-                }
-            }) { habitViewData -> _habits.value = habitViewData }
-        }
+        _habit.value = getNewHabitViewData()
     }
-
-
-    private var allIdentities: LiveData<List<IdentityViewData>>? = null
-
 
     fun loadHabit(habitId: Long) {
         viewModelScope.launch {
@@ -45,29 +40,17 @@ class HabitPageViewModel(application: Application) : BaseViewModel(application),
      * Habit Spinner is a list of parent Identities, so we need to observe with
      * LiveData
      */
-    fun getSpinnerItems(): LiveData<List<IdentityViewData>>?
-    {
-        if (allIdentities == null) {
-            mapIdentitiesToIdentityViews()
-        }
-
-        return allIdentities
-    }
-
-    // @todo: this is duplicated from IdentityPageViewModel
-    private fun mapIdentitiesToIdentityViews() {
-        allIdentities = Transformations.map(atomicIoRepo.allIdentities) { repoIdentities ->
-            repoIdentities.map { IdentityViewData.of(it) }
-        }
+    fun getSpinnerItems(): LiveData<List<IdentityViewData>> {
+        return identitiesDelegate.identities
     }
 
     override fun getSpinnerItemResourceId(type: String?): Int? {
         TODO("Not yet implemented")
     }
 
-
-
-
+    override fun clearItem() {
+        _habit.value = getNewHabitViewData()
+    }
 
     fun getNewHabitViewData() = HabitViewData()
 
@@ -83,7 +66,6 @@ class HabitPageViewModel(application: Application) : BaseViewModel(application),
             atomicIoRepo.addHabit(habitViewData.toModel())
         }
     }
-
 
     override fun deleteItem(itemViewData: BaseViewData) {
         GlobalScope.launch {

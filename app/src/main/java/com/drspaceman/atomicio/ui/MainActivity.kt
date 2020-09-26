@@ -1,7 +1,6 @@
 package com.drspaceman.atomicio.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -9,13 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.drspaceman.atomicio.R
-import kotlinx.android.synthetic.main.content_main.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     /*
-
+        // For exporting DB --> seed data (not working)
     adb shell "run-as com.drspaceman.atomicio cat /data/user/0/com.drspaceman.atomicio/databases/AtomicIo" > app/src/main/assets/seed_data.db
 
      */

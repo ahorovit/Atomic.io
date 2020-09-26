@@ -1,21 +1,27 @@
 package com.drspaceman.atomicio.repository
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.db.AtomicIoDatabase
+import com.drspaceman.atomicio.db.AtomicIoDao
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.model.Task
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.threeten.bp.LocalDate
+import javax.inject.Inject
 
-class AtomicIoRepository(context: Context) {
+@ActivityRetainedScoped
+class AtomicIoRepository
+@Inject
+constructor(
+    private val dao: AtomicIoDao
+) {
 
-    private var db = AtomicIoDatabase.getInstance(context)
-    private var dao = db.atomicIoDao()
+//    private var db = AtomicIoDatabase.getInstance(context)
+//    private var dao = db.atomicIoDao()
 
     // @todo: standardize
     val allIdentities: LiveData<List<Identity>>

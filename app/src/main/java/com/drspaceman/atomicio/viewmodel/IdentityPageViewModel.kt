@@ -1,41 +1,36 @@
 package com.drspaceman.atomicio.viewmodel
 
-import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
-import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class IdentityPageViewModel(application: Application) : BaseViewModel(application), SpinnerViewModel {
-
-    private val _identities = MediatorLiveData<List<IdentityViewData>>()
-    val identities: LiveData<List<IdentityViewData>>
-        get() = _identities
-
+class IdentityPageViewModel
+    @ViewModelInject
+    constructor(
+        atomicIoRepo: AtomicIoRepository,
+        private val identitiesDelegate: IdentitiesDelegate,
+        private val spinnerDelegate: SpinnerDelegate
+    ) : BaseViewModel(atomicIoRepo),
+    IdentitiesViewModelInterface by identitiesDelegate,
+    SpinnerViewModelInterface by spinnerDelegate
+{
     private val _identity = MutableLiveData<IdentityViewData>()
     val identity: LiveData<IdentityViewData>
         get() = _identity
-
-    init {
-        viewModelScope.launch {
-            _identities.addSource(Transformations.map(atomicIoRepo.allIdentities) { repoIdentities ->
-                repoIdentities.map { identity ->
-                    IdentityViewData.of(identity)
-                }
-            }) { identityViewData ->
-                _identities.value = identityViewData
-            }
-        }
-    }
 
     fun loadIdentity(identityId: Long) {
         viewModelScope.launch {
             _identity.value = IdentityViewData.of(atomicIoRepo.getIdentity(identityId))
         }
+    }
+
+    override fun clearItem() {
+        _identity.value = getNewIdentityView()
     }
 
     fun getNewIdentityView() = IdentityViewData(type = "Other")
@@ -60,13 +55,10 @@ class IdentityPageViewModel(application: Application) : BaseViewModel(applicatio
 
     /**
      * Identity spinner is a simple list of identity types (strings)
+     * @todo: move to Delegate?
      */
     fun getSpinnerItems(): List<String> {
         return AtomicIoRepository.identityTypes
-    }
-
-    override fun getSpinnerItemResourceId(type: String?): Int? {
-        return AtomicIoRepository.getTypeResourceId(type)
     }
 
     data class IdentityViewData(
