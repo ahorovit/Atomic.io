@@ -45,6 +45,10 @@ android {
         jvmTarget = "1.8"
     }
 
+    androidExtensions {
+        experimental = true
+    }
+
 }
 
 dependencies {
@@ -73,7 +77,9 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_viewmodel_version"
     kapt "androidx.hilt:hilt-compiler:$hilt_viewmodel_version"
-    
+    implementation "com.xwray:groupie:$groupie_version"
+    implementation "com.xwray:groupie-kotlin-android-extensions:$groupie_version"
+
     testImplementation 'junit:junit:4.13'
     testImplementation "androidx.room:room-testing:$room_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
