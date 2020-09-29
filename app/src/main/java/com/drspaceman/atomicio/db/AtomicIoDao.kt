@@ -53,17 +53,21 @@ interface AtomicIoDao {
     fun deleteIdentityById(identityId: Long)
 
     @Query(
+//        "select identity.id as identityId " +
+//                "FROM Identity identity"
+
+
         "SELECT " +
-                "Identity.id as identityId, " +
-                "Identity.name as identityName, " +
-                "Identity.type as identityType, " +
-                "Habit.id as habitId " +
-                "Habit.name as habitName " +
-                "FROM Identity " +
-                "LEFT JOIN Habit ON Identity.id = Habit.identityId " +
+                "identity.id as identityId, " +
+                "identity.name as identityName, " +
+                "identity.type as identityType, " +
+                "habit.id as habitId, " +
+                "habit.name as habitName " +
+                "FROM Identity identity " +
+                "LEFT JOIN Habit habit ON identity.id = habit.identityId " +
                 "ORDER BY identityName ASC, habitName ASC"
     )
-    suspend fun loadIdentitiesWithHabits(): LiveData<List<IdentityHabit>>
+    fun loadIdentitiesWithHabits(): LiveData<List<IdentityHabit>>
 
     data class IdentityHabit(
         val identityId: Long?,
