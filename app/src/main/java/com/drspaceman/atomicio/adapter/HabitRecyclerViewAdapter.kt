@@ -4,7 +4,7 @@ import android.view.View
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
-import kotlinx.android.synthetic.main.habit_view_holder.view.*
+import kotlinx.android.synthetic.main.habit_list_item.view.*
 
 class HabitRecyclerViewAdapter(
     items: List<HabitViewData>?,

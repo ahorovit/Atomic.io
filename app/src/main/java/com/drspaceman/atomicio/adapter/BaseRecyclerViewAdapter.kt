@@ -46,6 +46,6 @@ abstract class BaseRecyclerViewAdapter(
     }
 
     interface EditItemListener {
-        fun editItemDetails(identityId: Long?)
+        fun editItemDetails(itemId: Long?)
     }
 }

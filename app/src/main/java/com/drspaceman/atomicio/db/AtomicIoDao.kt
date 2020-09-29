@@ -52,6 +52,27 @@ interface AtomicIoDao {
     @Query("DELETE FROM Identity WHERE id = :identityId")
     fun deleteIdentityById(identityId: Long)
 
+    @Query(
+        "SELECT " +
+                "Identity.id as identityId, " +
+                "Identity.name as identityName, " +
+                "Identity.type as identityType, " +
+                "Habit.id as habitId " +
+                "Habit.name as habitName " +
+                "FROM Identity " +
+                "LEFT JOIN Habit ON Identity.id = Habit.identityId " +
+                "ORDER BY identityName ASC, habitName ASC"
+    )
+    suspend fun loadIdentitiesWithHabits(): LiveData<List<IdentityHabit>>
+
+    data class IdentityHabit(
+        val identityId: Long?,
+        val identityName: String?,
+        val identityType: String?,
+        val habitId: Long?,
+        val habitName: String?
+    )
+
 
     // @TODO: Break up DAOs?
 
