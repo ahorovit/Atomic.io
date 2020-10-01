@@ -1,5 +1,8 @@
 package com.drspaceman.atomicio.adapter
 
+import android.animation.Animator
+import android.view.ViewPropertyAnimator
+import android.widget.ImageView
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter.EditItemListener
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
@@ -22,9 +25,12 @@ class IdentityListHeader(
             identityLabelTextView.text = identity.name
             identityTypeImageView.setImageResource(identity.typeResourceId)
 
-            expandIcon.setImageResource(getIcon())
+            val animator = animateExpandIcon(expandIcon)
             expandIcon.setOnClickListener {
                 expandableGroup.onToggleExpanded()
+                animator.rotationBy(if (expandableGroup.isExpanded) 180F else -180F)
+                    .setDuration(300)
+                    .start();
             }
 
             parentLayout.setOnClickListener {
@@ -33,16 +39,34 @@ class IdentityListHeader(
         }
     }
 
+    private fun animateExpandIcon(expandIcon: ImageView): ViewPropertyAnimator {
+        expandIcon.setImageResource(if (expandableGroup.isExpanded) R.drawable.ic_collapse else R.drawable.ic_expand)
+
+        val animator = expandIcon.animate()
+        animator.setListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) {
+                expandIcon.isClickable = false
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                expandIcon.isClickable = true
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+                // Not needed
+            }
+
+            override fun onAnimationRepeat(animation: Animator?) {
+                // Not needed
+            }
+        })
+
+        return animator
+    }
+
     override fun setExpandableGroup(onToggleListener: ExpandableGroup) {
         expandableGroup = onToggleListener
     }
 
     override fun getLayout() = R.layout.identity_header
-
-    private fun getIcon(): Int {
-        return if (expandableGroup.isExpanded)
-            android.R.drawable.arrow_down_float
-        else
-            android.R.drawable.arrow_up_float
-    }
 }

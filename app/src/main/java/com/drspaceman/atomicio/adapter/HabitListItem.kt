@@ -15,7 +15,6 @@ class HabitListItem(
 ): Item() {
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.habitLabelTextView.text = habit.name
-        viewHolder.habitTypeImageView.setImageResource(habit.typeResourceId)
 
         viewHolder.parentLayout.setOnClickListener {
             hostFragment.editItemDetails(habit.id)

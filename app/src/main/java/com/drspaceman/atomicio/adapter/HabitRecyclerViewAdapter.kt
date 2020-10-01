@@ -21,7 +21,7 @@ class HabitRecyclerViewAdapter(
 
         var habitId: Long? = null
         val habitLabelTextView = itemView.habitLabelTextView
-        val habitTypeImageView = itemView.habitTypeImageView
+//        val habitTypeImageView = itemView.habitTypeImageView
 
         init {
             itemView.setOnClickListener {
@@ -35,7 +35,7 @@ class HabitRecyclerViewAdapter(
             val habit = viewData as HabitViewData
             habitId = habit.id
             habitLabelTextView.text = habit.name
-            habitTypeImageView.setImageResource(habit.typeResourceId)
+//            habitTypeImageView.setImageResource(habit.typeResourceId)
         }
     }
 }
