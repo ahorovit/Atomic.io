@@ -29,13 +29,6 @@ class IdentityPageFragment : BasePageFragment() {
 
     private val touchCallback: TouchCallback by lazy {
         object : SwipeTouchCallback() {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: ViewHolder,
-                target: ViewHolder
-            ): Boolean {
-                return false
-            }
 
             override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
                 val item = groupAdapter.getItem(viewHolder.adapterPosition)
