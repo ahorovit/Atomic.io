@@ -3,6 +3,7 @@ package com.drspaceman.atomicio.adapter
 import android.animation.Animator
 import android.view.ViewPropertyAnimator
 import android.widget.ImageView
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter.EditItemListener
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
@@ -69,4 +70,7 @@ class IdentityListHeader(
     }
 
     override fun getLayout() = R.layout.identity_header
+
+    override fun getSwipeDirs(): Int = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+
 }

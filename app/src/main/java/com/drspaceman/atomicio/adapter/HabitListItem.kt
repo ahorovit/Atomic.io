@@ -1,5 +1,6 @@
 package com.drspaceman.atomicio.adapter
 
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter.EditItemListener
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
@@ -16,10 +17,12 @@ class HabitListItem(
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.habitLabelTextView.text = habit.name
 
-        viewHolder.parentLayout.setOnClickListener {
-            hostFragment.editItemDetails(habit.id)
-        }
+//        viewHolder.parentLayout.setOnClickListener {
+//            hostFragment.editItemDetails(habit.id)
+//        }
     }
 
     override fun getLayout() = R.layout.habit_list_item
+
+    override fun getSwipeDirs(): Int = ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
 }
