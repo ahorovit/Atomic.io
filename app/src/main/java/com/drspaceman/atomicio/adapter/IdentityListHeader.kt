@@ -45,8 +45,9 @@ class IdentityListHeader(
             expandImageView = expandIcon
             expandAnimator = getAnimatorForImageView(expandImageView)
 
-            // @todo: sometimes icon is not being correctly selected upon drawing
-            expandImageView.setImageResource(if (isExpanded) R.drawable.ic_collapse else R.drawable.ic_expand)
+            // Recycled view might already have rotated icon
+            expandImageView.rotation = if(isExpanded) -180F else 0F
+
             expandImageView.setOnClickListener {
                 hostFragment.onToggleExpand(this@IdentityListHeader, identity.id)
                 toggle()
