@@ -126,6 +126,10 @@ constructor(
         dao.loadIdentitiesWithHabits()
     }
 
+    suspend fun deleteHabitsForIdentity(identityId: Long) = withContext(Dispatchers.IO) {
+        dao.deleteHabitsForIdentity(identityId)
+    }
+
     companion object {
         private val allTypes = hashMapOf(
             "Academic" to R.drawable.ic_academic,

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
@@ -117,6 +118,27 @@ class IdentityDetailsFragment : BaseDialogFragment() {
         }
 
         dismiss()
+    }
+
+    override fun deleteSelectedItem() {
+
+        itemViewData.id?.let {
+
+            AlertDialog.Builder(parentActivity)
+                .setTitle(getString(R.string.confirm_identity_delete))
+                .setMessage("Child Habits will become 'Misc Habits' if not deleted")
+                .setPositiveButton("Delete Habits") { _, _ ->
+                    viewModel.deleteIdentityAndHabits(itemViewData)
+                    dismiss()
+                }
+                .setNegativeButton("Keep Habits") { _, _ ->
+                    viewModel.deleteItem(itemViewData)
+                    dismiss()
+                }
+                .setNeutralButton("Cancel", null)
+                .create()
+                .show()
+        }
     }
 
     companion object {

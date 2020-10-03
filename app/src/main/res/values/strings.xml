@@ -48,5 +48,6 @@
     <string name="expand_list_icon">Expand List Icon</string>
     <string name="add_habit_icon">Add Habit Icon</string>
     <string name="edit_identity">Edit Identity</string>
+    <string name="confirm_identity_delete">Delete Habits for this Identity?</string>
 
 </resources>

@@ -13,7 +13,7 @@ import com.drspaceman.atomicio.viewmodel.BaseViewModel
 // @todo remove
 import kotlinx.android.synthetic.main.crud_buttons.*
 
-abstract class BaseDialogFragment: DialogFragment() {
+abstract class BaseDialogFragment : DialogFragment() {
 
     protected abstract val layoutId: Int
 
@@ -21,7 +21,7 @@ abstract class BaseDialogFragment: DialogFragment() {
 
     protected abstract val viewModel: BaseViewModel
 
-     // @todo: make lateinit instead of nullable
+    // @todo: make lateinit instead of nullable
     protected abstract val itemViewData: BaseViewModel.BaseViewData
 
     protected lateinit var parentActivity: AppCompatActivity
@@ -104,13 +104,8 @@ abstract class BaseDialogFragment: DialogFragment() {
         }
     }
 
-    private fun deleteSelectedItem() {
-        val item = itemViewData
-
-        item.id?.let {
-            viewModel.deleteItem(item)
-        }
-
+    protected open fun deleteSelectedItem() {
+        viewModel.deleteItem(itemViewData)
         dismiss()
     }
 

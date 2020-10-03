@@ -53,10 +53,6 @@ interface AtomicIoDao {
     fun deleteIdentityById(identityId: Long)
 
     @Query(
-//        "select identity.id as identityId " +
-//                "FROM Identity identity"
-
-
         "SELECT " +
                 "identity.id as identityId, " +
                 "identity.name as identityName, " +
@@ -76,6 +72,9 @@ interface AtomicIoDao {
         val habitId: Long?,
         val habitName: String?
     )
+
+    @Query("DELETE FROM Habit WHERE identityId = :identityId")
+    suspend fun deleteHabitsForIdentity(identityId: Long)
 
 
     // @TODO: Break up DAOs?
@@ -130,5 +129,6 @@ interface AtomicIoDao {
 
     @Insert(onConflict = IGNORE)
     suspend fun insertAgenda(agenda: Agenda): Long?
+
 
 }

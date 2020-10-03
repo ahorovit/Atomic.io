@@ -31,6 +31,7 @@ constructor(
     }
 
     init {
+        // @todo: there must be a simpler way to do this
         viewModelScope.launch {
             _identityHabits.addSource(atomicIoRepo.loadIdentityHabits()) {
                 _identityHabits.value = it
@@ -77,8 +78,7 @@ constructor(
                     habitList = mutableListOf()
                 }
 
-                if (identityHabit.habitId != null)
-                {
+                if (identityHabit.habitId != null) {
                     habitList.add(
                         HabitViewData(
                             identityHabit.habitId,
@@ -123,8 +123,10 @@ constructor(
     }
 
     override fun deleteItem(itemViewData: BaseViewData) {
-        GlobalScope.launch {
-            atomicIoRepo.deleteIdentity((itemViewData as IdentityViewData).toModel())
+        itemViewData.id?.let {
+            GlobalScope.launch {
+                atomicIoRepo.deleteIdentity((itemViewData as IdentityViewData).toModel())
+            }
         }
     }
 
@@ -134,6 +136,15 @@ constructor(
      */
     fun getSpinnerItems(): List<String> {
         return AtomicIoRepository.identityTypes
+    }
+
+    fun deleteIdentityAndHabits(identityViewData: IdentityViewData) {
+        identityViewData.id?.let {
+            GlobalScope.launch {
+                atomicIoRepo.deleteHabitsForIdentity(it)
+                deleteItem(identityViewData)
+            }
+        }
     }
 
 
