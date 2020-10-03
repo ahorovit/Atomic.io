@@ -3,13 +3,11 @@ package com.drspaceman.atomicio.viewmodel
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.db.AtomicIoDao
 import com.drspaceman.atomicio.db.AtomicIoDao.IdentityHabit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
-import com.xwray.groupie.ExpandableGroup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,41 +30,28 @@ constructor(
         }
     }
 
+    init {
+        viewModelScope.launch {
+            _identityHabits.addSource(atomicIoRepo.loadIdentityHabits()) {
+                _identityHabits.value = it
+            }
+        }
+    }
+
     private val _identity = MutableLiveData<IdentityViewData>()
     val identity: LiveData<IdentityViewData>
         get() = _identity
 
-    init {
-        viewModelScope.launch {
+    private val _expandedIdentityId = MutableLiveData<Long?>()
+    val expandedIdentityId: LiveData<Long?>
+        get() = _expandedIdentityId
 
-            _identityHabits.addSource(atomicIoRepo.loadIdentityHabits()) {
-                _identityHabits.value = it
-            }
+    fun setExpandedIdentityId(expandedId: Long?) {
+        _expandedIdentityId.value = expandedId
+    }
 
-//
-//            val identityHabits = liveData(context = viewModelScope.coroutineContext) {
-//
-//
-//
-//                val live = atomicIoRepo.loadIdentityHabits().distinctUntilChanged()
-//                emit(toIdentityWithHabitViews(live))
-//            }
-
-
-//            val identityHabitViewData: LiveData<List<IdentityWithHabitsViewData>> = liveData {
-//                val result = toIdentityWithHabitViews(identityHabits)
-//
-//                emit()
-//            }
-
-
-//            val live = Transformations.map(atomicIoRepo.loadIdentityHabits()) {
-//                toIdentityWithHabitViews(it)
-//            }
-//
-//
-//            _identityHabits.addSource(live) { _identityHabits.value = it }
-        }
+    fun clearExpandedIdentityId() {
+        _expandedIdentityId.value = null
     }
 
     private suspend fun toIdentityWithHabitViews(identityHabits: List<IdentityHabit>) =
@@ -109,7 +94,7 @@ constructor(
             // store last item
             identityViewData?.let { result.add(IdentityWithHabitsViewData(it, habitList)) }
 
-            result as List<IdentityWithHabitsViewData>
+            result
         }
 
 
@@ -150,6 +135,7 @@ constructor(
     fun getSpinnerItems(): List<String> {
         return AtomicIoRepository.identityTypes
     }
+
 
     data class IdentityWithHabitsViewData(
         val identity: IdentityViewData,

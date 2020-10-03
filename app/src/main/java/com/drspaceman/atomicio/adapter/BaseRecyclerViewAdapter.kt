@@ -48,4 +48,9 @@ abstract class BaseRecyclerViewAdapter(
     interface EditItemListener {
         fun editItemDetails(itemId: Long?)
     }
+
+    interface NestedEditItemListener: EditItemListener {
+        fun editSubItemDetails(itemId: Long?)
+        fun onToggleExpand(identityListHeader: IdentityListHeader, identityId: Long?)
+    }
 }

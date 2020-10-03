@@ -64,7 +64,7 @@ abstract class BaseDialogFragment: DialogFragment() {
             saveItemDetails()
         }
 
-        addHabitButton.setOnClickListener {
+        addIcon.setOnClickListener {
             deleteSelectedItem()
         }
     }

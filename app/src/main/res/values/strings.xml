@@ -44,5 +44,9 @@
     <string name="ok_button">OK</string>
     <string name="cancel_button">CANCEL</string>
     <string name="add_habits">ADD HABITS</string>
+    <string name="identity_type_icon">Identity Type Icon</string>
+    <string name="expand_list_icon">Expand List Icon</string>
+    <string name="add_habit_icon">Add Habit Icon</string>
+    <string name="edit_identity">Edit Identity</string>
 
 </resources>

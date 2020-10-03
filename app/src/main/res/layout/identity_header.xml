@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parentLayout"
     android:layout_width="match_parent"
@@ -23,6 +24,7 @@
             android:layout_marginVertical="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="32dp"
+            android:contentDescription="@string/identity_type_icon"
             app:srcCompat="@drawable/ic_other" />
 
         <TextView
@@ -34,23 +36,35 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/addHabitButton"
+        <ImageView
+            android:id="@+id/addIcon"
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="16dp"
-            android:tint="@android:color/white"
-            app:srcCompat="@drawable/ic_plus" />
+            android:contentDescription="@string/add_habit_icon"
+            app:srcCompat="@drawable/ic_plus"
+            app:tint="@android:color/white" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
+            android:id="@+id/editIcon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/edit_identity"
+            app:srcCompat="@drawable/ic_edit"
+            app:tint="@android:color/white" />
+
+        <ImageView
             android:id="@+id/expandIcon"
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="16dp"
-            android:tint="@android:color/white"
-            app:srcCompat="@drawable/ic_expand" />
+            android:contentDescription="@string/expand_list_icon"
+            app:srcCompat="@drawable/ic_expand"
+            app:tint="@android:color/white" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

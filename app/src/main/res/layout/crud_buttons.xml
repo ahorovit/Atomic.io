@@ -17,7 +17,7 @@
         android:contentDescription="@string/save_button" />
 
     <ImageButton
-        android:id="@+id/addHabitButton"
+        android:id="@+id/addIcon"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_margin="16dp"
