@@ -43,5 +43,6 @@
     <string name="end_label">End</string>
     <string name="ok_button">OK</string>
     <string name="cancel_button">CANCEL</string>
+    <string name="add_habits">ADD HABITS</string>
 
 </resources>

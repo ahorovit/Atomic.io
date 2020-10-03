@@ -4,11 +4,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.HabitListItem
+import com.drspaceman.atomicio.adapter.IdentityListFooter
 import com.drspaceman.atomicio.adapter.IdentityListHeader
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Section
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,12 +35,27 @@ class IdentityPageFragment : BasePageFragment() {
 
                 groupAdapter.clear() // @todo: can we edit instead of starting fresh?
 
-                identitiesWithHabits.forEach {
+                identitiesWithHabits.forEach { identityWithHabit ->
+
+
+
                     val group = ExpandableGroup(
-                        IdentityListHeader(it.identity, this)
+                        IdentityListHeader(identityWithHabit.identity, this)
                     ).apply {
-                        for (habit in it.habits) {
-                            add(HabitListItem(habit, this@IdentityPageFragment))
+
+                        val habitList = identityWithHabit.habits.map {
+                            HabitListItem(it, this@IdentityPageFragment)
+                        }
+
+
+//                        val items = mutableListOf<HabitListItem>()
+//                        for (habit in identityWithHabit.habits) {
+//                            items.add(HabitListItem(habit, this@IdentityPageFragment))
+//                        }
+                        addAll(habitList)
+
+                        if (habitList.isEmpty()) {
+                            add(IdentityListFooter(identityWithHabit.identity, this@IdentityPageFragment))
                         }
                     }
 

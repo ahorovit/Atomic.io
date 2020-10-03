@@ -3,7 +3,6 @@ package com.drspaceman.atomicio.ui
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,7 +64,7 @@ abstract class BaseDialogFragment: DialogFragment() {
             saveItemDetails()
         }
 
-        deleteButton.setOnClickListener {
+        addHabitButton.setOnClickListener {
             deleteSelectedItem()
         }
     }

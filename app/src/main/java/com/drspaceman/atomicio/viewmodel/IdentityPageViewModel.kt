@@ -92,15 +92,18 @@ constructor(
                     habitList = mutableListOf()
                 }
 
-                habitList.add(
-                    HabitViewData(
-                        identityHabit.habitId,
-                        identityHabit.identityId,
-                        identityHabit.habitName,
-                        identityHabit.identityType,
-                        AtomicIoRepository.getTypeResourceId(identityHabit.identityType)
+                if (identityHabit.habitId != null)
+                {
+                    habitList.add(
+                        HabitViewData(
+                            identityHabit.habitId,
+                            identityHabit.identityId,
+                            identityHabit.habitName,
+                            identityHabit.identityType,
+                            AtomicIoRepository.getTypeResourceId(identityHabit.identityType)
+                        )
                     )
-                )
+                }
             }
 
             // store last item

@@ -35,11 +35,20 @@
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/addHabitButton"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="16dp"
+            android:tint="@android:color/white"
+            app:srcCompat="@drawable/ic_plus" />
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/expandIcon"
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             android:tint="@android:color/white"
             app:srcCompat="@drawable/ic_expand" />
     </LinearLayout>

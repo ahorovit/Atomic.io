@@ -33,8 +33,9 @@ class IdentityListHeader(
                     .start();
             }
 
-            parentLayout.setOnClickListener {
+            parentLayout.setOnLongClickListener {
                 hostFragment.editItemDetails(identity.id)
+                false
             }
         }
     }
