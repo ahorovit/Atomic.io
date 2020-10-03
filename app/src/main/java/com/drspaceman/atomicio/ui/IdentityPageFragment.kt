@@ -50,6 +50,7 @@ class IdentityPageFragment : BasePageFragment(), NestedEditItemListener {
         viewModel.identityHabits.observe(
             viewLifecycleOwner,
             { identitiesWithHabits ->
+                expandedIdentity = null
                 groupAdapter.clear()
 
                 identitiesWithHabits.forEach { identityWithHabits ->

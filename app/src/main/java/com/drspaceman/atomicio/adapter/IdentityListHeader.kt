@@ -23,7 +23,7 @@ class IdentityListHeader(
     private lateinit var expandAnimator: ViewPropertyAnimator
 
     fun collapse() {
-        if (expandableGroup.isExpanded) {
+        if (isExpanded) {
             toggle()
         }
     }
@@ -45,7 +45,7 @@ class IdentityListHeader(
             expandImageView = expandIcon
             expandAnimator = getAnimatorForImageView(expandImageView)
 
-            // For some reason, expandedGroup.isExpanded doesn't reliably yield the correct icon
+            // @todo: sometimes icon is not being correctly selected upon drawing
             expandImageView.setImageResource(if (isExpanded) R.drawable.ic_collapse else R.drawable.ic_expand)
             expandImageView.setOnClickListener {
                 hostFragment.onToggleExpand(this@IdentityListHeader, identity.id)
