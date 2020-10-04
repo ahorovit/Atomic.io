@@ -40,13 +40,6 @@ constructor(
         }
     }
 
-//    private val _orphanHabits = MediatorLiveData<List<Habit>>()
-//    val orphanHabits = _orphanHabits.switchMap {
-//        liveData(context = viewModelScope.coroutineContext + Dispatchers.Default) {
-//            emit(toMiscIdentityWithHabitViews(it))
-//        }
-//    }
-
     init {
         // @todo: there must be a simpler way to do this
         _identityHabits.value = Pair(listOf(),listOf())

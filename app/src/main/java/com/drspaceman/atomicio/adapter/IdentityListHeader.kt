@@ -1,10 +1,13 @@
 package com.drspaceman.atomicio.adapter
 
 import android.animation.Animator
+import android.opengl.Visibility
+import android.view.View
 import android.view.ViewPropertyAnimator
 import android.widget.ImageView
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter.NestedEditItemListener
+import com.drspaceman.atomicio.ui.IdentityPageFragment
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.ExpandableItem
@@ -46,12 +49,21 @@ class IdentityListHeader(
             expandAnimator = getAnimatorForImageView(expandImageView)
 
             // Recycled view might already have rotated icon
-            expandImageView.rotation = if(isExpanded) -180F else 0F
+            expandImageView.rotation = if (isExpanded) -180F else 0F
 
             expandImageView.setOnClickListener {
                 hostFragment.onToggleExpand(this@IdentityListHeader, identity.id)
                 toggle()
             }
+
+            val editVisibility = if (identity.id == IdentityPageFragment.MISC_HABITS_ID) {
+                View.INVISIBLE
+            } else {
+                View.VISIBLE
+            }
+
+            addIcon.visibility = editVisibility
+            editIcon.visibility = editVisibility
         }
     }
 
