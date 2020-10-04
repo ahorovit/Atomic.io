@@ -52,29 +52,10 @@ class HabitDetailsFragment : BaseDialogFragment() {
     }
 
     // @todo: remove
-    override fun loadDataItem() {
-
-//        itemViewData = viewModel.getHabit(itemId, identityId)
-//        setSpinnerSelection()
-
-
-//        itemId?.let {
-//            loadExistingItem(it)
-//        } ?: run {
-//            getNewItem()
-//
-//            identityId?.let {
-//                itemViewData.identityId = it
-//            }
-//
-//            setSpinnerSelection()
-//        }
-    }
+    override fun loadDataItem() {}
 
     // @todo: remove
-    override fun loadExistingItem(id: Long) {
-//        viewModel.loadHabit(id)
-    }
+    override fun loadExistingItem(id: Long) {}
 
     override fun populateExistingValues() {
         editTextHabitName.setText(itemViewData.name)
@@ -82,9 +63,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
     }
 
     // @todo: remove
-    override fun getNewItem() {
-//        itemViewData = viewModel.getNewHabitViewData()
-    }
+    override fun getNewItem() {}
 
     override fun setSpinnerSelection() {
         itemViewData.identityId?.let { parentIdentityId ->

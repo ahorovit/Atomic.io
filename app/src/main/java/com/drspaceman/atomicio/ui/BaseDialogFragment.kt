@@ -64,7 +64,7 @@ abstract class BaseDialogFragment : DialogFragment() {
             saveItemDetails()
         }
 
-        addIcon.setOnClickListener {
+        deleteButton.setOnClickListener {
             deleteSelectedItem()
         }
     }

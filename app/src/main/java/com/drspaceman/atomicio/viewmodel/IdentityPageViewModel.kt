@@ -25,7 +25,14 @@ constructor(
     IdentitiesViewModelInterface by identitiesDelegate,
     SpinnerViewModelInterface by spinnerDelegate {
 
+    /**
+     * Tracks DB: first = Identities + Child Habits, second: Habits with no parent Identity
+     */
     private val _identityHabits = MediatorLiveData<Pair<List<IdentityHabit>,List<Habit>>>()
+
+    /**
+     * Translates _identityHabits into one usable list for expandable list of identites
+     */
     val identityHabits = _identityHabits.switchMap {
         liveData(context = viewModelScope.coroutineContext + Dispatchers.Default) {
             val allIdentityHabits = mutableListOf<IdentityWithHabitsViewData>()
@@ -41,7 +48,6 @@ constructor(
     }
 
     init {
-        // @todo: there must be a simpler way to do this
         _identityHabits.value = Pair(listOf(),listOf())
 
         viewModelScope.launch {
@@ -59,6 +65,9 @@ constructor(
     val identity: LiveData<IdentityViewData>
         get() = _identity
 
+    /**
+     * Helps view track which Identity is expanded
+     */
     private val _expandedIdentityId = MutableLiveData<Long?>()
     val expandedIdentityId: LiveData<Long?>
         get() = _expandedIdentityId
@@ -71,6 +80,9 @@ constructor(
         _expandedIdentityId.value = null
     }
 
+    /**
+     * translates list of Identity/Habit JOIN rows into Object holding IdentityViewData+List<HabitViewData>
+     */
     private suspend fun toIdentityWithHabitViews(identityHabits: List<IdentityHabit>) =
         withContext(Dispatchers.Default) {
             val result = mutableListOf<IdentityWithHabitsViewData>()
@@ -113,6 +125,9 @@ constructor(
             result
         }
 
+    /**
+     * translates list of Habits with no parent Identity into "Misc Habits" IdentityViewData+List<HabitViewData>
+     */
     private suspend fun toMiscIdentityWithHabitViews(orphanHabits: List<Habit>) =
         withContext(Dispatchers.Default) {
                 IdentityWithHabitsViewData(
@@ -175,7 +190,9 @@ constructor(
         }
     }
 
-
+    /**
+     * Supports Expandable List of Identity (Level1) with child Habits (Level2)
+     */
     data class IdentityWithHabitsViewData(
         val identity: IdentityViewData,
         val habits: List<HabitViewData>
