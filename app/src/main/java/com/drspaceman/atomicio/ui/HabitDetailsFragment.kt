@@ -19,18 +19,30 @@ import kotlinx.android.synthetic.main.spinner_layout.*
 class HabitDetailsFragment : BaseDialogFragment() {
     override val layoutId: Int = R.layout.fragment_habit_details
 
-    override val itemId: Long? by lazy {
-        arguments?.getLong(ARG_HABIT_ID, 0)
-    }
-
     override val viewModel by activityViewModels<HabitPageViewModel>()
 
     override lateinit var itemViewData: HabitViewData
 
     private lateinit var spinnerAdapter: ViewDataSpinnerAdapter
 
+    override var itemId: Long? = null
+    var identityId: Long? = null
+
+    override fun setArguments(args: Bundle?) {
+        args?.let {
+            val default = -1L
+            val bundleItemId = it.getLong(ARG_HABIT_ID, default)
+            val bundleIdentityId = it.getLong(ARG_IDENTITY_ID, default)
+
+            itemId = if (bundleItemId == default) null else bundleItemId
+            identityId = if (bundleIdentityId == default) null else bundleIdentityId
+        }
+
+        super.setArguments(args)
+    }
+
     override fun setObservers() {
-        viewModel.habit.observe(
+        viewModel.getHabit(itemId, identityId).observe(
             viewLifecycleOwner,
             {
                 itemViewData = it
@@ -39,8 +51,29 @@ class HabitDetailsFragment : BaseDialogFragment() {
         )
     }
 
+    // @todo: remove
+    override fun loadDataItem() {
+
+//        itemViewData = viewModel.getHabit(itemId, identityId)
+//        setSpinnerSelection()
+
+
+//        itemId?.let {
+//            loadExistingItem(it)
+//        } ?: run {
+//            getNewItem()
+//
+//            identityId?.let {
+//                itemViewData.identityId = it
+//            }
+//
+//            setSpinnerSelection()
+//        }
+    }
+
+    // @todo: remove
     override fun loadExistingItem(id: Long) {
-        viewModel.loadHabit(id)
+//        viewModel.loadHabit(id)
     }
 
     override fun populateExistingValues() {
@@ -48,8 +81,9 @@ class HabitDetailsFragment : BaseDialogFragment() {
         setSpinnerSelection()
     }
 
+    // @todo: remove
     override fun getNewItem() {
-        itemViewData = viewModel.getNewHabitViewData()
+//        itemViewData = viewModel.getNewHabitViewData()
     }
 
     override fun setSpinnerSelection() {
@@ -134,16 +168,21 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
     companion object {
         private const val ARG_HABIT_ID = "extra_habit_id"
+        private const val ARG_IDENTITY_ID = "extra_identity_id"
 
-        fun newInstance(itemId: Long?): HabitDetailsFragment {
+        fun newInstance(itemId: Long?, identityId: Long? = null): HabitDetailsFragment {
             val instance = HabitDetailsFragment()
+            val args = Bundle()
 
             itemId?.let {
-                val args = Bundle()
-                args.putLong(ARG_HABIT_ID, itemId)
-                instance.arguments = args
+                args.putLong(ARG_HABIT_ID, it)
             }
 
+            identityId?.let {
+                args.putLong(ARG_IDENTITY_ID, it)
+            }
+
+            instance.arguments = args
             return instance
         }
     }

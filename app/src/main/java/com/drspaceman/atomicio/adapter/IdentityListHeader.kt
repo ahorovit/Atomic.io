@@ -37,7 +37,7 @@ class IdentityListHeader(
             identityLabelTextView.text = identity.name
 
             addIcon.setOnClickListener {
-                hostFragment.editSubItemDetails(null)
+                hostFragment.editSubItemDetails(null, identity.id)
             }
 
             editIcon.setOnClickListener {

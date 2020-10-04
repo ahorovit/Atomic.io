@@ -96,9 +96,9 @@ class IdentityPageFragment : BasePageFragment(), NestedEditItemListener {
         }
     }
 
-    override fun editSubItemDetails(itemId: Long?) {
+    override fun editSubItemDetails(itemId: Long?, identityId: Long?) {
         val fragmentManager = activity?.supportFragmentManager ?: return
-        val editDetailsFragment = HabitDetailsFragment.newInstance(itemId)
+        val editDetailsFragment = HabitDetailsFragment.newInstance(itemId, identityId)
         editDetailsFragment.show(fragmentManager, "${editDetailsFragment::class}_tag")
     }
 

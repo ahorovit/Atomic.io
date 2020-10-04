@@ -22,18 +22,18 @@ constructor(
     HabitsViewModelInterface by habitsDelegate,
     SpinnerViewModelInterface by spinnerDelegate
 {
-    private val _habit = MutableLiveData<HabitViewData>()
-    val habit
-        get() = _habit
+    private val _habit = MutableLiveData(HabitViewData())
 
-    init {
-        _habit.value = getNewHabitViewData()
-    }
-
-    fun loadHabit(habitId: Long) {
-        viewModelScope.launch {
-            _habit.value = HabitViewData.of(atomicIoRepo.getHabit(habitId))
+    fun getHabit(habitId: Long?, identityId: Long?): LiveData<HabitViewData> {
+        if (habitId != null) {
+            viewModelScope.launch {
+                _habit.value = HabitViewData.of(atomicIoRepo.getHabit(habitId))
+            }
+        } else if (identityId != null) {
+            _habit.value = HabitViewData(identityId = identityId)
         }
+
+        return _habit
     }
 
     /**
@@ -44,15 +44,15 @@ constructor(
         return identitiesDelegate.identities
     }
 
+    // @todo: remove or move to SpinnerDelegate
     override fun getSpinnerItemResourceId(type: String?): Int? {
         TODO("Not yet implemented")
     }
 
     override fun clearItem() {
-        _habit.value = getNewHabitViewData()
+        _habit.value = HabitViewData()
     }
 
-    fun getNewHabitViewData() = HabitViewData()
 
     fun updateHabit(habitViewData: HabitViewData) {
         GlobalScope.launch {
@@ -78,7 +78,7 @@ constructor(
         override var id: Long? = null,
         var identityId: Long? = null,
         var name: String? = "",
-        override var type: String? = "",
+        override var type: String? = "Other",
         override var typeResourceId: Int = R.drawable.ic_other
     ) : BaseViewData(), SpinnerItemViewData {
         override fun toString(): String {

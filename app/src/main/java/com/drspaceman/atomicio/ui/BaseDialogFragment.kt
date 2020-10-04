@@ -95,7 +95,7 @@ abstract class BaseDialogFragment : DialogFragment() {
     }
 
     // @todo: move conditional logic into viewModel
-    protected fun loadDataItem() {
+    protected open fun loadDataItem() {
         itemId?.let {
             loadExistingItem(it)
         } ?: run {
