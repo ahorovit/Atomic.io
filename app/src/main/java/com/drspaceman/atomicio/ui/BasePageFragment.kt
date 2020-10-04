@@ -59,7 +59,7 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
         editDetailsFragment.show(fragmentManager, "${editDetailsFragment::class}_tag")
     }
 
-    override fun editItemDetails(identityId: Long?) {
-        showEditDetailsDialog(identityId)
+    override fun editItemDetails(itemId: Long?) {
+        showEditDetailsDialog(itemId)
     }
 }

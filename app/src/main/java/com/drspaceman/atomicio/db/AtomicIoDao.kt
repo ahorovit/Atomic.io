@@ -52,6 +52,33 @@ interface AtomicIoDao {
     @Query("DELETE FROM Identity WHERE id = :identityId")
     fun deleteIdentityById(identityId: Long)
 
+    @Query(
+        "SELECT " +
+                "identity.id as identityId, " +
+                "identity.name as identityName, " +
+                "identity.type as identityType, " +
+                "habit.id as habitId, " +
+                "habit.name as habitName " +
+                "FROM Identity identity " +
+                "LEFT JOIN Habit habit ON identity.id = habit.identityId " +
+                "ORDER BY identityName ASC, habitName ASC"
+    )
+    fun loadIdentitiesWithHabits(): LiveData<List<IdentityHabit>>
+
+    data class IdentityHabit(
+        val identityId: Long?,
+        val identityName: String?,
+        val identityType: String?,
+        val habitId: Long?,
+        val habitName: String?
+    )
+
+    @Query("SELECT * FROM Habit WHERE identityId IS NULL")
+    fun loadOrphanHabits() : LiveData<List<Habit>>
+
+    @Query("DELETE FROM Habit WHERE identityId = :identityId")
+    suspend fun deleteHabitsForIdentity(identityId: Long)
+
 
     // @TODO: Break up DAOs?
 
@@ -105,5 +132,4 @@ interface AtomicIoDao {
 
     @Insert(onConflict = IGNORE)
     suspend fun insertAgenda(agenda: Agenda): Long?
-
 }

@@ -122,6 +122,18 @@ constructor(
         dao.getTasksForAgenda(agendaId)
     }
 
+    suspend fun loadIdentityHabits() = withContext(Dispatchers.IO) {
+        dao.loadIdentitiesWithHabits()
+    }
+
+    suspend fun loadOrphanHabits() = withContext(Dispatchers.IO) {
+        dao.loadOrphanHabits()
+    }
+
+    suspend fun deleteHabitsForIdentity(identityId: Long) = withContext(Dispatchers.IO) {
+        dao.deleteHabitsForIdentity(identityId)
+    }
+
     companion object {
         private val allTypes = hashMapOf(
             "Academic" to R.drawable.ic_academic,

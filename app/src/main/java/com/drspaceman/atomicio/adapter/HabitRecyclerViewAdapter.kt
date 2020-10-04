@@ -4,13 +4,13 @@ import android.view.View
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
-import kotlinx.android.synthetic.main.habit_view_holder.view.*
+import kotlinx.android.synthetic.main.habit_list_item.view.*
 
 class HabitRecyclerViewAdapter(
     items: List<HabitViewData>?,
     hostFragment: EditItemListener
 ) : BaseRecyclerViewAdapter(items, hostFragment){
-    override val layoutId: Int = R.layout.habit_view_holder
+    override val layoutId: Int = R.layout.habit_list_item
 
     override fun createViewHolder(view: View) = HabitViewHolder(view, hostFragment)
 
@@ -21,7 +21,7 @@ class HabitRecyclerViewAdapter(
 
         var habitId: Long? = null
         val habitLabelTextView = itemView.habitLabelTextView
-        val habitTypeImageView = itemView.habitTypeImageView
+//        val habitTypeImageView = itemView.habitTypeImageView
 
         init {
             itemView.setOnClickListener {
@@ -35,7 +35,7 @@ class HabitRecyclerViewAdapter(
             val habit = viewData as HabitViewData
             habitId = habit.id
             habitLabelTextView.text = habit.name
-            habitTypeImageView.setImageResource(habit.typeResourceId)
+//            habitTypeImageView.setImageResource(habit.typeResourceId)
         }
     }
 }

@@ -3,7 +3,6 @@ package com.drspaceman.atomicio.ui
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import com.drspaceman.atomicio.viewmodel.BaseViewModel
 // @todo remove
 import kotlinx.android.synthetic.main.crud_buttons.*
 
-abstract class BaseDialogFragment: DialogFragment() {
+abstract class BaseDialogFragment : DialogFragment() {
 
     protected abstract val layoutId: Int
 
@@ -22,7 +21,7 @@ abstract class BaseDialogFragment: DialogFragment() {
 
     protected abstract val viewModel: BaseViewModel
 
-     // @todo: make lateinit instead of nullable
+    // @todo: make lateinit instead of nullable
     protected abstract val itemViewData: BaseViewModel.BaseViewData
 
     protected lateinit var parentActivity: AppCompatActivity
@@ -96,7 +95,7 @@ abstract class BaseDialogFragment: DialogFragment() {
     }
 
     // @todo: move conditional logic into viewModel
-    protected fun loadDataItem() {
+    protected open fun loadDataItem() {
         itemId?.let {
             loadExistingItem(it)
         } ?: run {
@@ -105,13 +104,8 @@ abstract class BaseDialogFragment: DialogFragment() {
         }
     }
 
-    private fun deleteSelectedItem() {
-        val item = itemViewData
-
-        item.id?.let {
-            viewModel.deleteItem(item)
-        }
-
+    protected open fun deleteSelectedItem() {
+        viewModel.deleteItem(itemViewData)
         dismiss()
     }
 
