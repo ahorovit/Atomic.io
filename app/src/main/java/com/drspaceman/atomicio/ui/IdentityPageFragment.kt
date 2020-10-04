@@ -107,6 +107,7 @@ class IdentityPageFragment : BasePageFragment(), NestedEditItemListener {
     }
 
     companion object {
+        const val MISC_HABITS_ID = -1L
         fun newInstance() = IdentityPageFragment()
     }
 }

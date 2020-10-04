@@ -4,9 +4,11 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.db.AtomicIoDao.IdentityHabit
+import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
+import com.drspaceman.atomicio.ui.IdentityPageFragment
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -23,18 +25,39 @@ constructor(
     IdentitiesViewModelInterface by identitiesDelegate,
     SpinnerViewModelInterface by spinnerDelegate {
 
-    private val _identityHabits = MediatorLiveData<List<IdentityHabit>>()
+    private val _identityHabits = MediatorLiveData<Pair<List<IdentityHabit>,List<Habit>>>()
     val identityHabits = _identityHabits.switchMap {
         liveData(context = viewModelScope.coroutineContext + Dispatchers.Default) {
-            emit(toIdentityWithHabitViews(it))
+            val allIdentityHabits = mutableListOf<IdentityWithHabitsViewData>()
+
+            allIdentityHabits.addAll(toIdentityWithHabitViews(it.first))
+
+            if(it.second.isNotEmpty()) {
+                allIdentityHabits.add(toMiscIdentityWithHabitViews(it.second))
+            }
+
+            emit(allIdentityHabits)
         }
     }
 
+//    private val _orphanHabits = MediatorLiveData<List<Habit>>()
+//    val orphanHabits = _orphanHabits.switchMap {
+//        liveData(context = viewModelScope.coroutineContext + Dispatchers.Default) {
+//            emit(toMiscIdentityWithHabitViews(it))
+//        }
+//    }
+
     init {
         // @todo: there must be a simpler way to do this
+        _identityHabits.value = Pair(listOf(),listOf())
+
         viewModelScope.launch {
             _identityHabits.addSource(atomicIoRepo.loadIdentityHabits()) {
-                _identityHabits.value = it
+                _identityHabits.value = _identityHabits.value?.copy(first = it)
+            }
+
+            _identityHabits.addSource(atomicIoRepo.loadOrphanHabits()) {
+                _identityHabits.value = _identityHabits.value?.copy(second = it)
             }
         }
     }
@@ -56,7 +79,7 @@ constructor(
     }
 
     private suspend fun toIdentityWithHabitViews(identityHabits: List<IdentityHabit>) =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             val result = mutableListOf<IdentityWithHabitsViewData>()
 
             var identityViewData: IdentityViewData? = null
@@ -97,6 +120,18 @@ constructor(
             result
         }
 
+    private suspend fun toMiscIdentityWithHabitViews(orphanHabits: List<Habit>) =
+        withContext(Dispatchers.Default) {
+                IdentityWithHabitsViewData(
+                    IdentityViewData(
+                        IdentityPageFragment.MISC_HABITS_ID,
+                        "Misc Habits",
+                        null,
+                        "Other"
+                    ),
+                    orphanHabits.map { HabitViewData.of(it) }
+                )
+        }
 
     fun loadIdentity(identityId: Long) {
         viewModelScope.launch {

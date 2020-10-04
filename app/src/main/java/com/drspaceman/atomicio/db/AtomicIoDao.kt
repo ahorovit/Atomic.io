@@ -73,6 +73,9 @@ interface AtomicIoDao {
         val habitName: String?
     )
 
+    @Query("SELECT * FROM Habit WHERE identityId IS NULL")
+    fun loadOrphanHabits() : LiveData<List<Habit>>
+
     @Query("DELETE FROM Habit WHERE identityId = :identityId")
     suspend fun deleteHabitsForIdentity(identityId: Long)
 
@@ -129,6 +132,4 @@ interface AtomicIoDao {
 
     @Insert(onConflict = IGNORE)
     suspend fun insertAgenda(agenda: Agenda): Long?
-
-
 }

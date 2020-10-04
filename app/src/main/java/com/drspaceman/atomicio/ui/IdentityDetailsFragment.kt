@@ -121,9 +121,7 @@ class IdentityDetailsFragment : BaseDialogFragment() {
     }
 
     override fun deleteSelectedItem() {
-
         itemViewData.id?.let {
-
             AlertDialog.Builder(parentActivity)
                 .setTitle(getString(R.string.confirm_identity_delete))
                 .setMessage("Child Habits will become 'Misc Habits' if not deleted")
