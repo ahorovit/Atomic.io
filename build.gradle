@@ -15,9 +15,7 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven {
-            url "https://maven.appspector.com/artifactory/android-sdk"
-        }
+        maven { url "https://maven.appspector.com/artifactory/android-sdk" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.0-rc03'
@@ -34,7 +32,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
+        maven { url 'https://jitpack.io' }
     }
 }
 
