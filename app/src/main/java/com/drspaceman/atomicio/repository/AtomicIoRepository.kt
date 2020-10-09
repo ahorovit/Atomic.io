@@ -75,17 +75,13 @@ constructor(
         return Habit()
     }
 
-    fun addHabit(habit: Habit): Long? {
-        val newId = dao.insertHabit(habit)
-        habit.id = newId
-
-        return newId
+    suspend fun addHabit(habit: Habit): Long? = withContext(Dispatchers.IO) {
+        dao.insertHabit(habit)
     }
 
     fun deleteHabit(habit: Habit) {
         dao.deleteHabit(habit)
     }
-
 
     fun createTask(): Task {
         return Task()

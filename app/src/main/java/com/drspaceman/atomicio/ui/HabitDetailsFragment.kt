@@ -1,5 +1,7 @@
 package com.drspaceman.atomicio.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -14,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.android.synthetic.main.fragment_habit_details.*
 import kotlinx.android.synthetic.main.spinner_layout.*
+import org.threeten.bp.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class HabitDetailsFragment : BaseDialogFragment() {
@@ -136,16 +139,39 @@ class HabitDetailsFragment : BaseDialogFragment() {
         writeHabitView.identityId = parentIdentity.id
         writeHabitView.type = parentIdentity.type
 
-        writeHabitView.id?.let {
-            viewModel.updateHabit(writeHabitView)
-        } ?: run {
-            viewModel.insertHabit(writeHabitView)
+        if (targetFragment == null) {
+            viewModel.saveHabit(itemViewData)
+            dismiss()
+        } else {
+            returnNewHabitId()
         }
+    }
 
-        dismiss()
+    /**
+     * TaskDetailFragment is waiting for the saved habit ID
+     * --> We need to wait for the habit to be saved before we can dismiss the dialog
+     */
+    private fun returnNewHabitId() {
+        viewModel.saveHabitForReturnId(itemViewData).observe(
+            viewLifecycleOwner,
+            {
+                it?.let {
+                    val bundle = Bundle()
+                    bundle.putLong(NEW_HABIT_RESULT, it)
+
+                    val intent = Intent().putExtras(bundle)
+                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+                    dismiss()
+                }
+            }
+        )
     }
 
     companion object {
+
+        const val NEW_HABIT_RESULT = "new_habit_result"
+        const val NEW_HABIT_REQUEST = 234
+
         private const val ARG_HABIT_ID = "extra_habit_id"
         private const val ARG_IDENTITY_ID = "extra_identity_id"
 

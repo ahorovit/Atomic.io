@@ -49,5 +49,8 @@
     <string name="add_habit_icon">Add Habit Icon</string>
     <string name="edit_identity">Edit Identity</string>
     <string name="confirm_identity_delete">Delete Habits for this Identity?</string>
+    <string name="add_new_habit">Add New Habit</string>
+    <string name="add_habit">Add Habit</string>
+    <string name="habit_label">Habit</string>
 
 </resources>

@@ -36,6 +36,8 @@ constructor(
         return _habit
     }
 
+    private val _newHabitId = MutableLiveData<Long?>()
+
     /**
      * Habit Spinner is a list of parent Identities, so we need to observe with
      * LiveData
@@ -51,26 +53,42 @@ constructor(
 
     override fun clearItem() {
         _habit.value = HabitViewData()
-    }
-
-
-    fun updateHabit(habitViewData: HabitViewData) {
-        GlobalScope.launch {
-            val habit = habitViewData.toModel()
-            atomicIoRepo.updateHabit(habit)
-        }
-    }
-
-    fun insertHabit(habitViewData: HabitViewData) {
-        GlobalScope.launch {
-            atomicIoRepo.addHabit(habitViewData.toModel())
-        }
+        _newHabitId.value = null
     }
 
     override fun deleteItem(itemViewData: BaseViewData) {
         GlobalScope.launch {
             val habit = (itemViewData as HabitViewData).toModel()
             atomicIoRepo.deleteHabit(habit)
+        }
+    }
+
+    fun saveHabit(habitViewData: HabitViewData) {
+        if (habitViewData.id != null) {
+            updateHabit(habitViewData)
+        } else {
+            insertHabit(habitViewData)
+        }
+    }
+
+    fun saveHabitForReturnId(habitViewData: HabitViewData): LiveData<Long?> {
+        viewModelScope.launch {
+            _newHabitId.value = atomicIoRepo.addHabit(habitViewData.toModel())
+        }
+
+        return _newHabitId
+    }
+
+    private fun updateHabit(habitViewData: HabitViewData) {
+        GlobalScope.launch {
+            val habit = habitViewData.toModel()
+            atomicIoRepo.updateHabit(habit)
+        }
+    }
+
+    private fun insertHabit(habitViewData: HabitViewData) {
+        GlobalScope.launch {
+            atomicIoRepo.addHabit(habitViewData.toModel())
         }
     }
 

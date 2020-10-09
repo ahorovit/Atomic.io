@@ -8,6 +8,11 @@ import android.widget.AdapterView
 import androidx.fragment.app.activityViewModels
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
+import com.drspaceman.atomicio.ui.HabitDetailsFragment.Companion.NEW_HABIT_REQUEST
+import com.drspaceman.atomicio.ui.HabitDetailsFragment.Companion.NEW_HABIT_RESULT
+import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.END_TIME_REQUEST
+import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.START_TIME_REQUEST
+import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.TIME_PICKER_RESULT
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
@@ -59,18 +64,32 @@ class TaskDetailsFragment : BaseDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        spinnerLabel.text = getString(R.string.habit_label)
+
+        newHabit.setOnClickListener {
+            showNewHabitDialog()
+        }
+
         editStartTime.setOnClickListener {
-            showTimePickerDialog(TimePickerFragment.START_TIME_CODE)
+            showTimePickerDialog(START_TIME_REQUEST)
         }
 
         editEndTime.setOnClickListener {
-            showTimePickerDialog(TimePickerFragment.END_TIME_CODE)
+            showTimePickerDialog(END_TIME_REQUEST)
         }
 
+        // @todo: this isn't working very well
         editTextTaskName.setOnKeyListener { _, _, _ ->
             isTitleEdited = true
             false
         }
+    }
+
+    private fun showNewHabitDialog() {
+        val fragmentManager = activity?.supportFragmentManager ?: return
+        val newHabitFragment = HabitDetailsFragment.newInstance(null)
+        newHabitFragment.setTargetFragment(this, NEW_HABIT_REQUEST)
+        newHabitFragment.show(fragmentManager, "${newHabitFragment::class}_tag")
     }
 
     private fun showTimePickerDialog(requestCode: Int) {
@@ -81,24 +100,35 @@ class TaskDetailsFragment : BaseDialogFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK
-            || data?.extras?.containsKey(TimePickerFragment.TIME_PICKER_RESULT) != true
-        ) {
+        if ( resultCode != Activity.RESULT_OK) {
             return
         }
 
-        val pickedTime = LocalTime.parse(
-            data.extras?.getString(TimePickerFragment.TIME_PICKER_RESULT)
-        )
+        var pickedTime: LocalTime? = null
+        var newHabitId: Long? = null
+        if (data?.extras?.containsKey(TIME_PICKER_RESULT) == true) {
+            pickedTime = LocalTime.parse(data.extras?.getString(TIME_PICKER_RESULT))
+        } else if (data?.extras?.containsKey(NEW_HABIT_RESULT) == true) {
+            newHabitId = data.extras?.getLong(NEW_HABIT_RESULT)
+        }
 
         when (requestCode) {
-            TimePickerFragment.START_TIME_CODE -> {
-                editStartTime.setText(formatTime(pickedTime))
-                itemViewData.startTime = pickedTime
+            START_TIME_REQUEST -> {
+                pickedTime?.let {
+                    editStartTime.setText(formatTime(pickedTime))
+                    itemViewData.startTime = pickedTime
+                }
             }
-            TimePickerFragment.END_TIME_CODE -> {
-                editEndTime.setText(formatTime(pickedTime))
-                itemViewData.endTime = pickedTime
+            END_TIME_REQUEST -> {
+                pickedTime?.let {
+                    editEndTime.setText(formatTime(pickedTime))
+                    itemViewData.endTime = pickedTime
+                }
+            }
+            NEW_HABIT_REQUEST -> {
+                newHabitId?.let {
+                    viewModel.setParentHabit(it)
+                }
             }
         }
     }

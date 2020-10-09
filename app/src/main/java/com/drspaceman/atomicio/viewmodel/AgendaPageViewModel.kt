@@ -20,7 +20,7 @@ constructor(
 
     private lateinit var agenda: Agenda
 
-    private val _task = MutableLiveData<TaskViewData>()
+    private val _task = MutableLiveData(TaskViewData())
     val task
         get() = _task
 
@@ -75,6 +75,10 @@ constructor(
             val task = (itemViewData as TaskViewData).toModel()
             atomicIoRepo.deleteTask(task)
         }
+    }
+
+    fun setParentHabit(habitId: Long) {
+        _task.value = _task.value?.copy(habitId = habitId)
     }
 
     data class TaskViewData(

@@ -52,7 +52,6 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
         return super.onOptionsItemSelected(item)
     }
 
-
     protected fun showEditDetailsDialog(itemId: Long?) {
         val fragmentManager = activity?.supportFragmentManager ?: return
         val editDetailsFragment = getEditDialogFragment(itemId)

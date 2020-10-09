@@ -56,8 +56,8 @@ class TimePickerFragment: DialogFragment() {
 
     companion object {
         const val TIME_PICKER_RESULT = "time_picker_result"
-        const val START_TIME_CODE = 1
-        const val END_TIME_CODE = 2
+        const val START_TIME_REQUEST = 1
+        const val END_TIME_REQUEST = 2
 
         fun newInstance(): TimePickerFragment {
             return TimePickerFragment()
