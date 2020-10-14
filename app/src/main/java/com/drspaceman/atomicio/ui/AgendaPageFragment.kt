@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import com.drspaceman.atomicio.R
@@ -20,6 +19,9 @@ import java.util.*
 import kotlinx.android.synthetic.main.fragment_agenda.*
 
 class AgendaPageFragment : BasePageFragment() {
+
+    override val fragmentTitle = "Agenda"
+
     override val layoutId: Int = R.layout.fragment_agenda
 
     private var agendaView = CALENDAR_VIEW

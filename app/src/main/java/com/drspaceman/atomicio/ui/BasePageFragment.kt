@@ -11,6 +11,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 abstract class BasePageFragment : Fragment(), EditItemListener {
 
+    protected abstract val fragmentTitle: String
+
     protected abstract val layoutId: Int
 
     protected abstract val viewModel: BaseViewModel
@@ -32,6 +34,9 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.title = fragmentTitle
+
         loadPageData()
 
         fab = view.findViewById(R.id.fab)

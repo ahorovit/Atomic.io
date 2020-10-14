@@ -13,6 +13,8 @@ class HabitPageFragment : BasePageFragment() {
     override val viewModel by activityViewModels<HabitPageViewModel>()
     override val layoutId: Int = R.layout.fragment_habits
 
+    override val fragmentTitle = "Habits"
+
     override fun loadPageData() {
         habitRecyclerView.layoutManager = LinearLayoutManager(context)
         recyclerViewAdapter = HabitRecyclerViewAdapter(null, this)

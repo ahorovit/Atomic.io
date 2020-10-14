@@ -24,6 +24,8 @@ class IdentityPageFragment : BasePageFragment(), NestedEditItemListener {
 
     override val layoutId: Int = R.layout.fragment_identities
 
+    override val fragmentTitle = "Identities/Habits"
+
     private var expandedIdentityId: Long? = null
     private var expandedIdentity: IdentityListHeader? = null
 
