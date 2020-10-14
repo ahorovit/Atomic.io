@@ -17,7 +17,7 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
 
     protected lateinit var recyclerViewAdapter: BaseRecyclerViewAdapter
 
-    private lateinit var fab: FloatingActionButton
+    protected lateinit var fab: FloatingActionButton
 
     protected abstract fun getEditDialogFragment(id: Long?): BaseDialogFragment
 

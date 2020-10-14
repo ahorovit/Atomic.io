@@ -52,5 +52,6 @@
     <string name="add_new_habit">Add New Habit</string>
     <string name="add_habit">Add Habit</string>
     <string name="habit_label">Habit</string>
+    <string name="view_as_checklist">View As Checklist</string>
 
 </resources>

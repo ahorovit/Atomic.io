@@ -2,7 +2,11 @@ package com.drspaceman.atomicio.ui
 
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import com.drspaceman.atomicio.R
@@ -18,20 +22,49 @@ import kotlinx.android.synthetic.main.fragment_agenda.*
 class AgendaPageFragment : BasePageFragment() {
     override val layoutId: Int = R.layout.fragment_agenda
 
+    private var agendaView = CALENDAR_VIEW
+
     override val viewModel by activityViewModels<AgendaPageViewModel>()
 
     private var todaysTasks: List<TaskViewData>? = null
 
-
     // @todo: implement without Calendar class
     private lateinit var day: Calendar
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.agenda_fragment_menu, menu)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         renderDayViewBackground()
         onAgendaChange()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when (item.itemId) {
+            R.id.toggleViewButton -> {
+                val icon = if (agendaView == CALENDAR_VIEW) {
+                    agendaView = CHECKLIST_VIEW
+                    R.drawable.ic_checklist_view
+                } else {
+                    agendaView = CALENDAR_VIEW
+                    R.drawable.ic_calendar_view
+                }
+
+                item.setIcon(icon)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun renderDayViewBackground() {
@@ -131,6 +164,10 @@ class AgendaPageFragment : BasePageFragment() {
 
 
     companion object {
+
+        private const val CALENDAR_VIEW = "calendar"
+        private const val CHECKLIST_VIEW = "checklist"
+
         fun newInstance() = AgendaPageFragment()
     }
 }

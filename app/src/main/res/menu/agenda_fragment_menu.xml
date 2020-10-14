@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/toggleViewButton"
+        android:icon="@drawable/ic_calendar_view"
+        app:showAsAction="ifRoom"
+        android:title="@string/view_as_checklist">
+    </item>
+</menu>
