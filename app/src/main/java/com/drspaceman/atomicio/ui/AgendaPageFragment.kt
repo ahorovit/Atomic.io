@@ -52,7 +52,7 @@ class AgendaPageFragment : BasePageFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        return when (item.itemId) {
+        when (item.itemId) {
             R.id.toggleViewButton -> {
                 val icon = if (agendaView == CALENDAR_VIEW) {
                     agendaView = CHECKLIST_VIEW
@@ -63,10 +63,13 @@ class AgendaPageFragment : BasePageFragment() {
                 }
 
                 item.setIcon(icon)
-                true
             }
-            else -> super.onOptionsItemSelected(item)
+            R.id.importTemplate -> {  }
+            R.id.exportTemplate -> {  }
+            else -> return super.onOptionsItemSelected(item)
         }
+
+        return true
     }
 
     private fun renderDayViewBackground() {

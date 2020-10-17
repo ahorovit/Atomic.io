@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/importTemplate"
+        android:icon="@drawable/ic_import"
+        android:title="@string/import_template"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/exportTemplate"
+        android:icon="@drawable/ic_export"
+        android:title="@string/export_template"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/toggleViewButton"
         android:icon="@drawable/ic_calendar_view"
-        app:showAsAction="ifRoom"
-        android:title="@string/view_as_checklist">
-    </item>
+        android:title="@string/view_as_checklist"
+        app:showAsAction="always"/>
 </menu>

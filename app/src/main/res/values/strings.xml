@@ -55,5 +55,7 @@
     <string name="view_as_checklist">View As Checklist</string>
     <string name="agenda_fragment_title">Agenda</string>
     <string name="identity_fragment_title">Identities/Habits</string>
+    <string name="export_template">Export Template</string>
+    <string name="import_template">Import Template</string>
 
 </resources>
