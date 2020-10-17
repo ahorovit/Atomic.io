@@ -64,8 +64,12 @@ class AgendaPageFragment : BasePageFragment() {
 
                 item.setIcon(icon)
             }
-            R.id.importTemplate -> {  }
-            R.id.exportTemplate -> {  }
+            R.id.importTemplate -> {
+
+            }
+            R.id.exportTemplate -> {
+
+            }
             else -> return super.onOptionsItemSelected(item)
         }
 
