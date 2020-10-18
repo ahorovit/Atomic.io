@@ -1,11 +1,11 @@
 package com.drspaceman.atomicio.ui
 
-
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,6 +62,11 @@ class AgendaPageFragment : BasePageFragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = groupAdapter
         }
+
+        viewSwitcher.inAnimation =
+            AnimationUtils.loadAnimation(activity, android.R.anim.slide_in_left)
+        viewSwitcher.outAnimation =
+            AnimationUtils.loadAnimation(activity, android.R.anim.slide_out_right)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -130,28 +135,25 @@ class AgendaPageFragment : BasePageFragment() {
     }
 
     private fun swapAgendaView() {
-        val iconId = when (agendaView) {
-            CALENDAR_VIEW -> {
-                viewSwitcher.showPrevious()
-                R.drawable.ic_calendar_view
+        agendaViewMenuButton?.setIcon(
+            when (agendaView) {
+                CALENDAR_VIEW -> R.drawable.ic_calendar_view
+                else -> R.drawable.ic_checklist_view
             }
-            else -> {
-                viewSwitcher.showNext()
-                R.drawable.ic_checklist_view
-            }
-        }
-
-        agendaViewMenuButton?.setIcon(iconId)
+        )
     }
 
     private fun renderAgenda() {
-        if (agendaView == null || todaysTasks == null) {
-            return
-        }
-
         when (agendaView) {
-            CALENDAR_VIEW -> onDayViewChange()
-            CHECKLIST_VIEW -> onCheckListViewChange()
+            CALENDAR_VIEW -> {
+                viewSwitcher.showPrevious()
+                onDayViewChange()
+            }
+            CHECKLIST_VIEW -> {
+                viewSwitcher.showNext()
+                onCheckListViewChange()
+            }
+            else -> return
         }
     }
 

@@ -10,11 +10,13 @@
         android:id="@+id/viewSwitcher"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:animateFirstView="false">
 
         <ScrollView
+            android:id="@+id/dayViewScroller"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <com.drspaceman.atomicio.adapter.MyDayView
                 android:id="@+id/dayView"
@@ -34,8 +36,9 @@
         </ScrollView>
 
         <ScrollView
+            android:id="@+id/checklistViewScroller"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/checkListRecyclerView"
