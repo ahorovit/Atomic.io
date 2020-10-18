@@ -1,32 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/agendaFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ScrollView
+    <ViewSwitcher
+        android:id="@+id/viewSwitcher"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <com.drspaceman.atomicio.adapter.MyDayView
-            android:id="@+id/dayView"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/large_padding"
-            app:dividerHeight="@dimen/divider_height"
-            app:endHour="@integer/end_hour"
-            app:eventMargin="@dimen/small_padding"
-            app:halfHourDividerColor="@color/half_hour_divider"
-            app:halfHourHeight="@dimen/half_hour_height"
-            app:hourDividerColor="@color/hour_divider"
-            app:hourLabelMarginEnd="@dimen/large_padding"
-            app:hourLabelWidth="@dimen/hour_label_width"
-            app:startHour="@integer/start_hour" />
-    </ScrollView>
+            android:layout_height="wrap_content">
+
+            <com.drspaceman.atomicio.adapter.MyDayView
+                android:id="@+id/dayView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/large_padding"
+                app:dividerHeight="@dimen/divider_height"
+                app:endHour="@integer/end_hour"
+                app:eventMargin="@dimen/small_padding"
+                app:halfHourDividerColor="@color/half_hour_divider"
+                app:halfHourHeight="@dimen/half_hour_height"
+                app:hourDividerColor="@color/hour_divider"
+                app:hourLabelMarginEnd="@dimen/large_padding"
+                app:hourLabelWidth="@dimen/hour_label_width"
+                app:startHour="@integer/start_hour" />
+
+        </ScrollView>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/checkListRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+    </ViewSwitcher>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

@@ -20,6 +20,10 @@ constructor(
 
     private lateinit var agenda: Agenda
 
+    private val _agendaView = MutableLiveData(CALENDAR_VIEW)
+    val agendaView: LiveData<String>
+        get() = _agendaView
+
     private val _task = MutableLiveData(TaskViewData())
     val task
         get() = _task
@@ -35,9 +39,7 @@ constructor(
 
             agenda.id?.let { agendaId ->
                 _tasks.addSource(Transformations.map(atomicIoRepo.getTasksForAgenda(agendaId)) { repoTasks ->
-                    repoTasks.map {
-                        TaskViewData.of(it)
-                    }
+                    repoTasks.map { TaskViewData.of(it) }
                 }) { _tasks.value = it }
             }
         }
@@ -79,6 +81,18 @@ constructor(
 
     fun setParentHabit(habitId: Long) {
         _task.value = _task.value?.copy(habitId = habitId)
+    }
+
+    fun toggleAgendaView() {
+        when (_agendaView.value) {
+            CALENDAR_VIEW -> _agendaView.value = CHECKLIST_VIEW
+            CHECKLIST_VIEW -> _agendaView.value = CALENDAR_VIEW
+        }
+    }
+
+    companion object {
+        const val CALENDAR_VIEW = "calendar"
+        const val CHECKLIST_VIEW = "checklist"
     }
 
     data class TaskViewData(
