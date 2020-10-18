@@ -61,6 +61,11 @@
             android:contentDescription="@string/edit_identity"
             app:srcCompat="@drawable/ic_edit"
             app:tint="@android:color/white" />
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

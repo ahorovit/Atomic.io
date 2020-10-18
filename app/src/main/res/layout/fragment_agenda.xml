@@ -10,8 +10,7 @@
         android:id="@+id/viewSwitcher"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:animateFirstView="false">
+        android:layout_weight="1">
 
         <ScrollView
             android:id="@+id/dayViewScroller"
@@ -53,8 +52,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_habit" />
-
+        app:srcCompat="@drawable/ic_habit"
+        android:contentDescription="New Task Button" />
 </LinearLayout>
