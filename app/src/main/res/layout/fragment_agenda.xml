@@ -6,11 +6,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ViewSwitcher
-        android:id="@+id/viewSwitcher"
+    <ViewFlipper
+        android:id="@+id/viewFlipper"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center" />
 
         <ScrollView
             android:id="@+id/dayViewScroller"
@@ -44,14 +50,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </ScrollView>
-    </ViewSwitcher>
-
+    </ViewFlipper>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_habit"
-        android:contentDescription="New Task Button" />
+        android:contentDescription="New Task Button"
+        app:srcCompat="@drawable/ic_habit" />
 </LinearLayout>

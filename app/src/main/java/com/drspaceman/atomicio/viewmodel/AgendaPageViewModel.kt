@@ -5,6 +5,10 @@ import androidx.lifecycle.*
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Task
 import com.drspaceman.atomicio.repository.AtomicIoRepository
+import com.drspaceman.atomicio.viewstate.AgendaViewState
+import com.drspaceman.atomicio.viewstate.ChecklistViewLoaded
+import com.drspaceman.atomicio.viewstate.DayViewLoaded
+import com.drspaceman.atomicio.viewstate.Loading
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
@@ -18,30 +22,50 @@ constructor(
     private val habitsDelegate: HabitsDelegate,
 ) : BaseViewModel(atomicIoRepo), HabitsViewModelInterface by habitsDelegate {
 
-    private lateinit var agenda: Agenda
+    private val _viewState = MediatorLiveData<AgendaViewState>()
+    val viewState: LiveData<AgendaViewState>
+        get() = _viewState
 
-    private val _agendaView = MutableLiveData(CALENDAR_VIEW)
-    val agendaView: LiveData<String>
-        get() = _agendaView
+    private lateinit var agenda: Agenda
 
     private val _task = MutableLiveData(TaskViewData())
     val task
         get() = _task
 
-
-    private var _tasks = MediatorLiveData<List<TaskViewData>>()
-    val tasks: LiveData<List<TaskViewData>>
-        get() = _tasks
-
     init {
+        _viewState.value = Loading
+
         viewModelScope.launch {
             agenda = atomicIoRepo.getAgendaForDate(LocalDate.now())
 
-            agenda.id?.let { agendaId ->
-                _tasks.addSource(Transformations.map(atomicIoRepo.getTasksForAgenda(agendaId)) { repoTasks ->
-                    repoTasks.map { TaskViewData.of(it) }
-                }) { _tasks.value = it }
-            }
+            _viewState.addSource(Transformations.map(atomicIoRepo.getTasksForAgenda(agenda.id!!)) { repoTasks ->
+                repoTasks.map { TaskViewData.of(it) }
+            }) { refreshViewState(it) }
+        }
+    }
+
+    private fun refreshViewState(tasks: List<TaskViewData>) {
+        val state = _viewState.value!!
+
+        _viewState.value = when (state) {
+            Loading -> getDefaultViewState(tasks)
+            is DayViewLoaded -> state.copy(tasks = tasks)
+            is ChecklistViewLoaded -> state.copy(tasks = tasks)
+        }
+    }
+
+    // TODO: access Settings for preferred view
+    private fun getDefaultViewState(tasks: List<TaskViewData>): AgendaViewState {
+        return DayViewLoaded(tasks)
+    }
+
+    fun toggleAgendaView() {
+        val state = _viewState.value!!
+
+        _viewState.value = when (state) {
+            Loading -> Loading
+            is DayViewLoaded -> ChecklistViewLoaded(state.tasks)
+            is ChecklistViewLoaded -> DayViewLoaded(state.tasks)
         }
     }
 
@@ -81,18 +105,6 @@ constructor(
 
     fun setParentHabit(habitId: Long) {
         _task.value = _task.value?.copy(habitId = habitId)
-    }
-
-    fun toggleAgendaView() {
-        when (_agendaView.value) {
-            CALENDAR_VIEW -> _agendaView.value = CHECKLIST_VIEW
-            CHECKLIST_VIEW -> _agendaView.value = CALENDAR_VIEW
-        }
-    }
-
-    companion object {
-        const val CALENDAR_VIEW = "calendar"
-        const val CHECKLIST_VIEW = "checklist"
     }
 
     data class TaskViewData(

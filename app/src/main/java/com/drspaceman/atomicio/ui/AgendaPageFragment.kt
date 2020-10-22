@@ -5,16 +5,17 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.CheckListItem
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
-import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.Companion.CALENDAR_VIEW
-import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.Companion.CHECKLIST_VIEW
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
+import com.drspaceman.atomicio.viewstate.AgendaViewState
+import com.drspaceman.atomicio.viewstate.ChecklistViewLoaded
+import com.drspaceman.atomicio.viewstate.DayViewLoaded
+import com.drspaceman.atomicio.viewstate.Loading
 import com.linkedin.android.tachyon.DayView.EventTimeRange
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
@@ -30,15 +31,11 @@ class AgendaPageFragment : BasePageFragment() {
 
     override val layoutId: Int = R.layout.fragment_agenda
 
-    private var agendaView: String? = null
-
     private var agendaViewMenuButton: MenuItem? = null
 
     private var groupAdapter = GroupAdapter<GroupieViewHolder>()
 
     override val viewModel by activityViewModels<AgendaPageViewModel>()
-
-    private var todaysTasks: List<TaskViewData>? = null
 
     // @todo: implement without Calendar class
     private lateinit var day: Calendar
@@ -52,6 +49,7 @@ class AgendaPageFragment : BasePageFragment() {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.agenda_fragment_menu, menu)
         agendaViewMenuButton = menu.findItem(R.id.toggleViewButton)
+        agendaViewMenuButton?.setIcon(R.drawable.ic_calendar_view)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,23 +60,12 @@ class AgendaPageFragment : BasePageFragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = groupAdapter
         }
-
-        viewSwitcher.inAnimation =
-            AnimationUtils.loadAnimation(activity, android.R.anim.slide_in_left)
-        viewSwitcher.outAnimation =
-            AnimationUtils.loadAnimation(activity, android.R.anim.slide_out_right)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.toggleViewButton -> {
                 viewModel.toggleAgendaView()
-            }
-            R.id.importTemplate -> {
-
-            }
-            R.id.exportTemplate -> {
-
             }
             else -> return super.onOptionsItemSelected(item)
         }
@@ -116,62 +103,42 @@ class AgendaPageFragment : BasePageFragment() {
     }
 
     override fun loadPageData() {
-        viewModel.agendaView.observe(
+        viewModel.viewState.observe(
             viewLifecycleOwner,
             {
-                agendaView = it
-                swapAgendaView()
-                renderAgenda()
-            }
-        )
-
-        viewModel.tasks.observe(
-            viewLifecycleOwner,
-            {
-                todaysTasks = it
-                renderAgenda()
+                render(it)
             }
         )
     }
 
-    private fun swapAgendaView() {
-        agendaViewMenuButton?.setIcon(
-            when (agendaView) {
-                CALENDAR_VIEW -> R.drawable.ic_calendar_view
-                else -> R.drawable.ic_checklist_view
+    private fun render(state: AgendaViewState) {
+        viewFlipper.displayedChild = when (state) {
+            Loading -> LOADING
+            is DayViewLoaded -> {
+                onDayViewChange(state.tasks)
+                agendaViewMenuButton?.setIcon(R.drawable.ic_calendar_view)
+                CALENDAR_VIEW
             }
-        )
-    }
-
-    private fun renderAgenda() {
-        when (agendaView) {
-            CALENDAR_VIEW -> {
-                viewSwitcher.showPrevious()
-                onDayViewChange()
+            is ChecklistViewLoaded -> {
+                onCheckListViewChange(state.tasks)
+                agendaViewMenuButton?.setIcon(R.drawable.ic_checklist_view)
+                CHECKLIST_VIEW
             }
-            CHECKLIST_VIEW -> {
-                viewSwitcher.showNext()
-                onCheckListViewChange()
-            }
-            else -> return
         }
     }
 
-    private fun onCheckListViewChange() {
-        todaysTasks?.let { tasks ->
-            groupAdapter.apply {
-                clear()
-                addAll(tasks.map { CheckListItem(it, this@AgendaPageFragment) })
-            }
+    private fun onCheckListViewChange(tasks: List<TaskViewData>) {
+        groupAdapter.apply {
+            clear()
+            addAll(tasks.map { CheckListItem(it, this@AgendaPageFragment) })
         }
     }
 
     // @todo: example code here is crap -- reimplement
-    private fun onDayViewChange() {
+    private fun onDayViewChange(tasks: List<TaskViewData>) {
         // The day view needs a list of event views and a corresponding list of event time ranges
         val taskViews: MutableList<View?>?
         val taskTimeRanges: MutableList<EventTimeRange?>?
-        val tasks: List<TaskViewData> = todaysTasks ?: return
 
 
         // Sort the events by start time so the layout happens in correct order
@@ -222,8 +189,11 @@ class AgendaPageFragment : BasePageFragment() {
         dayView.setEventViews(taskViews, taskTimeRanges)
     }
 
-
     companion object {
+        private const val LOADING = 0
+        private const val CALENDAR_VIEW = 1
+        private const val CHECKLIST_VIEW = 2
+
         fun newInstance() = AgendaPageFragment()
     }
 }
