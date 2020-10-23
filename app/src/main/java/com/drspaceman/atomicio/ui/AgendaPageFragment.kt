@@ -24,8 +24,10 @@ import java.text.DateFormat
 import java.util.*
 
 import kotlinx.android.synthetic.main.fragment_agenda.*
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class AgendaPageFragment : BasePageFragment() {
+class AgendaPageFragment : BasePageFragment(), CoroutineScope {
 
     override val fragmentTitle = "Agenda"
 
@@ -40,6 +42,10 @@ class AgendaPageFragment : BasePageFragment() {
     // @todo: implement without Calendar class
     private lateinit var day: Calendar
 
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -49,7 +55,7 @@ class AgendaPageFragment : BasePageFragment() {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.agenda_fragment_menu, menu)
         agendaViewMenuButton = menu.findItem(R.id.toggleViewButton)
-        agendaViewMenuButton?.setIcon(R.drawable.ic_calendar_view)
+        agendaViewMenuButton?.setIcon(R.drawable.ic_calendar_view) // TODO: get from preferences
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,6 +79,7 @@ class AgendaPageFragment : BasePageFragment() {
         return true
     }
 
+    // TODO: reimplement without Calendar
     private fun renderDayViewBackground() {
         // Create a new calendar object set to the start of today
         day = Calendar.getInstance().apply {
@@ -128,65 +135,89 @@ class AgendaPageFragment : BasePageFragment() {
     }
 
     private fun onCheckListViewChange(tasks: List<TaskViewData>) {
-        groupAdapter.apply {
-            clear()
-            addAll(tasks.map { CheckListItem(it, this@AgendaPageFragment) })
+        launch {
+            val items = async(Dispatchers.Default) {
+                tasks.map { CheckListItem(it, this@AgendaPageFragment) }
+            }
+
+            groupAdapter.apply {
+                clear()
+                addAll(items.await())
+            }
+        }
+    }
+
+    private fun onDayViewChange(tasks: List<TaskViewData>) {
+        launch {
+            val calendarData = async {
+                getCalendarViewItems(tasks)
+            }
+
+            val (taskViews, taskTimeRanges) = calendarData.await()
+
+            // Update the day view with the new events
+            dayView.setEventViews(taskViews, taskTimeRanges)
         }
     }
 
     // @todo: example code here is crap -- reimplement
-    private fun onDayViewChange(tasks: List<TaskViewData>) {
-        // The day view needs a list of event views and a corresponding list of event time ranges
-        val taskViews: MutableList<View?>?
-        val taskTimeRanges: MutableList<EventTimeRange?>?
+    private suspend fun getCalendarViewItems(tasks: List<TaskViewData>): CalendarData =
+        withContext(Dispatchers.Default) {
+            // The day view needs a list of event views and a corresponding list of event time ranges
+            val taskViews: MutableList<View?>?
+            val taskTimeRanges: MutableList<EventTimeRange?>?
 
 
-        // Sort the events by start time so the layout happens in correct order
-        // @todo: implement this without !!
-        Collections.sort(tasks,
-            Comparator<TaskViewData> { o1, o2 ->
-                if (o1.startTime!! < o2.startTime!!) -1 else if (o1.startTime!! == o2.startTime!!) 0 else 1
-            })
-        taskViews = ArrayList()
-        taskTimeRanges = ArrayList()
+            // Sort the events by start time so the layout happens in correct order
+            // @todo: implement this without !!
+            Collections.sort(tasks,
+                Comparator<TaskViewData> { o1, o2 ->
+                    if (o1.startTime!! < o2.startTime!!) -1 else if (o1.startTime!! == o2.startTime!!) 0 else 1
+                })
+            taskViews = ArrayList()
+            taskTimeRanges = ArrayList()
 
-        // Reclaim all of the existing event views so we can reuse them if needed, this process
-        // can be useful if your day view is hosted in a recycler view for example
-        val recycled = dayView.removeEventViews()
-        var remaining = recycled?.size ?: 0
-        for (task in tasks) {
-            // Try to recycle an existing event view if there are enough left, otherwise inflate
-            // a new one
-            val taskView =
-                if (remaining > 0) recycled!![--remaining] else layoutInflater.inflate(
-                    R.layout.agenda_item,
-                    dayView,
-                    false
-                )
+            // Reclaim all of the existing event views so we can reuse them if needed, this process
+            // can be useful if your day view is hosted in a recycler view for example
+            val recycled = dayView.removeEventViews()
+            var remaining = recycled?.size ?: 0
+            for (task in tasks) {
+                // Try to recycle an existing event view if there are enough left, otherwise inflate
+                // a new one
+                val taskView =
+                    if (remaining > 0) recycled!![--remaining] else layoutInflater.inflate(
+                        R.layout.agenda_item,
+                        dayView,
+                        false
+                    )
 
-            val taskTitle = taskView.findViewById<TextView>(R.id.taskTitle)
+                val taskTitle = taskView.findViewById<TextView>(R.id.taskTitle)
 
-            taskTitle.text = task.title
+                taskTitle.text = task.title
 //            taskLocation.text = task.location
 
-            taskView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
+                taskView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
 
-            // When an event is clicked, start a new draft event and show the edit event dialog
-            // @todo: implement this without !! or Calendar
-            taskView.setOnClickListener {
-                showEditDetailsDialog(task.id)
+                // When an event is clicked, start a new draft event and show the edit event dialog
+                // @todo: implement this without !! or Calendar
+                taskView.setOnClickListener {
+                    showEditDetailsDialog(task.id)
+                }
+                taskViews.add(taskView)
+
+                // The day view needs the event time ranges in the start minute/end minute format,
+                // so calculate those here
+                val startMinute: Int = 60 * task.startTime!!.hour + task.startTime!!.minute
+                val endMinute: Int = 60 * task.endTime!!.hour + task.endTime!!.minute
+                taskTimeRanges.add(EventTimeRange(startMinute, endMinute))
             }
-            taskViews.add(taskView)
 
-            // The day view needs the event time ranges in the start minute/end minute format,
-            // so calculate those here
-            val startMinute: Int = 60 * task.startTime!!.hour + task.startTime!!.minute
-            val endMinute: Int = 60 * task.endTime!!.hour + task.endTime!!.minute
-            taskTimeRanges.add(EventTimeRange(startMinute, endMinute))
+            CalendarData(taskViews, taskTimeRanges)
         }
 
-        // Update the day view with the new events
-        dayView.setEventViews(taskViews, taskTimeRanges)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        job.cancel()
     }
 
     companion object {
@@ -196,4 +227,9 @@ class AgendaPageFragment : BasePageFragment() {
 
         fun newInstance() = AgendaPageFragment()
     }
+
+    data class CalendarData(
+        val taskViews: MutableList<View?>,
+        val taskTimeRanges: MutableList<EventTimeRange?>
+    )
 }
