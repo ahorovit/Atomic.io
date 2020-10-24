@@ -8,8 +8,12 @@ import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter.EditItemListener
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
 
-abstract class BasePageFragment : Fragment(), EditItemListener {
+abstract class BasePageFragment : Fragment(), CoroutineScope, EditItemListener {
 
     protected abstract val fragmentTitle: String
 
@@ -20,6 +24,10 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
     protected lateinit var recyclerViewAdapter: BaseRecyclerViewAdapter
 
     protected lateinit var fab: FloatingActionButton
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     protected abstract fun getEditDialogFragment(id: Long?): BaseDialogFragment
 
@@ -65,5 +73,10 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
 
     override fun editItemDetails(itemId: Long?) {
         showEditDetailsDialog(itemId)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        job.cancel()
     }
 }

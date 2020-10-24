@@ -19,15 +19,12 @@ import com.drspaceman.atomicio.viewstate.Loading
 import com.linkedin.android.tachyon.DayView.EventTimeRange
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
-
+import kotlinx.android.synthetic.main.fragment_agenda.*
+import kotlinx.coroutines.*
 import java.text.DateFormat
 import java.util.*
 
-import kotlinx.android.synthetic.main.fragment_agenda.*
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
-
-class AgendaPageFragment : BasePageFragment(), CoroutineScope {
+class AgendaPageFragment : BasePageFragment() {
 
     override val fragmentTitle = "Agenda"
 
@@ -41,10 +38,6 @@ class AgendaPageFragment : BasePageFragment(), CoroutineScope {
 
     // @todo: implement without Calendar class
     private lateinit var day: Calendar
-
-    private val job = Job()
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -214,11 +207,6 @@ class AgendaPageFragment : BasePageFragment(), CoroutineScope {
 
             CalendarData(taskViews, taskTimeRanges)
         }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        job.cancel()
-    }
 
     companion object {
         private const val LOADING = 0
