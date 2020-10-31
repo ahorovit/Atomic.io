@@ -18,7 +18,7 @@ import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 
 import kotlinx.android.synthetic.main.fragment_task_details.*
-import kotlinx.android.synthetic.main.spinner_layout.*
+import kotlinx.android.synthetic.main.edit_task_form.*
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 

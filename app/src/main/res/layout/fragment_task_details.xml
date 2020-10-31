@@ -1,88 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/dialogAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/appToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </com.google.android.material.appbar.AppBarLayout>
+
     <ScrollView
-        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        <include layout="@layout/edit_task_form"/>
 
-            <include layout="@layout/spinner_layout" />
-
-            <Button
-                android:id="@+id/newHabit"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/add_habit"
-                android:contentDescription="@string/add_new_habit"
-                />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textViewTaskName"
-                    style="@style/FormLabel"
-                    android:text="@string/task_title" />
-
-                <EditText
-                    android:id="@+id/editTextTaskName"
-                    style="@style/FormEditText"
-                    android:hint="@string/habit_hint"
-                    android:inputType="text" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/startTime"
-                    style="@style/FormLabel"
-                    android:text="@string/start_label" />
-
-                <EditText
-                    android:id="@+id/editStartTime"
-                    android:clickable="true"
-                    android:focusable="false"
-                    style="@style/FormEditText" />
-
-                <TextView
-                    android:id="@+id/endTime"
-                    style="@style/FormLabel"
-                    android:text="@string/end_label" />
-
-                <EditText
-                    android:id="@+id/editEndTime"
-                    android:clickable="true"
-                    android:focusable="false"
-                    style="@style/FormEditText" />
-            </LinearLayout>
-
-
-        </LinearLayout>
     </ScrollView>
-
-    <include
-        android:id="@+id/crudButtons"
-        layout="@layout/crud_buttons"/>
 </LinearLayout>
