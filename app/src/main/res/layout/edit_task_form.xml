@@ -7,17 +7,6 @@
 
 
     <TextView
-        android:id="@+id/habitSpinnerLabel"
-        style="@style/FormLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="0.4"
-        android:text="@string/habit_label"
-        app:layout_constraintBottom_toBottomOf="@+id/habitSpinner"
-        app:layout_constraintEnd_toStartOf="@+id/leftGuideline" />
-
-    <TextView
         android:id="@+id/textViewTaskName"
         style="@style/FormLabel"
         android:layout_width="wrap_content"
@@ -99,6 +88,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="bottom"
+        android:layout_marginStart="16dp"
         android:contentDescription="@string/identity_type_icon"
         app:layout_constraintBottom_toBottomOf="@+id/identitySpinner"
         app:layout_constraintStart_toStartOf="@+id/leftGuideline"
@@ -113,19 +103,102 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
         app:layout_constraintStart_toEndOf="@+id/spinnerImage"
-        app:layout_constraintTop_toBottomOf="@+id/editEndTime" />
+        app:layout_constraintTop_toBottomOf="@+id/wednesday" />
 
+
+    <TextView
+        android:id="@+id/habitSpinnerLabel"
+        style="@style/FormLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="0.4"
+        android:text="@string/habit_label"
+        app:layout_constraintBottom_toBottomOf="@+id/habitSpinner"
+        app:layout_constraintEnd_toStartOf="@+id/leftGuideline" />
 
     <Spinner
         android:id="@+id/habitSpinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
-        app:layout_constraintStart_toEndOf="@+id/spinnerImage"
+        app:layout_constraintStart_toEndOf="@+id/leftGuideline"
         app:layout_constraintTop_toBottomOf="@+id/identitySpinner" />
 
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/sunday"
+        android:layout_width="47dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="S"
+        app:layout_constraintEnd_toStartOf="@+id/monday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editEndTime" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/monday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="M"
+        app:layout_constraintBottom_toBottomOf="@+id/sunday"
+        app:layout_constraintEnd_toStartOf="@+id/tuesday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sunday" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/tuesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="T"
+        app:layout_constraintBottom_toBottomOf="@+id/monday"
+        app:layout_constraintEnd_toStartOf="@+id/wednesday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/monday" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/wednesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="W"
+        app:layout_constraintBottom_toBottomOf="@+id/tuesday"
+        app:layout_constraintEnd_toStartOf="@+id/thursday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tuesday" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/thursday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="T"
+        app:layout_constraintBottom_toBottomOf="@+id/wednesday"
+        app:layout_constraintEnd_toStartOf="@+id/friday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/wednesday" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/friday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="F"
+        app:layout_constraintBottom_toBottomOf="@+id/thursday"
+        app:layout_constraintEnd_toStartOf="@+id/saturday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/thursday" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/saturday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="S"
+        app:layout_constraintBottom_toBottomOf="@+id/friday"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/friday" />
 
     <Button
         android:id="@+id/newIdentity"
@@ -136,34 +209,36 @@
         android:text="@string/add_identity"
         app:layout_constraintEnd_toStartOf="@+id/newHabit"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="@id/leftGuideline"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/habitSpinner" />
 
     <Button
         android:id="@+id/newHabit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:contentDescription="@string/add_new_habit"
         android:text="@string/add_habit"
         app:layout_constraintBottom_toBottomOf="@+id/newIdentity"
-        app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/newIdentity"
-        app:layout_constraintTop_toTopOf="@+id/newIdentity" />
+        app:layout_constraintTop_toTopOf="@+id/newIdentity"
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="64dp" />
+        app:layout_constraintGuide_begin="72dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/rightGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="64dp" />
+        app:layout_constraintGuide_end="32dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
