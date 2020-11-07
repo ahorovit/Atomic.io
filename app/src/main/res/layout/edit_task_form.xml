@@ -14,15 +14,14 @@
         android:layout_marginEnd="8dp"
         android:text="@string/task_title"
         app:layout_constraintBottom_toBottomOf="@+id/editTextTaskName"
-        app:layout_constraintEnd_toStartOf="@+id/leftGuideline"
-        app:layout_constraintTop_toTopOf="@+id/editTextTaskName" />
+        app:layout_constraintEnd_toStartOf="@+id/leftGuideline" />
 
     <EditText
         android:id="@+id/editTextTaskName"
         style="@style/FormEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:hint="@string/habit_hint"
         android:inputType="text"
         app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
@@ -38,17 +37,19 @@
         android:layout_marginEnd="8dp"
         android:text="@string/start_label"
         app:layout_constraintBottom_toBottomOf="@+id/editStartTime"
-        app:layout_constraintEnd_toStartOf="@+id/leftGuideline"
-        app:layout_constraintTop_toTopOf="@+id/editStartTime" />
+        app:layout_constraintEnd_toStartOf="@+id/leftGuideline" />
 
     <EditText
         android:id="@+id/editStartTime"
         style="@style/FormEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:clickable="true"
         android:focusable="false"
+        app:layout_constraintEnd_toStartOf="@+id/endTime"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/startTime"
         app:layout_constraintStart_toStartOf="@+id/leftGuideline"
         app:layout_constraintTop_toBottomOf="@+id/editTextTaskName" />
 
@@ -57,22 +58,25 @@
         style="@style/FormLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:text="@string/end_label"
         app:layout_constraintBottom_toBottomOf="@+id/editEndTime"
-        app:layout_constraintEnd_toStartOf="@+id/leftGuideline"
-        app:layout_constraintTop_toTopOf="@+id/editEndTime" />
+        app:layout_constraintEnd_toStartOf="@+id/editEndTime"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/editStartTime" />
 
     <EditText
         android:id="@+id/editEndTime"
         style="@style/FormEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:clickable="true"
         android:focusable="false"
-        app:layout_constraintStart_toStartOf="@+id/leftGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/editStartTime" />
+        app:layout_constraintBottom_toBottomOf="@+id/editStartTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/endTime"
+        app:layout_constraintTop_toTopOf="@+id/editStartTime" />
 
     <TextView
         android:id="@+id/identitySpinnerLabel"
@@ -103,7 +107,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
         app:layout_constraintStart_toEndOf="@+id/spinnerImage"
-        app:layout_constraintTop_toBottomOf="@+id/wednesday" />
+        app:layout_constraintTop_toBottomOf="@+id/trackingText" />
 
 
     <TextView
@@ -127,78 +131,60 @@
         app:layout_constraintStart_toEndOf="@+id/leftGuideline"
         app:layout_constraintTop_toBottomOf="@+id/identitySpinner" />
 
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/sunday"
-        android:layout_width="47dp"
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroup"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="S"
-        app:layout_constraintEnd_toStartOf="@+id/monday"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editEndTime" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/monday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="M"
-        app:layout_constraintBottom_toBottomOf="@+id/sunday"
-        app:layout_constraintEnd_toStartOf="@+id/tuesday"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/sunday" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/tuesday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="T"
-        app:layout_constraintBottom_toBottomOf="@+id/monday"
-        app:layout_constraintEnd_toStartOf="@+id/wednesday"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/monday" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/wednesday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="W"
-        app:layout_constraintBottom_toBottomOf="@+id/tuesday"
-        app:layout_constraintEnd_toStartOf="@+id/thursday"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/tuesday" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/thursday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="T"
-        app:layout_constraintBottom_toBottomOf="@+id/wednesday"
-        app:layout_constraintEnd_toStartOf="@+id/friday"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/wednesday" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/friday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="F"
-        app:layout_constraintBottom_toBottomOf="@+id/thursday"
-        app:layout_constraintEnd_toStartOf="@+id/saturday"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/thursday" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/saturday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="S"
-        app:layout_constraintBottom_toBottomOf="@+id/friday"
+        app:chipSpacingHorizontal="-8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/friday" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/repeatsText">
+
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/sunday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="S" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/monday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="M" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/tuesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="T" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/wednesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="W" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/thursday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="T" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/friday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="F" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/saturday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="S" />
+
+    </com.google.android.material.chip.ChipGroup>
 
     <Button
         android:id="@+id/newIdentity"
@@ -240,5 +226,25 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="32dp" />
+
+    <TextView
+        android:id="@+id/repeatsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="Repeats..."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editStartTime" />
+
+    <TextView
+        android:id="@+id/trackingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="Tracking..."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
