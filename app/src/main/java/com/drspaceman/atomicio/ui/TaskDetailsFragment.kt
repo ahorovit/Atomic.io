@@ -17,13 +17,13 @@ import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 
-import kotlinx.android.synthetic.main.fragment_task_details.*
+import kotlinx.android.synthetic.main.details_dialog.*
 import kotlinx.android.synthetic.main.edit_task_form.*
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
 class TaskDetailsFragment : BaseDialogFragment() {
-    override val layoutId = R.layout.fragment_task_details
+    override val layoutId = R.layout.edit_task_form
 
     override val itemId: Long? by lazy {
         arguments?.getLong(ARG_TASK_ID, 0)
@@ -64,7 +64,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        spinnerLabel.text = getString(R.string.habit_label)
+        habitSpinnerLabel.text = getString(R.string.habit_label)
 
         newHabit.setOnClickListener {
             showNewHabitDialog()
@@ -199,7 +199,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
             position?.let {
                 val habit = spinnerAdapter?.getItem(it) as HabitViewData
 
-                spinner.setSelection(it)
+                habitSpinner.setSelection(it)
                 spinnerImage.setImageResource(habit.typeResourceId)
                 itemViewData.habitId = habit.id
 
@@ -215,8 +215,8 @@ class TaskDetailsFragment : BaseDialogFragment() {
     override fun populateTypeSpinner() {
         initializeSpinnerAdapter()
 
-        spinner.post {
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        habitSpinner.post {
+            habitSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>,
                     view: View?,
@@ -244,7 +244,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
             android.R.layout.simple_spinner_item
         )
 
-        spinner.adapter = spinnerAdapter
+        habitSpinner.adapter = spinnerAdapter
     }
 
     companion object {

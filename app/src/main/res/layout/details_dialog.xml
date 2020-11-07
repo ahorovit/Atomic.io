@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/appToolbar"
+            android:id="@+id/dialogToolBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
@@ -25,7 +25,10 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <include layout="@layout/edit_task_form"/>
+        <ViewStub
+            android:id="@+id/viewStub"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent" />
 
     </ScrollView>
 </LinearLayout>

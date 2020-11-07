@@ -7,14 +7,25 @@
 
 
     <TextView
+        android:id="@+id/habitSpinnerLabel"
+        style="@style/FormLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="0.4"
+        android:text="@string/habit_label"
+        app:layout_constraintBottom_toBottomOf="@+id/habitSpinner"
+        app:layout_constraintEnd_toStartOf="@+id/leftGuideline" />
+
+    <TextView
         android:id="@+id/textViewTaskName"
         style="@style/FormLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/task_title"
         app:layout_constraintBottom_toBottomOf="@+id/editTextTaskName"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/leftGuideline"
         app:layout_constraintTop_toTopOf="@+id/editTextTaskName" />
 
     <EditText
@@ -23,11 +34,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:hint="@string/habit_hint"
         android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
+        app:layout_constraintStart_toStartOf="@+id/leftGuideline"
         app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -36,10 +46,10 @@
         style="@style/FormLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/start_label"
         app:layout_constraintBottom_toBottomOf="@+id/editStartTime"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/leftGuideline"
         app:layout_constraintTop_toTopOf="@+id/editStartTime" />
 
     <EditText
@@ -47,9 +57,10 @@
         style="@style/FormEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:clickable="true"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        android:focusable="false"
+        app:layout_constraintStart_toStartOf="@+id/leftGuideline"
         app:layout_constraintTop_toBottomOf="@+id/editTextTaskName" />
 
     <TextView
@@ -57,10 +68,10 @@
         style="@style/FormLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/end_label"
         app:layout_constraintBottom_toBottomOf="@+id/editEndTime"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/leftGuideline"
         app:layout_constraintTop_toTopOf="@+id/editEndTime" />
 
     <EditText
@@ -68,68 +79,91 @@
         style="@style/FormEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:clickable="true"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        android:focusable="false"
+        app:layout_constraintStart_toStartOf="@+id/leftGuideline"
         app:layout_constraintTop_toBottomOf="@+id/editStartTime" />
 
     <TextView
-        android:id="@+id/spinnerLabel"
+        android:id="@+id/identitySpinnerLabel"
         style="@style/FormLabel"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="0.4"
-        android:text="Habit"
-        app:layout_constraintBottom_toBottomOf="@+id/spinnerImage"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/spinnerImage"
-        app:layout_constraintVertical_bias="0.0" />
+        android:text="@string/identity"
+        app:layout_constraintBottom_toBottomOf="@+id/identitySpinner"
+        app:layout_constraintEnd_toStartOf="@+id/leftGuideline" />
 
     <ImageView
         android:id="@+id/spinnerImage"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="bottom"
-        android:contentDescription="TODO"
-        app:layout_constraintBottom_toBottomOf="@+id/spinner"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/spinner"
+        android:contentDescription="@string/identity_type_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/identitySpinner"
+        app:layout_constraintStart_toStartOf="@+id/leftGuideline"
+        app:layout_constraintTop_toTopOf="@+id/identitySpinner"
         app:srcCompat="@drawable/ic_other" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/identitySpinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_weight="1.4"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
         app:layout_constraintStart_toEndOf="@+id/spinnerImage"
         app:layout_constraintTop_toBottomOf="@+id/editEndTime" />
+
+
+    <Spinner
+        android:id="@+id/habitSpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/rightGuideline"
+        app:layout_constraintStart_toEndOf="@+id/spinnerImage"
+        app:layout_constraintTop_toBottomOf="@+id/identitySpinner" />
+
+
+    <Button
+        android:id="@+id/newIdentity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/add_new_habit"
+        android:text="@string/add_identity"
+        app:layout_constraintEnd_toStartOf="@+id/newHabit"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="@id/leftGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/habitSpinner" />
 
     <Button
         android:id="@+id/newHabit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:contentDescription="@string/add_new_habit"
         android:text="@string/add_habit"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
-
-    <include
-        android:id="@+id/crudButtons"
-        layout="@layout/crud_buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newHabit" />
+        app:layout_constraintBottom_toBottomOf="@+id/newIdentity"
+        app:layout_constraintEnd_toEndOf="@id/rightGuideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/newIdentity"
+        app:layout_constraintTop_toTopOf="@+id/newIdentity" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
+        android:id="@+id/leftGuideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="64dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/rightGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="64dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
