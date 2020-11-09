@@ -4,7 +4,7 @@ import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
 
 sealed class AgendaViewState
 
-object Loading: AgendaViewState()
+object AgendaLoading: AgendaViewState()
 
 data class DayViewLoaded(
     val tasks: List<AgendaPageViewModel.TaskViewData>

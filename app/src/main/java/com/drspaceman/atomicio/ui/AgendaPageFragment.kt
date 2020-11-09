@@ -15,7 +15,7 @@ import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewstate.AgendaViewState
 import com.drspaceman.atomicio.viewstate.ChecklistViewLoaded
 import com.drspaceman.atomicio.viewstate.DayViewLoaded
-import com.drspaceman.atomicio.viewstate.Loading
+import com.drspaceman.atomicio.viewstate.AgendaLoading
 import com.linkedin.android.tachyon.DayView.EventTimeRange
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
@@ -113,7 +113,7 @@ class AgendaPageFragment : BasePageFragment() {
 
     private fun render(state: AgendaViewState) {
         viewFlipper.displayedChild = when (state) {
-            Loading -> LOADING
+            AgendaLoading -> LOADING
             is DayViewLoaded -> {
                 onDayViewChange(state.tasks)
                 agendaViewMenuButton?.setIcon(R.drawable.ic_calendar_view)
