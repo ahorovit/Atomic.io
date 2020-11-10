@@ -46,6 +46,7 @@ constructor(
         }
 
         _viewState.addSource(task) {
+            setSelectedHabit(it.habitId)
             refreshViewState()
         }
 
@@ -68,7 +69,7 @@ constructor(
             identities.value ?: listOf(),
             selectedIdentity.value ?: VIEWDATA_STUB_ID,
             visibleHabits.value ?: listOf(),
-            task.value?.habitId ?: VIEWDATA_STUB_ID,
+            selectedHabit ?: VIEWDATA_STUB_ID,
         )
     }
 
@@ -115,19 +116,34 @@ constructor(
     }
 
     fun setSelectedIdentity(identityId: Long?) {
-        if (identityId == VIEWDATA_STUB_ID) {
-            selectedIdentity.value = null
+        when (identityId) {
+            selectedIdentity.value -> return
+            VIEWDATA_STUB_ID -> {
+                selectedHabit = null
+                selectedIdentity.value = null
+            }
+            else -> {
+                selectedHabit = null
+                selectedIdentity.value = identityId
+            }
         }
-
-        selectedIdentity.value = identityId
     }
 
     fun setSelectedHabit(habitId: Long?) {
-        if (habitId == VIEWDATA_STUB_ID) {
-            selectedHabit = null
+        when (habitId) {
+            selectedHabit -> return
+            null -> {
+                selectedHabit = null
+            }
+            VIEWDATA_STUB_ID -> {
+                selectedHabit = null
+            }
+            else -> {
+                val identityId = habits.value?.first { it.id == habitId }?.identityId
+                selectedHabit = habitId
+                setSelectedIdentity(identityId)
+            }
         }
-
-        selectedHabit = habitId
     }
 
     fun getNewTaskView(): TaskViewData {
