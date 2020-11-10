@@ -9,6 +9,8 @@ import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
 import com.drspaceman.atomicio.ui.IdentityPageFragment
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_IMAGE
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_TYPE
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -135,7 +137,7 @@ constructor(
                         IdentityPageFragment.MISC_HABITS_ID,
                         "Misc Habits",
                         null,
-                        "Other"
+                        VIEWDATA_STUB_TYPE
                     ),
                     orphanHabits.map { HabitViewData.of(it) }
                 )
@@ -151,7 +153,7 @@ constructor(
         _identity.value = getNewIdentityView()
     }
 
-    fun getNewIdentityView() = IdentityViewData(type = "Other")
+    fun getNewIdentityView() = IdentityViewData(type = VIEWDATA_STUB_TYPE)
 
     fun insertIdentity(newIdentityView: IdentityViewData) {
         GlobalScope.launch {
@@ -203,7 +205,7 @@ constructor(
         var name: String? = "",
         var description: String? = "",
         override var type: String? = "",
-        override var typeResourceId: Int = R.drawable.ic_other
+        override var typeResourceId: Int = VIEWDATA_STUB_IMAGE
     ) : BaseViewData(), SpinnerItemViewData {
 
         override fun toString(): String {

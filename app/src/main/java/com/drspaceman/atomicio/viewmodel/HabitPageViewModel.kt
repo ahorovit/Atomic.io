@@ -6,6 +6,7 @@ import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_IMAGE
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -96,8 +97,8 @@ constructor(
         override var id: Long? = null,
         var identityId: Long? = null,
         var name: String? = "",
-        override var type: String? = "Other",
-        override var typeResourceId: Int = R.drawable.ic_other
+        override var type: String? = ViewDataStub.VIEWDATA_STUB_TYPE,
+        override var typeResourceId: Int = VIEWDATA_STUB_IMAGE
     ) : BaseViewData(), SpinnerItemViewData {
         override fun toString(): String {
             return name ?: ""

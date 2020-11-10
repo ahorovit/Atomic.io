@@ -7,6 +7,9 @@ import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.model.Task
+import com.drspaceman.atomicio.viewmodel.BaseViewModel
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_IMAGE
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_TYPE
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -139,7 +142,7 @@ constructor(
             "Friendship" to R.drawable.ic_friendship,
             "Wellness" to R.drawable.ic_health,
             "Mindset" to R.drawable.ic_mindset,
-            "Other" to R.drawable.ic_other,
+            VIEWDATA_STUB_TYPE to VIEWDATA_STUB_IMAGE,
             "Productivity" to R.drawable.ic_productivity,
             "Professional" to R.drawable.ic_professional,
             "Romantic" to R.drawable.ic_romantic
@@ -149,7 +152,7 @@ constructor(
             get() = ArrayList(allTypes.keys.sorted())
 
         fun getTypeResourceId(type: String?): Int {
-            return type?.let { allTypes[type] } ?: allTypes["Other"]!!
+            return type?.let { allTypes[type] } ?: VIEWDATA_STUB_IMAGE
         }
     }
 }
