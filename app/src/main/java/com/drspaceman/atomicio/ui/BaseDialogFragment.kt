@@ -132,6 +132,7 @@ abstract class BaseDialogFragment : DialogFragment() {
     }
 
     interface SpinnerItemViewData {
+        var id: Long?
         var type: String?
         var typeResourceId: Int
     }

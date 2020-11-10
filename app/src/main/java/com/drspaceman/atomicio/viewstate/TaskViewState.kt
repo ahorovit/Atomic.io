@@ -11,5 +11,7 @@ object TaskLoading: TaskViewState()
 data class TaskLoaded(
     val task: AgendaPageViewModel.TaskViewData,
     val identities: List<IdentityPageViewModel.IdentityViewData>,
+    val selectedIdentityId: Long,
     val habits: List<HabitPageViewModel.HabitViewData>,
+    val selectedHabitId: Long
 ): TaskViewState()

@@ -8,15 +8,16 @@ import android.widget.AdapterView
 import androidx.fragment.app.activityViewModels
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
-import com.drspaceman.atomicio.exhaustive
 import com.drspaceman.atomicio.ui.HabitDetailsFragment.Companion.NEW_HABIT_REQUEST
 import com.drspaceman.atomicio.ui.HabitDetailsFragment.Companion.NEW_HABIT_RESULT
 import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.END_TIME_REQUEST
 import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.START_TIME_REQUEST
 import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.TIME_PICKER_RESULT
-import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
+import com.drspaceman.atomicio.viewmodel.BaseViewModel
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
+import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 import com.drspaceman.atomicio.viewmodel.TaskDetailsViewModel
 import com.drspaceman.atomicio.viewstate.TaskLoaded
 import com.drspaceman.atomicio.viewstate.TaskLoading
@@ -70,37 +71,12 @@ class TaskDetailsFragment : BaseDialogFragment() {
     }
 
     override fun setObservers() {
-
         viewModel.viewState.observe(
             viewLifecycleOwner,
             {
                 render(it)
             }
         )
-
-
-
-
-//        viewModel.task.observe(
-//            this,
-//            {
-//                itemViewData = it
-//                populateExistingValues()
-//            }
-//        )
-//
-//        viewModel.habits.observe(
-//            viewLifecycleOwner,
-//            { habitViewData ->
-//                habitSpinnerAdapter?.let {
-//                    it.setSpinnerItems(habitViewData)
-//
-//                    // This needs to run again in case the Fragment loaded before identities
-//                    // were loaded
-//                    setSpinnerSelection()
-//                }
-//            }
-//        )
     }
 
     private fun render(state: TaskViewState) {
@@ -110,14 +86,13 @@ class TaskDetailsFragment : BaseDialogFragment() {
             }
             is TaskLoaded -> {
                 itemViewData = state.task
-                populateExistingValues()
 
                 identitySpinnerAdapter?.let {
                     it.setSpinnerItems(state.identities)
 
                     // This needs to run again in case the Fragment loaded before identities
                     // were loaded
-                    setSpinnerSelection()
+                    setIdentitySpinnerSelection()
                 }
 
 
@@ -128,6 +103,8 @@ class TaskDetailsFragment : BaseDialogFragment() {
                     // were loaded
                     setSpinnerSelection()
                 }
+
+                populateExistingValues()
 
                 DETAILS_FORM
             }
@@ -206,6 +183,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
             editStartTime.setText(formatTime(it.startTime))
             editEndTime.setText(formatTime(it.endTime))
             setSpinnerSelection()
+            setIdentitySpinnerSelection()
         }
     }
 
@@ -279,7 +257,6 @@ class TaskDetailsFragment : BaseDialogFragment() {
                 if (!isTitleEdited) {
                     editTextTaskName.setText(habit.name)
                 }
-
             }
         }
     }
@@ -287,6 +264,25 @@ class TaskDetailsFragment : BaseDialogFragment() {
     // @TODO: (mostly) duplicated from HabitDetailsFragment
     override fun populateTypeSpinner() {
         initializeSpinnerAdapter()
+
+        identitySpinner.post {
+            identitySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val identity = parent.getItemAtPosition(position) as SpinnerItemViewData
+                    spinnerImage.setImageResource(identity.typeResourceId)
+                    viewModel.setSelectedIdentity(identity.id)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    // @todo: provide option to add identity if none exist yet
+                }
+            }
+        }
 
         habitSpinner.post {
             habitSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -296,11 +292,15 @@ class TaskDetailsFragment : BaseDialogFragment() {
                     position: Int,
                     id: Long
                 ) {
-                    val habit = parent.getItemAtPosition(position) as HabitViewData
+                    val habit = parent.getItemAtPosition(position) as SpinnerItemViewData
+
                     spinnerImage.setImageResource(habit.typeResourceId)
-                    if (!isTitleEdited) {
-                        editTextTaskName.setText(habit.name)
+
+                    if (habit !is ViewDataStub && !isTitleEdited) {
+                        editTextTaskName.setText(habit.toString())
                     }
+
+                    viewModel.setSelectedHabit(habit.id)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -314,10 +314,19 @@ class TaskDetailsFragment : BaseDialogFragment() {
     private fun initializeSpinnerAdapter() {
         habitSpinnerAdapter = ViewDataSpinnerAdapter(
             parentActivity,
-            android.R.layout.simple_spinner_item
+            android.R.layout.simple_spinner_item,
+            "Habit"
         )
 
         habitSpinner.adapter = habitSpinnerAdapter
+
+        identitySpinnerAdapter = ViewDataSpinnerAdapter(
+            parentActivity,
+            android.R.layout.simple_spinner_item,
+            "Identity"
+        )
+
+        identitySpinner.adapter = identitySpinnerAdapter
     }
 
     companion object {

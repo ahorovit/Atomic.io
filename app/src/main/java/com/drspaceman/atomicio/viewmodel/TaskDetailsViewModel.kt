@@ -4,6 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_ID
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewstate.TaskLoaded
 import com.drspaceman.atomicio.viewstate.TaskLoading
@@ -58,15 +59,16 @@ constructor(
     }
 
     private fun refreshViewState() {
-
         if (!habitsDelegate.isLoaded || !identitiesDelegate.isLoaded) {
             return
         }
 
         _viewState.value = TaskLoaded(
-            task.value!!,
-            identities.value!!,
-            visibleHabits.value!!
+            task.value ?: TaskViewData(),
+            identities.value ?: listOf(),
+            selectedIdentity.value ?: VIEWDATA_STUB_ID,
+            visibleHabits.value ?: listOf(),
+            task.value?.habitId ?: VIEWDATA_STUB_ID,
         )
     }
 
@@ -112,8 +114,20 @@ constructor(
         task.value = task.value?.copy(habitId = habitId)
     }
 
-    fun setIdentity(identityId: Long) {
-        // TODO
+    fun setSelectedIdentity(identityId: Long?) {
+        if (identityId == VIEWDATA_STUB_ID) {
+            selectedIdentity.value = null
+        }
+
+        selectedIdentity.value = identityId
+    }
+
+    fun setSelectedHabit(habitId: Long?) {
+        if (habitId == VIEWDATA_STUB_ID) {
+            selectedHabit = null
+        }
+
+        selectedHabit = habitId
     }
 
     fun getNewTaskView(): TaskViewData {
