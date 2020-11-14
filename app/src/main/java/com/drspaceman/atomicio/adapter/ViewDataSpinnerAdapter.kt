@@ -2,7 +2,6 @@ package com.drspaceman.atomicio.adapter
 
 import android.content.Context
 import android.widget.ArrayAdapter
-import com.drspaceman.atomicio.viewmodel.BaseViewModel
 import com.drspaceman.atomicio.viewmodel.BaseViewModel.BaseViewData
 import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub
 import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_ID
@@ -36,7 +35,7 @@ class ViewDataSpinnerAdapter(
         addAll(viewData)
     }
 
-    fun getViewDatumPosition(id: Long): Int? {
-        return positionMap[id]
+    fun getPosition(viewDataId: Long): Int {
+        return positionMap[viewDataId] ?: 0
     }
 }

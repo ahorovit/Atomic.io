@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Spinner
 import androidx.fragment.app.activityViewModels
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
@@ -15,7 +16,6 @@ import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.START_TIME_REQUES
 import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.TIME_PICKER_RESULT
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub
-import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.TaskDetailsViewModel
 import com.drspaceman.atomicio.viewstate.TaskLoaded
 import com.drspaceman.atomicio.viewstate.TaskLoading
@@ -37,10 +37,8 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
     override lateinit var itemViewData: TaskViewData
 
-    private var identitySpinnerAdapter: ViewDataSpinnerAdapter? = null
-    private var habitSpinnerAdapter: ViewDataSpinnerAdapter? = null
-
     // If title has been manually edited, don't autofill habit name
+    // TODO: handle with viewModel
     private var isTitleEdited = false
 
 
@@ -85,11 +83,20 @@ class TaskDetailsFragment : BaseDialogFragment() {
             is TaskLoaded -> {
                 itemViewData = state.task // TODO remove
 
-                identitySpinnerAdapter?.setSpinnerItems(state.identities)
+                (identitySpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.identities)
+                (habitSpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.habits)
 
-                habitSpinnerAdapter?.setSpinnerItems(state.habits)
+                val identity = updateSpinner(identitySpinner, state.selectedIdentityId)
+                spinnerImage.setImageResource(identity.typeResourceId)
 
-                populateForm(state.task, state.selectedIdentityId)
+                val habit = updateSpinner(habitSpinner, state.selectedHabitId)
+                if (!isTitleEdited) {
+                    editTextTaskName.setText(habit.toString())
+                }
+
+                editTextTaskName.setText(state.task.title)
+                editStartTime.setText(formatTime(state.task.startTime))
+                editEndTime.setText(formatTime(state.task.endTime))
 
                 DETAILS_FORM
             }
@@ -162,24 +169,9 @@ class TaskDetailsFragment : BaseDialogFragment() {
         viewModel.loadTask(id)
     }
 
-    private fun populateForm(task: TaskViewData, identityId: Long) {
-        editTextTaskName.setText(task.title)
-        editStartTime.setText(formatTime(task.startTime))
-        editEndTime.setText(formatTime(task.endTime))
-        setIdentitySpinnerSelection(identityId)
-        setSpinnerSelection()
-    }
 
     // TODO: remove
-    override fun populateExistingValues() {
-//        itemViewData.let {
-//            editTextTaskName.setText(it.title)
-//            editStartTime.setText(formatTime(it.startTime))
-//            editEndTime.setText(formatTime(it.endTime))
-//            setSpinnerSelection()
-//            setIdentitySpinnerSelection()
-//        }
-    }
+    override fun populateExistingValues() {}
 
     override fun saveItemDetails() {
         val writeTaskView = itemViewData
@@ -210,40 +202,17 @@ class TaskDetailsFragment : BaseDialogFragment() {
         itemViewData = viewModel.getNewTaskView()
     }
 
-    private fun setIdentitySpinnerSelection(identityId: Long) {
+    private fun updateSpinner(spinner: Spinner, itemId: Long): SpinnerItemViewData {
+        val adapter = spinner.adapter as ViewDataSpinnerAdapter
+        val position = adapter.getPosition(itemId)
+        spinner.tag = position // avoid triggering onItemSelected() logic
+        spinner.setSelection(position)
 
-        val position = identitySpinnerAdapter?.getViewDatumPosition(identityId)
-
-        // @todo: figure out why occasionally image is [NA] null while selection text is correct
-        position?.let {
-            val identity = habitSpinnerAdapter?.getItem(it) as SpinnerItemViewData
-
-            habitSpinner.setSelection(it)
-            spinnerImage.setImageResource(identity.typeResourceId)
-        }
+        return adapter.getItem(position) as SpinnerItemViewData
     }
-
 
     // @TODO: (mostly) duplicated from HabitDetailsFragment
-    override fun setSpinnerSelection() {
-        val task = itemViewData
-
-        task.habitId?.let { parentHabitId ->
-            val position = habitSpinnerAdapter?.getViewDatumPosition(parentHabitId)
-
-            // @todo: figure out why occasionally image is [NA] null while selection text is correct
-            position?.let {
-                val habit = habitSpinnerAdapter?.getItem(it) as HabitViewData
-
-                habitSpinner.setSelection(it)
-                itemViewData.habitId = habit.id
-
-                if (!isTitleEdited) {
-                    editTextTaskName.setText(habit.name)
-                }
-            }
-        }
-    }
+    override fun setSpinnerSelection() {}
 
     // @TODO: (mostly) duplicated from HabitDetailsFragment
     override fun populateTypeSpinner() {
@@ -257,8 +226,9 @@ class TaskDetailsFragment : BaseDialogFragment() {
                     position: Int,
                     id: Long
                 ) {
+                    if (identitySpinner.tag == position) return
+
                     val identity = parent.getItemAtPosition(position) as SpinnerItemViewData
-                    spinnerImage.setImageResource(identity.typeResourceId)
                     viewModel.setSelectedIdentity(identity.id)
                 }
 
@@ -276,9 +246,9 @@ class TaskDetailsFragment : BaseDialogFragment() {
                     position: Int,
                     id: Long
                 ) {
-                    val habit = parent.getItemAtPosition(position) as SpinnerItemViewData
+                    if (habitSpinner.tag == position) return
 
-                    spinnerImage.setImageResource(habit.typeResourceId)
+                    val habit = parent.getItemAtPosition(position) as SpinnerItemViewData
 
                     if (habit !is ViewDataStub && !isTitleEdited) {
                         editTextTaskName.setText(habit.toString())
@@ -294,23 +264,18 @@ class TaskDetailsFragment : BaseDialogFragment() {
         }
     }
 
-    // @TODO: duplicated from HabitDetailsFragment
     private fun initializeSpinnerAdapter() {
-        habitSpinnerAdapter = ViewDataSpinnerAdapter(
+        habitSpinner.adapter = ViewDataSpinnerAdapter(
             parentActivity,
             android.R.layout.simple_spinner_item,
             "Habit"
         )
 
-        habitSpinner.adapter = habitSpinnerAdapter
-
-        identitySpinnerAdapter = ViewDataSpinnerAdapter(
+        identitySpinner.adapter = ViewDataSpinnerAdapter(
             parentActivity,
             android.R.layout.simple_spinner_item,
             "Identity"
         )
-
-        identitySpinner.adapter = identitySpinnerAdapter
     }
 
     companion object {

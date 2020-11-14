@@ -16,7 +16,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.android.synthetic.main.fragment_habit_details.*
 import kotlinx.android.synthetic.main.spinner_layout.*
-import org.threeten.bp.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class HabitDetailsFragment : BaseDialogFragment() {
@@ -70,7 +69,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
     override fun setSpinnerSelection() {
         itemViewData.identityId?.let { parentIdentityId ->
-            val position = spinnerAdapter.getViewDatumPosition(parentIdentityId)
+            val position = spinnerAdapter.getPosition(parentIdentityId)
 
             // @todo: figure out why occasionally image is [NA] null while selection text is correct
             position?.let {

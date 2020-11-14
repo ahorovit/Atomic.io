@@ -115,33 +115,32 @@ constructor(
         task.value = task.value?.copy(habitId = habitId)
     }
 
-    fun setSelectedIdentity(identityId: Long?) {
+    fun setSelectedIdentity(identityId: Long?, propagate: Boolean = true) {
         when (identityId) {
             selectedIdentity.value -> return
             VIEWDATA_STUB_ID -> {
-                selectedHabit = null
+                if (propagate) setSelectedHabit(null, false)
                 selectedIdentity.value = null
             }
             else -> {
-                selectedHabit = null
+                if (propagate) setSelectedHabit(null, false)
                 selectedIdentity.value = identityId
             }
         }
     }
 
-    fun setSelectedHabit(habitId: Long?) {
+    fun setSelectedHabit(habitId: Long?, propagate: Boolean = true) {
         when (habitId) {
             selectedHabit -> return
-            null -> {
-                selectedHabit = null
-            }
-            VIEWDATA_STUB_ID -> {
-                selectedHabit = null
-            }
+            null -> { selectedHabit = null }
+            VIEWDATA_STUB_ID -> { selectedHabit = null }
             else -> {
                 val identityId = habits.value?.first { it.id == habitId }?.identityId
                 selectedHabit = habitId
-                setSelectedIdentity(identityId)
+
+                if (propagate) {
+                    setSelectedIdentity(identityId, false)
+                }
             }
         }
     }
