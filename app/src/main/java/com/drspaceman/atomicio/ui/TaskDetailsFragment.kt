@@ -15,11 +15,9 @@ import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.END_TIME_REQUEST
 import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.START_TIME_REQUEST
 import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.TIME_PICKER_RESULT
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
-import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub
 import com.drspaceman.atomicio.viewmodel.TaskDetailsViewModel
 import com.drspaceman.atomicio.viewstate.TaskLoaded
 import com.drspaceman.atomicio.viewstate.TaskLoading
-import com.drspaceman.atomicio.viewstate.TaskViewState
 import kotlinx.android.synthetic.main.details_dialog.*
 
 import kotlinx.android.synthetic.main.edit_task_form.*
@@ -45,21 +43,23 @@ class TaskDetailsFragment : BaseDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        habitSpinnerLabel.text = getString(R.string.habit_label)
+//        habitSpinnerLabel.text = getString(R.string.habit_label)
 
         newHabit.setOnClickListener {
             showNewHabitDialog()
         }
 
+        // TODO: default to NOW
         editStartTime.setOnClickListener {
             showTimePickerDialog(START_TIME_REQUEST)
         }
 
+        // TODO: change to duration picker
         editEndTime.setOnClickListener {
             showTimePickerDialog(END_TIME_REQUEST)
         }
 
-        // @todo: this isn't working very well
+        // @todo: move to ViewModel
         editTextTaskName.setOnKeyListener { _, _, _ ->
             isTitleEdited = true
             false
@@ -70,39 +70,37 @@ class TaskDetailsFragment : BaseDialogFragment() {
         viewModel.viewState.observe(
             viewLifecycleOwner,
             {
-                render(it)
+                viewFlipper.displayedChild = when (it) {
+                    is TaskLoading -> {
+                        LOADING
+                    }
+                    is TaskLoaded -> {
+                        renderForm(it)
+                        DETAILS_FORM
+                    }
+                }
             }
         )
     }
 
-    private fun render(state: TaskViewState) {
-        viewFlipper.displayedChild = when (state) {
-            is TaskLoading -> {
-                LOADING
-            }
-            is TaskLoaded -> {
-                itemViewData = state.task // TODO remove
+    private fun renderForm(state: TaskLoaded) {
+        itemViewData = state.task // TODO remove
+        editTextTaskName.setText(state.task.title)
 
-                (identitySpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.identities)
-                (habitSpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.habits)
+        (identitySpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.identities)
+        (habitSpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.habits)
 
-                val identity = updateSpinner(identitySpinner, state.selectedIdentityId)
-                spinnerImage.setImageResource(identity.typeResourceId)
+        val identity = updateSpinner(identitySpinner, state.selectedIdentityId)
+        spinnerImage.setImageResource(identity.typeResourceId)
 
-                val habit = updateSpinner(habitSpinner, state.selectedHabitId)
-                if (!isTitleEdited) {
-                    editTextTaskName.setText(habit.toString())
-                }
-
-                editTextTaskName.setText(state.task.title)
-                editStartTime.setText(formatTime(state.task.startTime))
-                editEndTime.setText(formatTime(state.task.endTime))
-
-                DETAILS_FORM
-            }
+        val habit = updateSpinner(habitSpinner, state.selectedHabitId)
+        if (!isTitleEdited) {
+            editTextTaskName.setText(habit.toString())
         }
-    }
 
+        editStartTime.setText(formatTime(state.task.startTime))
+        editEndTime.setText(formatTime(state.task.endTime))
+    }
 
     private fun showNewHabitDialog() {
         val fragmentManager = activity?.supportFragmentManager ?: return
@@ -119,7 +117,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if ( resultCode != Activity.RESULT_OK) {
+        if (resultCode != Activity.RESULT_OK) {
             return
         }
 
@@ -202,6 +200,10 @@ class TaskDetailsFragment : BaseDialogFragment() {
         itemViewData = viewModel.getNewTaskView()
     }
 
+    /**
+     * Push change to spinner from ViewState --> We need to avoid triggering additional change
+     * to viewState because of the change (use tag)
+     */
     private fun updateSpinner(spinner: Spinner, itemId: Long): SpinnerItemViewData {
         val adapter = spinner.adapter as ViewDataSpinnerAdapter
         val position = adapter.getPosition(itemId)
@@ -214,67 +216,40 @@ class TaskDetailsFragment : BaseDialogFragment() {
     // @TODO: (mostly) duplicated from HabitDetailsFragment
     override fun setSpinnerSelection() {}
 
-    // @TODO: (mostly) duplicated from HabitDetailsFragment
     override fun populateTypeSpinner() {
-        initializeSpinnerAdapter()
+        val itemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                if (parent.tag == position) return
+                val item = parent.getItemAtPosition(position) as SpinnerItemViewData
 
-        identitySpinner.post {
-            identitySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    if (identitySpinner.tag == position) return
-
-                    val identity = parent.getItemAtPosition(position) as SpinnerItemViewData
-                    viewModel.setSelectedIdentity(identity.id)
+                when (parent.id) {
+                    R.id.identitySpinner -> viewModel.setSelectedIdentity(item.id)
+                    R.id.habitSpinner -> viewModel.setSelectedHabit(item.id)
                 }
+            }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    // @todo: provide option to add identity if none exist yet
-                }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // @todo: provide option to add identity if none exist yet
             }
         }
 
-        habitSpinner.post {
-            habitSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    if (habitSpinner.tag == position) return
-
-                    val habit = parent.getItemAtPosition(position) as SpinnerItemViewData
-
-                    if (habit !is ViewDataStub && !isTitleEdited) {
-                        editTextTaskName.setText(habit.toString())
-                    }
-
-                    viewModel.setSelectedHabit(habit.id)
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    // @todo: provide option to add identity if none exist yet
-                }
-            }
-        }
-    }
-
-    private fun initializeSpinnerAdapter() {
-        habitSpinner.adapter = ViewDataSpinnerAdapter(
-            parentActivity,
-            android.R.layout.simple_spinner_item,
-            "Habit"
-        )
-
+        identitySpinner.onItemSelectedListener = itemSelectedListener
         identitySpinner.adapter = ViewDataSpinnerAdapter(
             parentActivity,
             android.R.layout.simple_spinner_item,
             "Identity"
+        )
+
+        habitSpinner.onItemSelectedListener = itemSelectedListener
+        habitSpinner.adapter = ViewDataSpinnerAdapter(
+            parentActivity,
+            android.R.layout.simple_spinner_item,
+            "Habit"
         )
     }
 
