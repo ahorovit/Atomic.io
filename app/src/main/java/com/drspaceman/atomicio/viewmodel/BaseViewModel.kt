@@ -11,7 +11,7 @@ abstract class BaseViewModel(
 ): ViewModel() {
 
     abstract fun deleteItem(itemViewData: BaseViewData)
-    abstract fun clearItem()
+    abstract fun clearContext()
 
     abstract class BaseViewData {
         abstract var id: Long?

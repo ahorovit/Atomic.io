@@ -52,7 +52,7 @@ constructor(
         TODO("Not yet implemented")
     }
 
-    override fun clearItem() {
+    override fun clearContext() {
         _habit.value = HabitViewData()
         _newHabitId.value = null
     }

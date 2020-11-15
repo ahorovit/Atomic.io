@@ -77,7 +77,7 @@ constructor(
     }
 
     // @todo: remove
-    override fun clearItem() {
+    override fun clearContext() {
         _task.value = getNewTaskView()
     }
 

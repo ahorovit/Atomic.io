@@ -107,12 +107,12 @@ abstract class BaseDialogFragment : DialogFragment() {
     }
 
     override fun onCancel(dialog: DialogInterface) {
-        viewModel.clearItem()
+        viewModel.clearContext()
         super.onCancel(dialog)
     }
 
     override fun dismiss() {
-        viewModel.clearItem()
+        viewModel.clearContext()
         super.dismiss()
     }
 

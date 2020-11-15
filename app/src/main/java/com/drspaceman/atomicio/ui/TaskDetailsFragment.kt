@@ -94,9 +94,9 @@ class TaskDetailsFragment : BaseDialogFragment() {
         spinnerImage.setImageResource(identity.typeResourceId)
 
         val habit = updateSpinner(habitSpinner, state.selectedHabitId)
-        if (!isTitleEdited) {
-            editTextTaskName.setText(habit.toString())
-        }
+//        if (!isTitleEdited) {
+//            editTextTaskName.setText(habit.toString())
+//        }
 
         editStartTime.setText(formatTime(state.task.startTime))
         editEndTime.setText(formatTime(state.task.endTime))

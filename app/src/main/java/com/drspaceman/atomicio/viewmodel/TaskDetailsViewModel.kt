@@ -22,42 +22,42 @@ constructor(
     HabitsViewModelInterface by habitsDelegate,
     IdentitiesViewModelInterface by identitiesDelegate {
 
-    private val _viewState = MediatorLiveData<TaskViewState>()
-    val viewState: LiveData<TaskViewState>
-        get() = _viewState
-
     private val task = MutableLiveData(TaskViewData())
 
     private var selectedIdentity = MutableLiveData<Long?>(null)
     private var selectedHabit: Long? = null
 
-    private val visibleHabits = MediatorLiveData<List<HabitViewData>>()
+    private val visibleHabits = MediatorLiveData<List<HabitViewData>>().apply {
+        value = listOf()
 
-    init {
-        _viewState.value = TaskLoading
-        visibleHabits.value = listOf()
-
-        visibleHabits.addSource(habits) {
+        addSource(habits) {
             refreshVisibleHabits()
         }
 
-        visibleHabits.addSource(selectedIdentity) {
+        addSource(selectedIdentity) {
             refreshVisibleHabits()
         }
+    }
 
-        _viewState.addSource(task) {
+    private val _viewState = MediatorLiveData<TaskViewState>().apply {
+        value = TaskLoading
+
+        addSource(task) {
             setSelectedHabit(it.habitId)
             refreshViewState()
         }
 
-        _viewState.addSource(visibleHabits) {
+        addSource(visibleHabits) {
             refreshViewState()
         }
 
-        _viewState.addSource(identities) {
+        addSource(identities) {
             refreshViewState()
         }
     }
+
+    val viewState: LiveData<TaskViewState>
+        get() = _viewState
 
     private fun refreshViewState() {
         if (!habitsDelegate.isLoaded || !identitiesDelegate.isLoaded) {
@@ -77,7 +77,7 @@ constructor(
         visibleHabits.value = if (selectedIdentity.value == null) {
             habits.value
         } else {
-            habits.value!!.filter { it.identityId == selectedIdentity.value }
+            habits.value?.filter { it.identityId == selectedIdentity.value }
         }
     }
 
@@ -85,7 +85,9 @@ constructor(
         task.value = TaskViewData.of(atomicIoRepo.getTask(taskId))
     }
 
-    override fun clearItem() {
+    override fun clearContext() {
+        selectedHabit = null
+        selectedIdentity.value = null
         task.value = TaskViewData()
     }
 

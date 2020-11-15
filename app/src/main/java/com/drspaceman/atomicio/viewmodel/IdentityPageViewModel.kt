@@ -149,7 +149,7 @@ constructor(
         }
     }
 
-    override fun clearItem() {
+    override fun clearContext() {
         _identity.value = getNewIdentityView()
     }
 
