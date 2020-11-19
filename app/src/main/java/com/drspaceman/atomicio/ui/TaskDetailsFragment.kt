@@ -84,8 +84,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
     }
 
     private fun renderForm(state: TaskLoaded) {
-        itemViewData = state.task // TODO remove
-        editTextTaskName.setText(state.task.title)
+        itemViewData = state.task
 
         (identitySpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.identities)
         (habitSpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.habits)
@@ -93,11 +92,9 @@ class TaskDetailsFragment : BaseDialogFragment() {
         val identity = updateSpinner(identitySpinner, state.selectedIdentityId)
         spinnerImage.setImageResource(identity.typeResourceId)
 
-        val habit = updateSpinner(habitSpinner, state.selectedHabitId)
-//        if (!isTitleEdited) {
-//            editTextTaskName.setText(habit.toString())
-//        }
+        updateSpinner(habitSpinner, state.selectedHabitId)
 
+        editTextTaskName.setText(state.task.title)
         editStartTime.setText(formatTime(state.task.startTime))
         editEndTime.setText(formatTime(state.task.endTime))
     }
@@ -121,6 +118,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
             return
         }
 
+        // TODO: move conversion into LocalTime into viewmodel?
         var pickedTime: LocalTime? = null
         var newHabitId: Long? = null
         if (data?.extras?.containsKey(TIME_PICKER_RESULT) == true) {
@@ -172,27 +170,14 @@ class TaskDetailsFragment : BaseDialogFragment() {
     override fun populateExistingValues() {}
 
     override fun saveItemDetails() {
-        val writeTaskView = itemViewData
+        itemViewData.title = editTextTaskName.text.toString()
 
-        // @todo: validate end > start
-        if (
-            editTextTaskName.text.isEmpty()
-            || editStartTime.text.isEmpty()
-            || editEndTime.text.isEmpty()
-        ) {
-            // @todo alert user of issue
+        if (!viewModel.isValid()) {
+            // TODO: show snackbar/toast
             return
         }
 
-
-        writeTaskView.title = editTextTaskName.text.toString()
-
-        writeTaskView.id?.let {
-            viewModel.updateTask(writeTaskView)
-        } ?: run {
-            viewModel.insertTask(writeTaskView)
-        }
-
+        viewModel.saveItem()
         dismiss()
     }
 

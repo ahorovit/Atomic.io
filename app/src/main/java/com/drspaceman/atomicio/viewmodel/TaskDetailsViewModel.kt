@@ -2,6 +2,7 @@ package com.drspaceman.atomicio.viewmodel
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.drspaceman.atomicio.isNull
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_ID
@@ -42,10 +43,10 @@ constructor(
     private val _viewState = MediatorLiveData<TaskViewState>().apply {
         value = TaskLoading
 
-        addSource(task) {
-            setSelectedHabit(it.habitId)
-            refreshViewState()
-        }
+//        addSource(task) {
+//            setSelectedHabit(it.habitId)
+//            refreshViewState()
+//        }
 
         addSource(visibleHabits) {
             refreshViewState()
@@ -82,7 +83,9 @@ constructor(
     }
 
     fun loadTask(taskId: Long) = viewModelScope.launch {
-        task.value = TaskViewData.of(atomicIoRepo.getTask(taskId))
+        val loadedTask = TaskViewData.of(atomicIoRepo.getTask(taskId))
+        task.value = loadedTask
+        setSelectedHabit(loadedTask.habitId)
     }
 
     override fun clearContext() {
@@ -91,18 +94,26 @@ constructor(
         task.value = TaskViewData()
     }
 
-    fun updateTask(writeTaskView: TaskViewData) {
-        GlobalScope.launch {
-            atomicIoRepo.updateTask(writeTaskView.toModel())
+    // TODO: bind isValid to activate/deactivate CRUD buttons
+    fun isValid(): Boolean {
+        task.value?.let{
+            return !(it.title.isNullOrEmpty()
+                    || it.startTime.isNull()
+                    || it.endTime.isNull())
         }
+
+        return false
     }
 
-    fun insertTask(newTaskViewData: TaskViewData) {
-        val task = newTaskViewData.toModel()
-//        task.agendaId = agenda.id
-
-        GlobalScope.launch {
-            atomicIoRepo.addTask(task)
+    fun saveItem() {
+        task.value?.let {
+            GlobalScope.launch {
+                if (it.id == null) {
+                    atomicIoRepo.addTask(it.toModel())
+                } else {
+                    atomicIoRepo.updateTask(it.toModel())
+                }
+            }
         }
     }
 
