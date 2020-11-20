@@ -1,6 +1,7 @@
 package com.drspaceman.atomicio.model
 
 import androidx.room.*
+import com.drspaceman.atomicio.adapter.DaySelection
 import org.threeten.bp.LocalTime
 
 @Entity(
