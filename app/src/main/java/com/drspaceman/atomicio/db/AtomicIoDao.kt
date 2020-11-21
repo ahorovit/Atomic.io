@@ -17,9 +17,6 @@ interface AtomicIoDao {
     @Query("SELECT * FROM Identity WHERE id = :identityId")
     fun loadIdentity(identityId: Long): Identity
 
-    @Query("SELECT * FROM Identity WHERE id = :identityId")
-    fun loadLiveIdentity(identityId: Long): LiveData<Identity>
-
     @Insert(onConflict = IGNORE)
     fun insertIdentity(identity: Identity): Long?
 
@@ -28,9 +25,6 @@ interface AtomicIoDao {
 
     @Delete
     fun deleteIdentity(identity: Identity)
-
-    @Query("DELETE FROM Identity WHERE id = :identityId")
-    fun deleteIdentityById(identityId: Long)
 
     @Query(
         "SELECT " +
@@ -69,9 +63,6 @@ interface AtomicIoDao {
     @Query("SELECT * FROM Habit WHERE id = :habitId")
     fun loadHabit(habitId: Long): Habit
 
-    @Query("SELECT * FROM Habit WHERE id = :habitId")
-    fun loadLiveHabit(habitId: Long): LiveData<Habit>
-
     @Insert(onConflict = IGNORE)
     fun insertHabit(habit: Habit): Long?
 
@@ -89,9 +80,6 @@ interface AtomicIoDao {
 
     @Insert(onConflict = IGNORE)
     fun insertTask(task: Task): Long?
-
-    @Query("SELECT * FROM Task WHERE id = :taskId")
-    fun loadLiveTask(taskId: Long): LiveData<Task>
 
     @Query("SELECT * FROM Task WHERE id = :taskId")
     fun loadTask(taskId: Long): Task

@@ -23,10 +23,6 @@ class AtomicIoRepository
 constructor(
     private val dao: AtomicIoDao
 ) {
-
-//    private var db = AtomicIoDatabase.getInstance(context)
-//    private var dao = db.atomicIoDao()
-
     // @todo: standardize
     val allIdentities: LiveData<List<Identity>>
         get() {
@@ -38,19 +34,11 @@ constructor(
             return dao.loadAllHabits()
         }
 
-    fun createIdentity(): Identity {
-        return Identity()
-    }
-
     fun addIdentity(identity: Identity): Long? {
         val newId = dao.insertIdentity(identity)
         identity.id = newId
 
         return newId
-    }
-
-    fun getLiveIdentity(identityId: Long): LiveData<Identity> {
-        return dao.loadLiveIdentity(identityId)
     }
 
     fun updateIdentity(identity: Identity) {
@@ -65,19 +53,11 @@ constructor(
         dao.deleteIdentity(identity)
     }
 
-    fun getLiveHabit(habitId: Long): LiveData<Habit> {
-        return dao.loadLiveHabit(habitId)
-    }
-
     fun updateHabit(habit: Habit) {
         dao.updateHabit(habit)
     }
 
     suspend fun getHabit(habitId: Long) = withContext(Dispatchers.IO) { dao.loadHabit(habitId) }
-
-    fun createHabit(): Habit {
-        return Habit()
-    }
 
     suspend fun addHabit(habit: Habit): Long? = withContext(Dispatchers.IO) {
         dao.insertHabit(habit)
@@ -87,19 +67,11 @@ constructor(
         dao.deleteHabit(habit)
     }
 
-    fun createTask(): Task {
-        return Task()
-    }
-
     fun addTask(task: Task): Long? {
         val newId = dao.insertTask(task)
         task.id = newId
 
         return newId
-    }
-
-    fun getLiveTask(taskId: Long): LiveData<Task> {
-        return dao.loadLiveTask(taskId)
     }
 
     suspend fun updateTask(task: Task) = withContext(Dispatchers.IO) { dao.updateTask(task) }
