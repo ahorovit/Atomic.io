@@ -2,10 +2,8 @@ package com.drspaceman.atomicio.viewmodel
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Task
 import com.drspaceman.atomicio.repository.AtomicIoRepository
-import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData.Companion
 import com.drspaceman.atomicio.viewstate.AgendaViewState
 import com.drspaceman.atomicio.viewstate.ChecklistViewLoaded
 import com.drspaceman.atomicio.viewstate.DayViewLoaded

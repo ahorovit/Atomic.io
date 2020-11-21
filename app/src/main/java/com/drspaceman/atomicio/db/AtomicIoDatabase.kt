@@ -11,8 +11,6 @@ import com.drspaceman.atomicio.model.*
     entities = [
         Identity::class,
         Habit::class,
-        Agenda::class,
-        TaskChain::class,
         Task::class
     ],
     version = 1

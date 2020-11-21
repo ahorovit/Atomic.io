@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.DaySelection
 import com.drspaceman.atomicio.db.AtomicIoDao
-import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.model.Task
@@ -108,16 +107,6 @@ constructor(
     suspend fun getTask(taskId: Long) = withContext(Dispatchers.IO) { dao.loadTask(taskId) }
 
     suspend fun deleteTask(task: Task) = withContext(Dispatchers.IO) { dao.deleteTask(task) }
-
-    suspend fun getAgendaForDate(date: LocalDate) = withContext(Dispatchers.IO) {
-        dao.getAgenda(date) ?: createAgendaForDate(date)
-    }
-
-    private suspend fun createAgendaForDate(date: LocalDate): Agenda {
-        val agenda = Agenda(date = date)
-        agenda.id = dao.insertAgenda(agenda)
-        return agenda
-    }
 
     suspend fun loadTasksForDay(day: DayOfWeek) = withContext(Dispatchers.IO) {
         dao.loadLiveTasksForDay(DaySelection.getDayMask(day))

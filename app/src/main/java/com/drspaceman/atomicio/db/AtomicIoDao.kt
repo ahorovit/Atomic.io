@@ -9,27 +9,7 @@ import org.threeten.bp.LocalDate
 
 @Dao
 interface AtomicIoDao {
-    @Query("SELECT * FROM TaskChain")
-    fun loadAllTaskChains(): LiveData<List<TaskChain>>
-
-    @Query("SELECT * FROM TaskChain WHERE id = :sequenceId")
-    fun loadTaskChain(sequenceId: Long): TaskChain
-
-    @Query("SELECT * FROM TaskChain WHERE id = :sequenceId")
-    fun loadLiveTaskChain(sequenceId: Long): LiveData<TaskChain>
-
-    @Insert(onConflict = IGNORE)
-    fun insertTaskChain(sequence: TaskChain)
-
-    @Update(onConflict = REPLACE)
-    fun updateTaskChain(sequence: TaskChain)
-
-    @Delete
-    fun deleteTaskChain(sequence: TaskChain)
-
-
     // @TODO: Break up DAOs?
-
 
     @Query("SELECT * FROM Identity ORDER BY name")
     fun loadAllIdentities(): LiveData<List<Identity>>
@@ -124,11 +104,4 @@ interface AtomicIoDao {
 
 
     // @TODO: Break up DAOs?
-
-
-    @Query("SELECT * from Agenda WHERE date = :date")
-    suspend fun getAgenda(date: LocalDate): Agenda?
-
-    @Insert(onConflict = IGNORE)
-    suspend fun insertAgenda(agenda: Agenda): Long?
 }
