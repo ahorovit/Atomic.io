@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Task
 import com.drspaceman.atomicio.repository.AtomicIoRepository
+import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData.Companion
 import com.drspaceman.atomicio.viewstate.AgendaViewState
 import com.drspaceman.atomicio.viewstate.ChecklistViewLoaded
 import com.drspaceman.atomicio.viewstate.DayViewLoaded
@@ -22,24 +23,22 @@ constructor(
     private val habitsDelegate: HabitsDelegate,
 ) : BaseViewModel(atomicIoRepo), HabitsViewModelInterface by habitsDelegate {
 
+    private lateinit var tasks: LiveData<List<Task>>
+
     private val _viewState = MediatorLiveData<AgendaViewState>().apply {
         value = AgendaLoading
 
         viewModelScope.launch {
-            agenda = atomicIoRepo.getAgendaForDate(LocalDate.now())
+            tasks = atomicIoRepo.loadTasksForDay(LocalDate.now().dayOfWeek)
 
-//            _viewState.addSource(Transformations.map(atomicIoRepo.getTasksForAgenda(agenda.id!!)) { repoTasks ->
-//                repoTasks.map { TaskViewData.of(it) }
-//            }) { refreshViewState(it) }
+            addSource(tasks) { repoTasks ->
+                refreshViewState(repoTasks.map { TaskViewData.of(it) })
+            }
         }
     }
 
-
     val viewState: LiveData<AgendaViewState>
         get() = _viewState
-
-    private lateinit var agenda: Agenda
-
 
     // @todo: remove
     private val _task = MutableLiveData(TaskViewData())

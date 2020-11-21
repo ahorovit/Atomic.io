@@ -2,7 +2,6 @@ package com.drspaceman.atomicio.viewmodel
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.db.AtomicIoDao.IdentityHabit
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
@@ -63,6 +62,7 @@ constructor(
         }
     }
 
+    // @todo: remove
     private val _identity = MutableLiveData<IdentityViewData>()
     val identity: LiveData<IdentityViewData>
         get() = _identity
@@ -143,30 +143,15 @@ constructor(
                 )
         }
 
-    fun loadIdentity(identityId: Long) {
-        viewModelScope.launch {
-            _identity.value = IdentityViewData.of(atomicIoRepo.getIdentity(identityId))
-        }
-    }
-
+    // @todo: remove
     override fun clearContext() {
         _identity.value = getNewIdentityView()
     }
 
+    // TODO: remove
     fun getNewIdentityView() = IdentityViewData(type = VIEWDATA_STUB_TYPE)
 
-    fun insertIdentity(newIdentityView: IdentityViewData) {
-        GlobalScope.launch {
-            atomicIoRepo.addIdentity(newIdentityView.toModel())
-        }
-    }
-
-    fun updateIdentity(identityViewData: IdentityViewData) {
-        GlobalScope.launch {
-            atomicIoRepo.updateIdentity(identityViewData.toModel())
-        }
-    }
-
+    // TODO: remove
     override fun deleteItem(itemViewData: BaseViewData) {
         itemViewData.id?.let {
             GlobalScope.launch {
@@ -175,22 +160,6 @@ constructor(
         }
     }
 
-    /**
-     * Identity spinner is a simple list of identity types (strings)
-     * @todo: move to Delegate?
-     */
-    fun getSpinnerItems(): List<String> {
-        return AtomicIoRepository.identityTypes
-    }
-
-    fun deleteIdentityAndHabits(identityViewData: IdentityViewData) {
-        identityViewData.id?.let {
-            GlobalScope.launch {
-                atomicIoRepo.deleteHabitsForIdentity(it)
-                deleteItem(identityViewData)
-            }
-        }
-    }
 
     /**
      * Supports Expandable List of Identity (Level1) with child Habits (Level2)
