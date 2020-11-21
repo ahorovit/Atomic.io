@@ -8,6 +8,8 @@ import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_habits.*
 
+
+// TODO: remove HAbit Page entirely
 @AndroidEntryPoint
 class HabitPageFragment : BasePageFragment() {
     override val viewModel by activityViewModels<HabitPageViewModel>()

@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 import com.drspaceman.atomicio.viewstate.IdentityLoaded
-import com.drspaceman.atomicio.viewstate.IdentityLoading
 import com.drspaceman.atomicio.viewstate.IdentityViewState
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

@@ -9,10 +9,13 @@ import androidx.fragment.app.activityViewModels
 
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
-import com.drspaceman.atomicio.viewmodel.HabitPageViewModel
+import com.drspaceman.atomicio.viewmodel.HabitDetailsViewModel
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
+import com.drspaceman.atomicio.viewstate.HabitLoaded
+import com.drspaceman.atomicio.viewstate.HabitLoading
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.details_dialog.*
 
 import kotlinx.android.synthetic.main.fragment_habit_details.*
 import kotlinx.android.synthetic.main.spinner_layout.*
@@ -21,7 +24,7 @@ import kotlinx.android.synthetic.main.spinner_layout.*
 class HabitDetailsFragment : BaseDialogFragment() {
     override val layoutId: Int = R.layout.fragment_habit_details
 
-    override val viewModel by activityViewModels<HabitPageViewModel>()
+    override val viewModel by activityViewModels<HabitDetailsViewModel>()
 
     override lateinit var itemViewData: HabitViewData
 
@@ -44,11 +47,17 @@ class HabitDetailsFragment : BaseDialogFragment() {
     }
 
     override fun setObservers() {
-        viewModel.getHabit(itemId, identityId).observe(
+
+        viewModel.viewState.observe(
             viewLifecycleOwner,
             {
-                itemViewData = it
-                populateExistingValues()
+                viewFlipper.displayedChild = when(it) {
+                    HabitLoading -> LOADING
+                    is HabitLoaded -> {
+                        itemViewData = it.habit
+                        DETAILS_FORM
+                    }
+                }
             }
         )
     }
@@ -72,7 +81,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
             val position = spinnerAdapter.getPosition(parentIdentityId)
 
             // @todo: figure out why occasionally image is [NA] null while selection text is correct
-            position?.let {
+            position.let {
                 spinner.setSelection(it)
                 spinnerImage.setImageResource(itemViewData.typeResourceId)
             }
@@ -167,6 +176,9 @@ class HabitDetailsFragment : BaseDialogFragment() {
     }
 
     companion object {
+
+        private const val LOADING = 0
+        private const val DETAILS_FORM = 1
 
         const val NEW_HABIT_RESULT = "new_habit_result"
         const val NEW_HABIT_REQUEST = 234
