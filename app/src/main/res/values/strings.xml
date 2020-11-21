@@ -21,7 +21,7 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="add_identity">Add Identity</string>
+    <string name="add_identity">+ Identity</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="habit_name_label">Habit Name</string>
@@ -49,5 +49,14 @@
     <string name="add_habit_icon">Add Habit Icon</string>
     <string name="edit_identity">Edit Identity</string>
     <string name="confirm_identity_delete">Delete Habits for this Identity?</string>
+    <string name="add_new_habit">Add New Habit</string>
+    <string name="add_habit">+ Habit</string>
+    <string name="habit_label">Habit</string>
+    <string name="view_as_checklist">View As Checklist</string>
+    <string name="agenda_fragment_title">Agenda</string>
+    <string name="identity_fragment_title">Identities/Habits</string>
+    <string name="export_template">Export Template</string>
+    <string name="import_template">Import Template</string>
+    <string name="identity">Identity</string>
 
 </resources>

@@ -8,8 +8,14 @@ import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter
 import com.drspaceman.atomicio.adapter.BaseRecyclerViewAdapter.EditItemListener
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
 
-abstract class BasePageFragment : Fragment(), EditItemListener {
+abstract class BasePageFragment : Fragment(), CoroutineScope, EditItemListener {
+
+    protected abstract val fragmentTitle: String
 
     protected abstract val layoutId: Int
 
@@ -17,7 +23,11 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
 
     protected lateinit var recyclerViewAdapter: BaseRecyclerViewAdapter
 
-    private lateinit var fab: FloatingActionButton
+    protected lateinit var fab: FloatingActionButton
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     protected abstract fun getEditDialogFragment(id: Long?): BaseDialogFragment
 
@@ -32,6 +42,9 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.title = fragmentTitle
+
         loadPageData()
 
         fab = view.findViewById(R.id.fab)
@@ -52,7 +65,6 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
         return super.onOptionsItemSelected(item)
     }
 
-
     protected fun showEditDetailsDialog(itemId: Long?) {
         val fragmentManager = activity?.supportFragmentManager ?: return
         val editDetailsFragment = getEditDialogFragment(itemId)
@@ -61,5 +73,10 @@ abstract class BasePageFragment : Fragment(), EditItemListener {
 
     override fun editItemDetails(itemId: Long?) {
         showEditDetailsDialog(itemId)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        job.cancel()
     }
 }

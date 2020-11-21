@@ -5,72 +5,105 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Spinner
 import androidx.fragment.app.activityViewModels
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
-import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
+import com.drspaceman.atomicio.ui.HabitDetailsFragment.Companion.NEW_HABIT_REQUEST
+import com.drspaceman.atomicio.ui.HabitDetailsFragment.Companion.NEW_HABIT_RESULT
+import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.END_TIME_REQUEST
+import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.START_TIME_REQUEST
+import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.TIME_PICKER_RESULT
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
-import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
+import com.drspaceman.atomicio.viewmodel.TaskDetailsViewModel
+import com.drspaceman.atomicio.viewstate.TaskLoaded
+import com.drspaceman.atomicio.viewstate.TaskLoading
+import kotlinx.android.synthetic.main.details_dialog.*
 
-import kotlinx.android.synthetic.main.fragment_task_details.*
-import kotlinx.android.synthetic.main.spinner_layout.*
+import kotlinx.android.synthetic.main.edit_task_form.*
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
 class TaskDetailsFragment : BaseDialogFragment() {
-    override val layoutId = R.layout.fragment_task_details
+    override val layoutId = R.layout.edit_task_form
 
     override val itemId: Long? by lazy {
         arguments?.getLong(ARG_TASK_ID, 0)
     }
 
-    override val viewModel by activityViewModels<AgendaPageViewModel>()
+    override val viewModel by activityViewModels<TaskDetailsViewModel>()
 
     override lateinit var itemViewData: TaskViewData
 
-    private var spinnerAdapter: ViewDataSpinnerAdapter? = null
-
     // If title has been manually edited, don't autofill habit name
+    // TODO: handle with viewModel
     private var isTitleEdited = false
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+//        habitSpinnerLabel.text = getString(R.string.habit_label)
+
+        newHabit.setOnClickListener {
+            showNewHabitDialog()
+        }
+
+        // TODO: default to NOW
+        editStartTime.setOnClickListener {
+            showTimePickerDialog(START_TIME_REQUEST)
+        }
+
+        // TODO: change to duration picker
+        editEndTime.setOnClickListener {
+            showTimePickerDialog(END_TIME_REQUEST)
+        }
+
+        // @todo: move to ViewModel
+        editTextTaskName.setOnKeyListener { _, _, _ ->
+            isTitleEdited = true
+            false
+        }
+    }
+
     override fun setObservers() {
-        viewModel.task.observe(
-            this,
-            {
-                itemViewData = it
-                populateExistingValues()
-            }
-        )
-
-        viewModel.habits.observe(
+        viewModel.viewState.observe(
             viewLifecycleOwner,
-            { habitViewData ->
-                spinnerAdapter?.let {
-                    it.setSpinnerItems(habitViewData)
-
-                    // This needs to run again in case the Fragment loaded before identities
-                    // were loaded
-                    setSpinnerSelection()
+            {
+                viewFlipper.displayedChild = when (it) {
+                    is TaskLoading -> {
+                        LOADING
+                    }
+                    is TaskLoaded -> {
+                        renderForm(it)
+                        DETAILS_FORM
+                    }
                 }
             }
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun renderForm(state: TaskLoaded) {
+        itemViewData = state.task
 
-        editStartTime.setOnClickListener {
-            showTimePickerDialog(TimePickerFragment.START_TIME_CODE)
-        }
+        (identitySpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.identities)
+        (habitSpinner.adapter as ViewDataSpinnerAdapter).setSpinnerItems(state.habits)
 
-        editEndTime.setOnClickListener {
-            showTimePickerDialog(TimePickerFragment.END_TIME_CODE)
-        }
+        val identity = updateSpinner(identitySpinner, state.selectedIdentityId)
+        spinnerImage.setImageResource(identity.typeResourceId)
 
-        editTextTaskName.setOnKeyListener { _, _, _ ->
-            isTitleEdited = true
-            false
-        }
+        updateSpinner(habitSpinner, state.selectedHabitId)
+
+        editTextTaskName.setText(state.task.title)
+        editStartTime.setText(formatTime(state.task.startTime))
+//        editEndTime.setText(formatTime(state.task.endTime))
+    }
+
+    private fun showNewHabitDialog() {
+        val fragmentManager = activity?.supportFragmentManager ?: return
+        val newHabitFragment = HabitDetailsFragment.newInstance(null)
+        newHabitFragment.setTargetFragment(this, NEW_HABIT_REQUEST)
+        newHabitFragment.show(fragmentManager, "${newHabitFragment::class}_tag")
     }
 
     private fun showTimePickerDialog(requestCode: Int) {
@@ -81,24 +114,36 @@ class TaskDetailsFragment : BaseDialogFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK
-            || data?.extras?.containsKey(TimePickerFragment.TIME_PICKER_RESULT) != true
-        ) {
+        if (resultCode != Activity.RESULT_OK) {
             return
         }
 
-        val pickedTime = LocalTime.parse(
-            data.extras?.getString(TimePickerFragment.TIME_PICKER_RESULT)
-        )
+        // TODO: move conversion into LocalTime into viewmodel?
+        var pickedTime: LocalTime? = null
+        var newHabitId: Long? = null
+        if (data?.extras?.containsKey(TIME_PICKER_RESULT) == true) {
+            pickedTime = LocalTime.parse(data.extras?.getString(TIME_PICKER_RESULT))
+        } else if (data?.extras?.containsKey(NEW_HABIT_RESULT) == true) {
+            newHabitId = data.extras?.getLong(NEW_HABIT_RESULT)
+        }
 
         when (requestCode) {
-            TimePickerFragment.START_TIME_CODE -> {
-                editStartTime.setText(formatTime(pickedTime))
-                itemViewData.startTime = pickedTime
+            START_TIME_REQUEST -> {
+                pickedTime?.let {
+                    editStartTime.setText(formatTime(pickedTime))
+                    itemViewData.startTime = pickedTime
+                }
             }
-            TimePickerFragment.END_TIME_CODE -> {
-                editEndTime.setText(formatTime(pickedTime))
-                itemViewData.endTime = pickedTime
+            END_TIME_REQUEST -> {
+                pickedTime?.let {
+                    editEndTime.setText(formatTime(pickedTime))
+//                    itemViewData.endTime = pickedTime
+                }
+            }
+            NEW_HABIT_REQUEST -> {
+                newHabitId?.let {
+                    viewModel.setParentHabit(it)
+                }
             }
         }
     }
@@ -116,108 +161,78 @@ class TaskDetailsFragment : BaseDialogFragment() {
         return displayTime
     }
 
-    override fun loadExistingItem(id: Long) {
-        viewModel.loadTask(id)
-    }
-
-    override fun populateExistingValues() {
-        itemViewData.let {
-            editTextTaskName.setText(it.title)
-            editStartTime.setText(formatTime(it.startTime))
-            editEndTime.setText(formatTime(it.endTime))
-            setSpinnerSelection()
-        }
-    }
+    // TODO: remove
+    override fun populateExistingValues() {}
 
     override fun saveItemDetails() {
-        val writeTaskView = itemViewData
+        itemViewData.title = editTextTaskName.text.toString()
 
-        // @todo: validate end > start
-        if (
-            editTextTaskName.text.isEmpty()
-            || editStartTime.text.isEmpty()
-            || editEndTime.text.isEmpty()
-        ) {
-            // @todo alert user of issue
+        if (!viewModel.isValid()) {
+            // TODO: show snackbar/toast
             return
         }
 
-
-        writeTaskView.title = editTextTaskName.text.toString()
-
-        writeTaskView.id?.let {
-            viewModel.updateTask(writeTaskView)
-        } ?: run {
-            viewModel.insertTask(writeTaskView)
-        }
-
+        viewModel.saveItem()
         dismiss()
     }
 
-    override fun getNewItem() {
-        itemViewData = viewModel.getNewTaskView()
+    /**
+     * Push change to spinner from ViewState --> We need to avoid triggering additional change
+     * to viewState because of the change (use tag)
+     */
+    private fun updateSpinner(spinner: Spinner, itemId: Long): SpinnerItemViewData {
+        val adapter = spinner.adapter as ViewDataSpinnerAdapter
+        val position = adapter.getPosition(itemId)
+        spinner.tag = position // avoid triggering onItemSelected() logic
+        spinner.setSelection(position)
+
+        return adapter.getItem(position) as SpinnerItemViewData
     }
 
     // @TODO: (mostly) duplicated from HabitDetailsFragment
-    override fun setSpinnerSelection() {
-        val task = itemViewData
+    override fun setSpinnerSelection() {}
 
-        task.habitId?.let { parentHabitId ->
-            val position = spinnerAdapter?.getViewDatumPosition(parentHabitId)
-
-            // @todo: figure out why occasionally image is [NA] null while selection text is correct
-            position?.let {
-                val habit = spinnerAdapter?.getItem(it) as HabitViewData
-
-                spinner.setSelection(it)
-                spinnerImage.setImageResource(habit.typeResourceId)
-                itemViewData.habitId = habit.id
-
-                if (!isTitleEdited) {
-                    editTextTaskName.setText(habit.name)
-                }
-
-            }
-        }
-    }
-
-    // @TODO: (mostly) duplicated from HabitDetailsFragment
     override fun populateTypeSpinner() {
-        initializeSpinnerAdapter()
+        val itemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                if (parent.tag == position) return
+                val item = parent.getItemAtPosition(position) as SpinnerItemViewData
 
-        spinner.post {
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val habit = parent.getItemAtPosition(position) as HabitViewData
-                    spinnerImage.setImageResource(habit.typeResourceId)
-                    if (!isTitleEdited) {
-                        editTextTaskName.setText(habit.name)
-                    }
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    // @todo: provide option to add identity if none exist yet
+                when (parent.id) {
+                    R.id.identitySpinner -> viewModel.setSelectedIdentity(item.id)
+                    R.id.habitSpinner -> viewModel.setSelectedHabit(item.id)
                 }
             }
-        }
-    }
 
-    // @TODO: duplicated from HabitDetailsFragment
-    private fun initializeSpinnerAdapter() {
-        spinnerAdapter = ViewDataSpinnerAdapter(
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // @todo: provide option to add identity if none exist yet
+            }
+        }
+
+        identitySpinner.onItemSelectedListener = itemSelectedListener
+        identitySpinner.adapter = ViewDataSpinnerAdapter(
             parentActivity,
-            android.R.layout.simple_spinner_item
+            android.R.layout.simple_spinner_item,
+            "Identity"
         )
 
-        spinner.adapter = spinnerAdapter
+        habitSpinner.onItemSelectedListener = itemSelectedListener
+        habitSpinner.adapter = ViewDataSpinnerAdapter(
+            parentActivity,
+            android.R.layout.simple_spinner_item,
+            "Habit"
+        )
     }
 
     companion object {
+        private const val LOADING = 0
+        private const val DETAILS_FORM = 1
+
         // @todo: could be communicated simply through the shared viewModel?
         private const val ARG_TASK_ID = "extra_task_id"
 

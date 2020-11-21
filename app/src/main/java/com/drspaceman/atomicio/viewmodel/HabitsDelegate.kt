@@ -13,17 +13,25 @@ class HabitsDelegate
 constructor(
     private val atomicIoRepo: AtomicIoRepository
 ) : ViewModel(), HabitsViewModelInterface {
+    var isLoaded = false
+
+    // @todo: use liveData builder
     private val _habits = MediatorLiveData<List<HabitViewData>>()
     override val habits: LiveData<List<HabitViewData>>
         get() = _habits
 
     init {
+        _habits.value = listOf()
+
         viewModelScope.launch {
             _habits.addSource(Transformations.map(atomicIoRepo.allHabits) { repoHabits ->
                 repoHabits.map { habit ->
                     HabitViewData.of(habit)
                 }
-            }) { habitViewData -> _habits.value = habitViewData }
+            }) { habitViewData ->
+                isLoaded = true
+                _habits.value = habitViewData
+            }
         }
     }
 }

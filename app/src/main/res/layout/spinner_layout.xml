@@ -10,8 +10,7 @@
     <TextView
         android:id="@+id/spinnerLabel"
         style="@style/FormLabel"
-        android:layout_weight="0.4"
-        android:text="@string/type_label" />
+        android:layout_weight="0.4" />
 
     <ImageView
         android:id="@+id/spinnerImage"

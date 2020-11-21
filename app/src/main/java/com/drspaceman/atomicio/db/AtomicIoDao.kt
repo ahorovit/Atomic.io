@@ -104,6 +104,8 @@ interface AtomicIoDao {
 
     // @TODO: Break up DAOs?
 
+    @Query("SELECT * FROM Task WHERE dayFlags & :dayMask > 0")
+    fun loadLiveTasksForDay(dayMask: Int): LiveData<List<Task>>
 
     @Insert(onConflict = IGNORE)
     fun insertTask(task: Task): Long?
@@ -113,9 +115,6 @@ interface AtomicIoDao {
 
     @Query("SELECT * FROM Task WHERE id = :taskId")
     fun loadTask(taskId: Long): Task
-
-    @Query("SELECT * FROM Task WHERE agendaId = :agendaId")
-    fun getTasksForAgenda(agendaId: Long?): LiveData<List<Task>>
 
     @Update(onConflict = REPLACE)
     fun updateTask(task: Task)

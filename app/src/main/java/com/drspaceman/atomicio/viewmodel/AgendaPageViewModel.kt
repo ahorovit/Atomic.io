@@ -5,6 +5,11 @@ import androidx.lifecycle.*
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Task
 import com.drspaceman.atomicio.repository.AtomicIoRepository
+import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData.Companion
+import com.drspaceman.atomicio.viewstate.AgendaViewState
+import com.drspaceman.atomicio.viewstate.ChecklistViewLoaded
+import com.drspaceman.atomicio.viewstate.DayViewLoaded
+import com.drspaceman.atomicio.viewstate.AgendaLoading
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
@@ -18,99 +23,108 @@ constructor(
     private val habitsDelegate: HabitsDelegate,
 ) : BaseViewModel(atomicIoRepo), HabitsViewModelInterface by habitsDelegate {
 
-    private lateinit var agenda: Agenda
+    private lateinit var tasks: LiveData<List<Task>>
 
-    private val _task = MutableLiveData<TaskViewData>()
-    val task
-        get() = _task
+    private val _viewState = MediatorLiveData<AgendaViewState>().apply {
+        value = AgendaLoading
 
-
-    private var _tasks = MediatorLiveData<List<TaskViewData>>()
-    val tasks: LiveData<List<TaskViewData>>
-        get() = _tasks
-
-    init {
         viewModelScope.launch {
-            agenda = atomicIoRepo.getAgendaForDate(LocalDate.now())
+            tasks = atomicIoRepo.loadTasksForDay(LocalDate.now().dayOfWeek)
 
-            agenda.id?.let { agendaId ->
-                _tasks.addSource(Transformations.map(atomicIoRepo.getTasksForAgenda(agendaId)) { repoTasks ->
-                    repoTasks.map {
-                        TaskViewData.of(it)
-                    }
-                }) { _tasks.value = it }
+            addSource(tasks) { repoTasks ->
+                refreshViewState(repoTasks.map { TaskViewData.of(it) })
             }
         }
     }
 
+    val viewState: LiveData<AgendaViewState>
+        get() = _viewState
+
+    // @todo: remove
+    private val _task = MutableLiveData(TaskViewData())
+    val task
+        get() = _task
+
+    private fun refreshViewState(tasks: List<TaskViewData>) {
+        val state = _viewState.value!!
+
+        _viewState.value = when (state) {
+            AgendaLoading -> getDefaultViewState(tasks)
+            is DayViewLoaded -> state.copy(tasks = tasks)
+            is ChecklistViewLoaded -> state.copy(tasks = tasks)
+        }
+    }
+
+    // TODO: access Settings for preferred view
+    private fun getDefaultViewState(tasks: List<TaskViewData>): AgendaViewState {
+        return DayViewLoaded(tasks)
+    }
+
+    fun toggleAgendaView() {
+        val state = _viewState.value!!
+
+        _viewState.value = when (state) {
+            AgendaLoading -> AgendaLoading
+            is DayViewLoaded -> ChecklistViewLoaded(state.tasks)
+            is ChecklistViewLoaded -> DayViewLoaded(state.tasks)
+        }
+    }
+
+    // @todo: remove
     fun loadTask(taskId: Long) = viewModelScope.launch {
         _task.value = TaskViewData.of(atomicIoRepo.getTask(taskId))
     }
 
-    override fun clearItem() {
-        _task.value = getNewTaskView()
-    }
+    // @todo: remove
+//    override fun clearContext() {
+//        _task.value = getNewTaskView()
+//    }
 
+    // @todo: remove
     fun getNewTaskView(): TaskViewData {
         return TaskViewData()
     }
 
+    // @todo: remove
     fun updateTask(writeTaskView: TaskViewData) {
         GlobalScope.launch {
             atomicIoRepo.updateTask(writeTaskView.toModel())
         }
     }
 
+    // @todo: remove
     fun insertTask(newTaskViewData: TaskViewData) {
         val task = newTaskViewData.toModel()
-        task.agendaId = agenda.id
 
         GlobalScope.launch {
             atomicIoRepo.addTask(task)
         }
     }
 
-    override fun deleteItem(itemViewData: BaseViewData) {
-        GlobalScope.launch {
-            val task = (itemViewData as TaskViewData).toModel()
-            atomicIoRepo.deleteTask(task)
-        }
-    }
-
+    // @todo: move to TaskDetailsViewModel
     data class TaskViewData(
         override var id: Long? = null,
         var habitId: Long? = null,
-        var agendaId: Long? = null,
         var title: String? = "",
-        var location: String? = "",
         var startTime: LocalTime? = null,
-        var endTime: LocalTime? = null
+        var duration: Int? = null
     ) : BaseViewData() {
         override fun toString() = title ?: ""
 
         override fun toModel() = Task(
             id,
             habitId,
-            agendaId,
             title,
-            location,
             startTime,
-            endTime
+            duration
         )
-
-        fun getDuration(): Int? {
-            return startTime?.until(endTime, ChronoUnit.MINUTES)?.toInt()
-        }
 
         companion object {
             fun of(task: Task) = TaskViewData(
                 task.id,
                 task.habitId,
-                task.agendaId,
-                task.title,
-                task.location,
+                task.name,
                 task.startTime,
-                task.endTime
             )
         }
     }

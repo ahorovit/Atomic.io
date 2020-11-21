@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         setupToolbar()
         setupBottomNavigationMenu()
+        openFragment(AgendaPageFragment.newInstance())
     }
 
     private fun setupToolbar() {
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
     private fun openFragment(fragment: Fragment) {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.mainFragmentContainer, fragment)
-        transaction.addToBackStack(null)
+//        transaction.addToBackStack(null)
         transaction.commit()
     }
 

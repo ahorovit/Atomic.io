@@ -3,15 +3,14 @@ package com.drspaceman.atomicio.ui
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import com.drspaceman.atomicio.R
+import com.drspaceman.atomicio.viewmodel.BaseDetailsViewModel
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 
-// @todo remove
-import kotlinx.android.synthetic.main.crud_buttons.*
+import kotlinx.android.synthetic.main.details_dialog.*
 
 abstract class BaseDialogFragment : DialogFragment() {
 
@@ -19,7 +18,7 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     protected abstract val itemId: Long?
 
-    protected abstract val viewModel: BaseViewModel
+    protected abstract val viewModel: BaseDetailsViewModel
 
     // @todo: make lateinit instead of nullable
     protected abstract val itemViewData: BaseViewModel.BaseViewData
@@ -28,15 +27,9 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     protected abstract fun setObservers()
 
-    // @todo: pull generic implementation down into base class
-    protected abstract fun loadExistingItem(id: Long)
-
     protected abstract fun populateExistingValues()
 
     protected abstract fun saveItemDetails()
-
-    // @todo: pull generic implementation into base class
-    protected abstract fun getNewItem()
 
     protected abstract fun setSpinnerSelection()
 
@@ -46,26 +39,50 @@ abstract class BaseDialogFragment : DialogFragment() {
 //        return R.style.AppTheme
 //    }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        setHasOptionsMenu(true)
+        super.onActivityCreated(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         setObservers()
-        return inflater.inflate(layoutId, container, false)
+        return inflater.inflate(R.layout.details_dialog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupDialogToolBar()
+
+        viewStub.layoutResource = layoutId
+        viewStub.inflate()
+
         populateTypeSpinner()
         loadDataItem()
+    }
 
-        saveButton.setOnClickListener {
-            saveItemDetails()
+    fun setupDialogToolBar() {
+        dialogToolBar.inflateMenu(R.menu.dialog_menu)
+        dialogToolBar.setNavigationIcon(R.drawable.ic_back)
+        dialogToolBar.setNavigationOnClickListener {
+            dismiss()
         }
 
-        deleteButton.setOnClickListener {
-            deleteSelectedItem()
+        dialogToolBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.saveButton -> {
+                    saveItemDetails()
+                    true
+                }
+                R.id.deleteButton -> {
+                    deleteSelectedItem()
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -85,23 +102,17 @@ abstract class BaseDialogFragment : DialogFragment() {
     }
 
     override fun onCancel(dialog: DialogInterface) {
-        viewModel.clearItem()
+        viewModel.clearContext()
         super.onCancel(dialog)
     }
 
     override fun dismiss() {
-        viewModel.clearItem()
+        viewModel.clearContext()
         super.dismiss()
     }
 
-    // @todo: move conditional logic into viewModel
     protected open fun loadDataItem() {
-        itemId?.let {
-            loadExistingItem(it)
-        } ?: run {
-            getNewItem()
-            setSpinnerSelection()
-        }
+        viewModel.loadItem(itemId)
     }
 
     protected open fun deleteSelectedItem() {
@@ -110,6 +121,7 @@ abstract class BaseDialogFragment : DialogFragment() {
     }
 
     interface SpinnerItemViewData {
+        var id: Long?
         var type: String?
         var typeResourceId: Int
     }

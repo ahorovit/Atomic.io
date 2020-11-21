@@ -2,14 +2,19 @@ package com.drspaceman.atomicio.repository
 
 import androidx.lifecycle.LiveData
 import com.drspaceman.atomicio.R
+import com.drspaceman.atomicio.adapter.DaySelection
 import com.drspaceman.atomicio.db.AtomicIoDao
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.model.Task
+import com.drspaceman.atomicio.viewmodel.BaseViewModel
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_IMAGE
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_TYPE
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
@@ -75,17 +80,13 @@ constructor(
         return Habit()
     }
 
-    fun addHabit(habit: Habit): Long? {
-        val newId = dao.insertHabit(habit)
-        habit.id = newId
-
-        return newId
+    suspend fun addHabit(habit: Habit): Long? = withContext(Dispatchers.IO) {
+        dao.insertHabit(habit)
     }
 
     fun deleteHabit(habit: Habit) {
         dao.deleteHabit(habit)
     }
-
 
     fun createTask(): Task {
         return Task()
@@ -118,8 +119,8 @@ constructor(
         return agenda
     }
 
-    suspend fun getTasksForAgenda(agendaId: Long) = withContext(Dispatchers.IO) {
-        dao.getTasksForAgenda(agendaId)
+    suspend fun loadTasksForDay(day: DayOfWeek) = withContext(Dispatchers.IO) {
+        dao.loadLiveTasksForDay(DaySelection.getDayMask(day))
     }
 
     suspend fun loadIdentityHabits() = withContext(Dispatchers.IO) {
@@ -143,7 +144,7 @@ constructor(
             "Friendship" to R.drawable.ic_friendship,
             "Wellness" to R.drawable.ic_health,
             "Mindset" to R.drawable.ic_mindset,
-            "Other" to R.drawable.ic_other,
+            VIEWDATA_STUB_TYPE to VIEWDATA_STUB_IMAGE,
             "Productivity" to R.drawable.ic_productivity,
             "Professional" to R.drawable.ic_professional,
             "Romantic" to R.drawable.ic_romantic
@@ -153,7 +154,7 @@ constructor(
             get() = ArrayList(allTypes.keys.sorted())
 
         fun getTypeResourceId(type: String?): Int {
-            return type?.let { allTypes[type] } ?: allTypes["Other"]!!
+            return type?.let { allTypes[type] } ?: VIEWDATA_STUB_IMAGE
         }
     }
 }

@@ -7,10 +7,13 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import com.drspaceman.atomicio.R
-import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel
+import com.drspaceman.atomicio.viewmodel.IdentityDetailsViewModel
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 import com.drspaceman.atomicio.viewmodel.SpinnerViewModelInterface
+import com.drspaceman.atomicio.viewstate.IdentityLoaded
+import com.drspaceman.atomicio.viewstate.IdentityLoading
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.details_dialog.*
 
 import kotlinx.android.synthetic.main.fragment_identity_details.*
 import kotlinx.android.synthetic.main.spinner_layout.*
@@ -26,22 +29,24 @@ class IdentityDetailsFragment : BaseDialogFragment() {
         arguments?.getLong(ARG_IDENTITY_ID, 0)
     }
 
-    override val viewModel by activityViewModels<IdentityPageViewModel>()
+    override val viewModel by activityViewModels<IdentityDetailsViewModel>()
 
     override lateinit var itemViewData: IdentityViewData
 
     override fun setObservers() {
-        viewModel.identity.observe(
+        viewModel.viewState.observe(
             this,
             {
-                itemViewData = it
-                populateExistingValues()
+                viewFlipper.displayedChild = when(it) {
+                    IdentityLoading -> LOADING
+                    is IdentityLoaded ->  {
+                        itemViewData = it.identity
+                        populateExistingValues()
+                        DETAILS_FORM
+                    }
+                }
             }
         )
-    }
-
-    override fun loadExistingItem(id: Long) {
-        viewModel.loadIdentity(id)
     }
 
     override fun populateExistingValues() {
@@ -49,10 +54,6 @@ class IdentityDetailsFragment : BaseDialogFragment() {
             editTextName.setText(it.name)
             setSpinnerSelection()
         }
-    }
-
-    override fun getNewItem() {
-        itemViewData = viewModel.getNewIdentityView()
     }
 
     override fun populateTypeSpinner() {
@@ -141,6 +142,9 @@ class IdentityDetailsFragment : BaseDialogFragment() {
 
     companion object {
         private const val ARG_IDENTITY_ID = "extra_identity_id"
+
+        private const val LOADING = 0
+        private const val DETAILS_FORM = 1
 
         fun newInstance(identityId: Long?): IdentityDetailsFragment {
             val instance = IdentityDetailsFragment()

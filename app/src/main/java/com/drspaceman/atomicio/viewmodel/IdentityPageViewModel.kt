@@ -2,16 +2,16 @@ package com.drspaceman.atomicio.viewmodel
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.db.AtomicIoDao.IdentityHabit
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.ui.BaseDialogFragment.SpinnerItemViewData
 import com.drspaceman.atomicio.ui.IdentityPageFragment
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_IMAGE
+import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_TYPE
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -61,6 +61,7 @@ constructor(
         }
     }
 
+    // @todo: remove
     private val _identity = MutableLiveData<IdentityViewData>()
     val identity: LiveData<IdentityViewData>
         get() = _identity
@@ -135,60 +136,11 @@ constructor(
                         IdentityPageFragment.MISC_HABITS_ID,
                         "Misc Habits",
                         null,
-                        "Other"
+                        VIEWDATA_STUB_TYPE
                     ),
                     orphanHabits.map { HabitViewData.of(it) }
                 )
         }
-
-    fun loadIdentity(identityId: Long) {
-        viewModelScope.launch {
-            _identity.value = IdentityViewData.of(atomicIoRepo.getIdentity(identityId))
-        }
-    }
-
-    override fun clearItem() {
-        _identity.value = getNewIdentityView()
-    }
-
-    fun getNewIdentityView() = IdentityViewData(type = "Other")
-
-    fun insertIdentity(newIdentityView: IdentityViewData) {
-        GlobalScope.launch {
-            atomicIoRepo.addIdentity(newIdentityView.toModel())
-        }
-    }
-
-    fun updateIdentity(identityViewData: IdentityViewData) {
-        GlobalScope.launch {
-            atomicIoRepo.updateIdentity(identityViewData.toModel())
-        }
-    }
-
-    override fun deleteItem(itemViewData: BaseViewData) {
-        itemViewData.id?.let {
-            GlobalScope.launch {
-                atomicIoRepo.deleteIdentity((itemViewData as IdentityViewData).toModel())
-            }
-        }
-    }
-
-    /**
-     * Identity spinner is a simple list of identity types (strings)
-     * @todo: move to Delegate?
-     */
-    fun getSpinnerItems(): List<String> {
-        return AtomicIoRepository.identityTypes
-    }
-
-    fun deleteIdentityAndHabits(identityViewData: IdentityViewData) {
-        identityViewData.id?.let {
-            GlobalScope.launch {
-                atomicIoRepo.deleteHabitsForIdentity(it)
-                deleteItem(identityViewData)
-            }
-        }
-    }
 
     /**
      * Supports Expandable List of Identity (Level1) with child Habits (Level2)
@@ -202,8 +154,8 @@ constructor(
         override var id: Long? = null,
         var name: String? = "",
         var description: String? = "",
-        override var type: String? = "",
-        override var typeResourceId: Int = R.drawable.ic_other
+        override var type: String? = VIEWDATA_STUB_TYPE,
+        override var typeResourceId: Int = VIEWDATA_STUB_IMAGE
     ) : BaseViewData(), SpinnerItemViewData {
 
         override fun toString(): String {
