@@ -38,11 +38,8 @@ constructor(
     }
 
     override fun clearContext() {
-        identity.value = getNewIdentityView()
+        identity.value = IdentityViewData()
     }
-
-    fun getNewIdentityView() =
-        IdentityViewData(type = ViewDataStub.VIEWDATA_STUB_TYPE)
 
 
     fun insertIdentity(newIdentityView: IdentityViewData) {
@@ -57,11 +54,9 @@ constructor(
         }
     }
 
-    override fun deleteItem(itemViewData: BaseViewData) {
+    override fun deleteItem(itemViewData: BaseViewData) = GlobalScope.launch {
         itemViewData.id?.let {
-            GlobalScope.launch {
-                atomicIoRepo.deleteIdentity((itemViewData as IdentityViewData).toModel())
-            }
+            atomicIoRepo.deleteIdentity((itemViewData as IdentityViewData).toModel())
         }
     }
 
@@ -81,5 +76,4 @@ constructor(
             }
         }
     }
-
 }

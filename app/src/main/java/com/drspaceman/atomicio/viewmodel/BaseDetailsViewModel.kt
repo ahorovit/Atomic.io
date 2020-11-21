@@ -8,7 +8,9 @@ abstract class BaseDetailsViewModel(atomicIoRepo: AtomicIoRepository) :
 
     abstract fun clearContext()
 
-    abstract fun deleteItem(itemViewData: BaseViewData)
+    abstract fun deleteItem(itemViewData: BaseViewData): Job
+
+    protected abstract fun loadExistingItem(id: Long): Job
 
     fun loadItem(id: Long?) {
         if (id == null) {
@@ -17,8 +19,4 @@ abstract class BaseDetailsViewModel(atomicIoRepo: AtomicIoRepository) :
             loadExistingItem(id)
         }
     }
-
-    // @todo: pull generic implementation down into base class
-    protected abstract fun loadExistingItem(id: Long): Job
-
 }

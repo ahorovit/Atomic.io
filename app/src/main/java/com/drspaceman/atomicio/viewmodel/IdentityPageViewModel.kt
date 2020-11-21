@@ -12,7 +12,6 @@ import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VI
 import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VIEWDATA_STUB_TYPE
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -155,7 +154,7 @@ constructor(
         override var id: Long? = null,
         var name: String? = "",
         var description: String? = "",
-        override var type: String? = "",
+        override var type: String? = VIEWDATA_STUB_TYPE,
         override var typeResourceId: Int = VIEWDATA_STUB_IMAGE
     ) : BaseViewData(), SpinnerItemViewData {
 

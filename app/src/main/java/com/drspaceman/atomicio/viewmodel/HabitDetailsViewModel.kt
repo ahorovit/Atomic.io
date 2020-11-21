@@ -59,10 +59,9 @@ constructor(
         _habit.value = HabitViewData.of(atomicIoRepo.getHabit(id))
     }
 
-    override fun deleteItem(itemViewData: BaseViewData) {
-        GlobalScope.launch {
-            val habit = (itemViewData as HabitViewData).toModel()
-            atomicIoRepo.deleteHabit(habit)
+    override fun deleteItem(itemViewData: BaseViewData) = GlobalScope.launch {
+        itemViewData.id?.let {
+            atomicIoRepo.deleteHabit((itemViewData as HabitViewData).toModel())
         }
     }
 
@@ -71,11 +70,9 @@ constructor(
         _newHabitId.value = null
     }
 
-    private fun updateHabit(habitViewData: HabitViewData) {
-        GlobalScope.launch {
-            val habit = habitViewData.toModel()
-            atomicIoRepo.updateHabit(habit)
-        }
+    private fun updateHabit(habitViewData: HabitViewData) = GlobalScope.launch {
+        val habit = habitViewData.toModel()
+        atomicIoRepo.updateHabit(habit)
     }
 
     fun saveHabitForReturnId(habitViewData: HabitViewData): LiveData<Long?> {
@@ -86,10 +83,8 @@ constructor(
         return _newHabitId
     }
 
-    private fun insertHabit(habitViewData: HabitViewData) {
-        GlobalScope.launch {
-            atomicIoRepo.addHabit(habitViewData.toModel())
-        }
+    private fun insertHabit(habitViewData: HabitViewData) = GlobalScope.launch {
+        atomicIoRepo.addHabit(habitViewData.toModel())
     }
 
     fun saveHabit(habitViewData: HabitViewData) {
@@ -99,6 +94,4 @@ constructor(
             insertHabit(habitViewData)
         }
     }
-
-
 }

@@ -43,11 +43,6 @@ constructor(
     private val _viewState = MediatorLiveData<TaskViewState>().apply {
         value = TaskLoading
 
-//        addSource(task) {
-//            setSelectedHabit(it.habitId)
-//            refreshViewState()
-//        }
-
         addSource(visibleHabits) {
             refreshViewState()
         }
@@ -96,7 +91,7 @@ constructor(
 
     // TODO: bind isValid to activate/deactivate CRUD buttons
     fun isValid(): Boolean {
-        task.value?.let{
+        task.value?.let {
             return !(it.title.isNullOrEmpty()
                     || it.startTime.isNull()
                     || it.duration.isNull())
@@ -105,22 +100,19 @@ constructor(
         return false
     }
 
-    fun saveItem() {
+    fun saveItem() = GlobalScope.launch {
         task.value?.let {
-            GlobalScope.launch {
-                if (it.id == null) {
-                    atomicIoRepo.addTask(it.toModel())
-                } else {
-                    atomicIoRepo.updateTask(it.toModel())
-                }
+            if (it.id == null) {
+                atomicIoRepo.addTask(it.toModel())
+            } else {
+                atomicIoRepo.updateTask(it.toModel())
             }
         }
     }
 
-    override fun deleteItem(itemViewData: BaseViewData) {
-        GlobalScope.launch {
-            val task = (itemViewData as TaskViewData).toModel()
-            atomicIoRepo.deleteTask(task)
+    override fun deleteItem(itemViewData: BaseViewData) = GlobalScope.launch {
+        itemViewData.id?.let {
+            atomicIoRepo.deleteTask((itemViewData as TaskViewData).toModel())
         }
     }
 
@@ -145,8 +137,12 @@ constructor(
     fun setSelectedHabit(habitId: Long?, propagate: Boolean = true) {
         when (habitId) {
             selectedHabit -> return
-            null -> { selectedHabit = null }
-            VIEWDATA_STUB_ID -> { selectedHabit = null }
+            null -> {
+                selectedHabit = null
+            }
+            VIEWDATA_STUB_ID -> {
+                selectedHabit = null
+            }
             else -> {
                 val identityId = habits.value?.first { it.id == habitId }?.identityId
                 selectedHabit = habitId
@@ -156,9 +152,5 @@ constructor(
                 }
             }
         }
-    }
-
-    fun getNewTaskView(): TaskViewData {
-        return TaskViewData()
     }
 }
