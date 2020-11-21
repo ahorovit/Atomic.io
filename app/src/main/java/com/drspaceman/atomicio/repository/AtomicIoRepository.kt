@@ -2,6 +2,7 @@ package com.drspaceman.atomicio.repository
 
 import androidx.lifecycle.LiveData
 import com.drspaceman.atomicio.R
+import com.drspaceman.atomicio.adapter.DaySelection
 import com.drspaceman.atomicio.db.AtomicIoDao
 import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
@@ -13,6 +14,7 @@ import com.drspaceman.atomicio.viewmodel.BaseViewModel.ViewDataStub.Companion.VI
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
@@ -117,8 +119,8 @@ constructor(
         return agenda
     }
 
-    suspend fun getTasksForAgenda(agendaId: Long) = withContext(Dispatchers.IO) {
-        dao.getTasksForAgenda(agendaId)
+    suspend fun loadTasksForDay(day: DayOfWeek) = withContext(Dispatchers.IO) {
+        dao.loadLiveTasksForDay(DaySelection.getDayMask(day))
     }
 
     suspend fun loadIdentityHabits() = withContext(Dispatchers.IO) {

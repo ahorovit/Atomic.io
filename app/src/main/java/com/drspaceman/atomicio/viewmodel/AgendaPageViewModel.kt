@@ -22,7 +22,19 @@ constructor(
     private val habitsDelegate: HabitsDelegate,
 ) : BaseViewModel(atomicIoRepo), HabitsViewModelInterface by habitsDelegate {
 
-    private val _viewState = MediatorLiveData<AgendaViewState>()
+    private val _viewState = MediatorLiveData<AgendaViewState>().apply {
+        value = AgendaLoading
+
+        viewModelScope.launch {
+            agenda = atomicIoRepo.getAgendaForDate(LocalDate.now())
+
+//            _viewState.addSource(Transformations.map(atomicIoRepo.getTasksForAgenda(agenda.id!!)) { repoTasks ->
+//                repoTasks.map { TaskViewData.of(it) }
+//            }) { refreshViewState(it) }
+        }
+    }
+
+
     val viewState: LiveData<AgendaViewState>
         get() = _viewState
 
@@ -33,18 +45,6 @@ constructor(
     private val _task = MutableLiveData(TaskViewData())
     val task
         get() = _task
-
-    init {
-        _viewState.value = AgendaLoading
-
-        viewModelScope.launch {
-            agenda = atomicIoRepo.getAgendaForDate(LocalDate.now())
-
-            _viewState.addSource(Transformations.map(atomicIoRepo.getTasksForAgenda(agenda.id!!)) { repoTasks ->
-                repoTasks.map { TaskViewData.of(it) }
-            }) { refreshViewState(it) }
-        }
-    }
 
     private fun refreshViewState(tasks: List<TaskViewData>) {
         val state = _viewState.value!!
@@ -96,7 +96,6 @@ constructor(
     // @todo: remove
     fun insertTask(newTaskViewData: TaskViewData) {
         val task = newTaskViewData.toModel()
-        task.agendaId = agenda.id
 
         GlobalScope.launch {
             atomicIoRepo.addTask(task)
@@ -121,37 +120,26 @@ constructor(
     data class TaskViewData(
         override var id: Long? = null,
         var habitId: Long? = null,
-        var agendaId: Long? = null,
         var title: String? = "",
-        var location: String? = "",
         var startTime: LocalTime? = null,
-        var endTime: LocalTime? = null
+        var duration: Int? = null
     ) : BaseViewData() {
         override fun toString() = title ?: ""
 
         override fun toModel() = Task(
             id,
             habitId,
-            agendaId,
             title,
-            location,
             startTime,
-            endTime
+            duration
         )
-
-        fun getDuration(): Int? {
-            return startTime?.until(endTime, ChronoUnit.MINUTES)?.toInt()
-        }
 
         companion object {
             fun of(task: Task) = TaskViewData(
                 task.id,
                 task.habitId,
-                task.agendaId,
-                task.title,
-                task.location,
+                task.name,
                 task.startTime,
-                task.endTime
             )
         }
     }

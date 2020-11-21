@@ -8,7 +8,7 @@ import org.threeten.bp.DayOfWeek
 class DaySelectionTest {
     @Test
     fun test_select_and_deselect_day() {
-        val daySelection = DaySelection(0)
+        val daySelection = DaySelection()
         val sunday = DayOfWeek.SUNDAY
 
         assertThat(daySelection.isDaySelected(sunday)).isFalse()
@@ -22,7 +22,7 @@ class DaySelectionTest {
 
     @Test
     fun test_toInt() {
-        val daySelection = DaySelection(0)
+        val daySelection = DaySelection()
         daySelection.selectDay(DayOfWeek.MONDAY)
         daySelection.selectDay(DayOfWeek.TUESDAY)
         daySelection.selectDay(DayOfWeek.WEDNESDAY)

@@ -16,7 +16,7 @@ class CheckListItem(
         viewHolder.apply {
 //            taskTypeImageView.setImageResource(taskViewData.) // @todo: hold typeResourceId
             taskLabelTextView.text = taskViewData.title
-            timesTextView.text = "${taskViewData.startTime} - ${taskViewData.endTime}"
+//            timesTextView.text = "${taskViewData.startTime} - ${taskViewData.endTime}"
         }
     }
 

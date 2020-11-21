@@ -201,7 +201,7 @@ class AgendaPageFragment : BasePageFragment() {
                 // The day view needs the event time ranges in the start minute/end minute format,
                 // so calculate those here
                 val startMinute: Int = 60 * task.startTime!!.hour + task.startTime!!.minute
-                val endMinute: Int = 60 * task.endTime!!.hour + task.endTime!!.minute
+                val endMinute: Int = startMinute + task.duration!!
                 taskTimeRanges.add(EventTimeRange(startMinute, endMinute))
             }
 

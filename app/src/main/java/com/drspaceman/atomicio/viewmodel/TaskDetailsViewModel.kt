@@ -99,7 +99,7 @@ constructor(
         task.value?.let{
             return !(it.title.isNullOrEmpty()
                     || it.startTime.isNull()
-                    || it.endTime.isNull())
+                    || it.duration.isNull())
         }
 
         return false

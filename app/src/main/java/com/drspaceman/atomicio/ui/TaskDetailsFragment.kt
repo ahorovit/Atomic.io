@@ -96,7 +96,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
         editTextTaskName.setText(state.task.title)
         editStartTime.setText(formatTime(state.task.startTime))
-        editEndTime.setText(formatTime(state.task.endTime))
+//        editEndTime.setText(formatTime(state.task.endTime))
     }
 
     private fun showNewHabitDialog() {
@@ -137,7 +137,7 @@ class TaskDetailsFragment : BaseDialogFragment() {
             END_TIME_REQUEST -> {
                 pickedTime?.let {
                     editEndTime.setText(formatTime(pickedTime))
-                    itemViewData.endTime = pickedTime
+//                    itemViewData.endTime = pickedTime
                 }
             }
             NEW_HABIT_REQUEST -> {

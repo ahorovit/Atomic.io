@@ -2,11 +2,11 @@ package com.drspaceman.atomicio.adapter
 
 import org.threeten.bp.DayOfWeek
 
-class DaySelection(private val dayBits: Int) {
+class DaySelection(private val dayBits: Int = 0) {
 
     private val selectedDays = mutableMapOf<DayOfWeek, Boolean>().apply {
         DAYS.forEach {
-            val isSelected = dayBits and (1 shl (it.value - 1))
+            val isSelected = dayBits and getDayMask(it)
             put(it, isSelected != 0)
         }
     }
@@ -26,7 +26,7 @@ class DaySelection(private val dayBits: Int) {
 
         DAYS.forEach {
             if (selectedDays[it] == true) {
-                result += (1 shl (it.value - 1))
+                result += getDayMask(it)
             }
         }
 
@@ -43,5 +43,9 @@ class DaySelection(private val dayBits: Int) {
             DayOfWeek.SATURDAY,
             DayOfWeek.SUNDAY
         )
+
+        fun getDayMask(day: DayOfWeek): Int {
+            return 1 shl (day.value - 1)
+        }
     }
 }
