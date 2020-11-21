@@ -19,7 +19,7 @@ constructor(
     atomicIoRepo: AtomicIoRepository,
     private val identitiesDelegate: IdentitiesDelegate,
     private val habitsDelegate: HabitsDelegate
-) : BaseViewModel(atomicIoRepo),
+) : BaseDetailsViewModel(atomicIoRepo),
     HabitsViewModelInterface by habitsDelegate,
     IdentitiesViewModelInterface by identitiesDelegate {
 
@@ -82,8 +82,8 @@ constructor(
         }
     }
 
-    fun loadTask(taskId: Long) = viewModelScope.launch {
-        val loadedTask = TaskViewData.of(atomicIoRepo.getTask(taskId))
+    override fun loadExistingItem(id: Long) = viewModelScope.launch {
+        val loadedTask = TaskViewData.of(atomicIoRepo.getTask(id))
         task.value = loadedTask
         setSelectedHabit(loadedTask.habitId)
     }

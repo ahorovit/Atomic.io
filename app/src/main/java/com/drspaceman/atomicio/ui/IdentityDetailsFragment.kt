@@ -49,19 +49,11 @@ class IdentityDetailsFragment : BaseDialogFragment() {
         )
     }
 
-    override fun loadExistingItem(id: Long) {
-        viewModel.loadIdentity(id)
-    }
-
     override fun populateExistingValues() {
         itemViewData.let {
             editTextName.setText(it.name)
             setSpinnerSelection()
         }
-    }
-
-    override fun getNewItem() {
-        itemViewData = viewModel.getNewIdentityView()
     }
 
     override fun populateTypeSpinner() {

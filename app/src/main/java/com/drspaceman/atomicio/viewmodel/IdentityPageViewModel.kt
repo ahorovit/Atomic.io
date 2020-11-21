@@ -143,24 +143,6 @@ constructor(
                 )
         }
 
-    // @todo: remove
-    override fun clearContext() {
-        _identity.value = getNewIdentityView()
-    }
-
-    // TODO: remove
-    fun getNewIdentityView() = IdentityViewData(type = VIEWDATA_STUB_TYPE)
-
-    // TODO: remove
-    override fun deleteItem(itemViewData: BaseViewData) {
-        itemViewData.id?.let {
-            GlobalScope.launch {
-                atomicIoRepo.deleteIdentity((itemViewData as IdentityViewData).toModel())
-            }
-        }
-    }
-
-
     /**
      * Supports Expandable List of Identity (Level1) with child Habits (Level2)
      */

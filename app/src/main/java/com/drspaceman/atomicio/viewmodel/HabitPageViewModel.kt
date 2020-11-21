@@ -26,17 +26,6 @@ constructor(
         TODO("Not yet implemented")
     }
 
-    override fun clearContext() {
-    }
-
-    // TODO remove
-    override fun deleteItem(itemViewData: BaseViewData) {
-        GlobalScope.launch {
-            val habit = (itemViewData as HabitViewData).toModel()
-            atomicIoRepo.deleteHabit(habit)
-        }
-    }
-
     data class HabitViewData(
         override var id: Long? = null,
         var identityId: Long? = null,

@@ -7,6 +7,7 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.drspaceman.atomicio.R
+import com.drspaceman.atomicio.viewmodel.BaseDetailsViewModel
 import com.drspaceman.atomicio.viewmodel.BaseViewModel
 
 import kotlinx.android.synthetic.main.details_dialog.*
@@ -17,7 +18,7 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     protected abstract val itemId: Long?
 
-    protected abstract val viewModel: BaseViewModel
+    protected abstract val viewModel: BaseDetailsViewModel
 
     // @todo: make lateinit instead of nullable
     protected abstract val itemViewData: BaseViewModel.BaseViewData
@@ -26,15 +27,9 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     protected abstract fun setObservers()
 
-    // @todo: pull generic implementation down into base class
-    protected abstract fun loadExistingItem(id: Long)
-
     protected abstract fun populateExistingValues()
 
     protected abstract fun saveItemDetails()
-
-    // @todo: pull generic implementation into base class
-    protected abstract fun getNewItem()
 
     protected abstract fun setSpinnerSelection()
 
@@ -116,14 +111,8 @@ abstract class BaseDialogFragment : DialogFragment() {
         super.dismiss()
     }
 
-    // @todo: move conditional logic into viewModel
     protected open fun loadDataItem() {
-        itemId?.let {
-            loadExistingItem(it)
-        } ?: run {
-            getNewItem()
-            setSpinnerSelection()
-        }
+        viewModel.loadItem(itemId)
     }
 
     protected open fun deleteSelectedItem() {

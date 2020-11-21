@@ -17,7 +17,7 @@ class IdentityDetailsViewModel
 constructor(
     atomicIoRepo: AtomicIoRepository,
     private val spinnerDelegate: SpinnerDelegate
-) : BaseViewModel(atomicIoRepo),
+) : BaseDetailsViewModel(atomicIoRepo),
     SpinnerViewModelInterface by spinnerDelegate {
 
     private val identity = MutableLiveData(IdentityViewData())
@@ -33,10 +33,8 @@ constructor(
         get() = _viewState
 
 
-    fun loadIdentity(identityId: Long) {
-        viewModelScope.launch {
-            identity.value = IdentityViewData.of(atomicIoRepo.getIdentity(identityId))
-        }
+    override fun loadExistingItem(id: Long) = viewModelScope.launch {
+        identity.value = IdentityViewData.of(atomicIoRepo.getIdentity(id))
     }
 
     override fun clearContext() {

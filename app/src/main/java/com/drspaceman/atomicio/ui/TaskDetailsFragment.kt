@@ -161,11 +161,6 @@ class TaskDetailsFragment : BaseDialogFragment() {
         return displayTime
     }
 
-    override fun loadExistingItem(id: Long) {
-        viewModel.loadTask(id)
-    }
-
-
     // TODO: remove
     override fun populateExistingValues() {}
 
@@ -179,10 +174,6 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
         viewModel.saveItem()
         dismiss()
-    }
-
-    override fun getNewItem() {
-        itemViewData = viewModel.getNewTaskView()
     }
 
     /**

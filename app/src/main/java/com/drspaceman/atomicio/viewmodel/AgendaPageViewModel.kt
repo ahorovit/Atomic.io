@@ -76,9 +76,9 @@ constructor(
     }
 
     // @todo: remove
-    override fun clearContext() {
-        _task.value = getNewTaskView()
-    }
+//    override fun clearContext() {
+//        _task.value = getNewTaskView()
+//    }
 
     // @todo: remove
     fun getNewTaskView(): TaskViewData {
@@ -100,20 +100,6 @@ constructor(
             atomicIoRepo.addTask(task)
         }
     }
-
-    // @todo: remove
-    override fun deleteItem(itemViewData: BaseViewData) {
-        GlobalScope.launch {
-            val task = (itemViewData as TaskViewData).toModel()
-            atomicIoRepo.deleteTask(task)
-        }
-    }
-
-    // @todo: remove
-    fun setParentHabit(habitId: Long) {
-        _task.value = _task.value?.copy(habitId = habitId)
-    }
-
 
     // @todo: move to TaskDetailsViewModel
     data class TaskViewData(

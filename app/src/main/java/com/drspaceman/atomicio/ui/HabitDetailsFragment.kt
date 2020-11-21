@@ -55,6 +55,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
                     HabitLoading -> LOADING
                     is HabitLoaded -> {
                         itemViewData = it.habit
+                        populateExistingValues()
                         DETAILS_FORM
                     }
                 }
@@ -62,22 +63,15 @@ class HabitDetailsFragment : BaseDialogFragment() {
         )
     }
 
-    // @todo: remove
-    override fun loadDataItem() {}
-
-    // @todo: remove
-    override fun loadExistingItem(id: Long) {}
-
     override fun populateExistingValues() {
         editTextHabitName.setText(itemViewData.name)
         setSpinnerSelection()
     }
 
-    // @todo: remove
-    override fun getNewItem() {}
-
     override fun setSpinnerSelection() {
-        itemViewData.identityId?.let { parentIdentityId ->
+        val identityId = itemViewData.identityId ?: identityId
+
+        identityId?.let { parentIdentityId ->
             val position = spinnerAdapter.getPosition(parentIdentityId)
 
             // @todo: figure out why occasionally image is [NA] null while selection text is correct
@@ -100,6 +94,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
                     id: Long
                 ) {
                     val identity = parent.getItemAtPosition(position) as IdentityViewData
+                    identityId = identity.id
                     spinnerImage.setImageResource(identity.typeResourceId)
                 }
 
