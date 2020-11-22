@@ -8,11 +8,9 @@ import com.drspaceman.atomicio.viewstate.AgendaViewState
 import com.drspaceman.atomicio.viewstate.ChecklistViewLoaded
 import com.drspaceman.atomicio.viewstate.DayViewLoaded
 import com.drspaceman.atomicio.viewstate.AgendaLoading
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
-import org.threeten.bp.temporal.ChronoUnit
 
 class AgendaPageViewModel
 @ViewModelInject
@@ -38,11 +36,6 @@ constructor(
     val viewState: LiveData<AgendaViewState>
         get() = _viewState
 
-    // @todo: remove
-    private val _task = MutableLiveData(TaskViewData())
-    val task
-        get() = _task
-
     private fun refreshViewState(tasks: List<TaskViewData>) {
         val state = _viewState.value!!
 
@@ -65,37 +58,6 @@ constructor(
             AgendaLoading -> AgendaLoading
             is DayViewLoaded -> ChecklistViewLoaded(state.tasks)
             is ChecklistViewLoaded -> DayViewLoaded(state.tasks)
-        }
-    }
-
-    // @todo: remove
-    fun loadTask(taskId: Long) = viewModelScope.launch {
-        _task.value = TaskViewData.of(atomicIoRepo.getTask(taskId))
-    }
-
-    // @todo: remove
-//    override fun clearContext() {
-//        _task.value = getNewTaskView()
-//    }
-
-    // @todo: remove
-    fun getNewTaskView(): TaskViewData {
-        return TaskViewData()
-    }
-
-    // @todo: remove
-    fun updateTask(writeTaskView: TaskViewData) {
-        GlobalScope.launch {
-            atomicIoRepo.updateTask(writeTaskView.toModel())
-        }
-    }
-
-    // @todo: remove
-    fun insertTask(newTaskViewData: TaskViewData) {
-        val task = newTaskViewData.toModel()
-
-        GlobalScope.launch {
-            atomicIoRepo.addTask(task)
         }
     }
 
