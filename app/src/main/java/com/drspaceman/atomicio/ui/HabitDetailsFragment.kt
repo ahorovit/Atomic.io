@@ -17,12 +17,11 @@ import com.drspaceman.atomicio.viewstate.HabitLoading
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.details_dialog.*
 
-import kotlinx.android.synthetic.main.fragment_habit_details.*
-import kotlinx.android.synthetic.main.spinner_layout.*
+import kotlinx.android.synthetic.main.edit_habit_form.*
 
 @AndroidEntryPoint
 class HabitDetailsFragment : BaseDialogFragment() {
-    override val layoutId: Int = R.layout.fragment_habit_details
+    override val layoutId: Int = R.layout.edit_habit_form
 
     override val viewModel by activityViewModels<HabitDetailsViewModel>()
 

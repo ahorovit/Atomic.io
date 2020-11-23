@@ -24,7 +24,7 @@
     <string name="add_identity">+ Identity</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
-    <string name="habit_name_label">Habit Name</string>
+    <string name="habit_name_label">Name</string>
     <string name="habit_hint">EG: Wake up at 6am</string>
     <string name="habit_identity_label">Identity (optional)</string>
     <string name="duration_label">Duration (min)</string>
@@ -58,5 +58,7 @@
     <string name="export_template">Export Template</string>
     <string name="import_template">Import Template</string>
     <string name="identity">Identity</string>
+    <string name="scheduled_tasks_header">Scheduled Tasks:</string>
+    <string name="schedule_new_task_button">Schedule New Task</string>
 
 </resources>
