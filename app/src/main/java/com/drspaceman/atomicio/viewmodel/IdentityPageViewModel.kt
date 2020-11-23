@@ -47,6 +47,7 @@ constructor(
         }
     }
 
+    // TODO: move into apply{} block(s)
     init {
         _identityHabits.value = Pair(listOf(),listOf())
 

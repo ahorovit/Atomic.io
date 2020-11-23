@@ -96,6 +96,10 @@ constructor(
         dao.deleteHabitsForIdentity(identityId)
     }
 
+    suspend fun loadTasksAndResults(day: DayOfWeek) = withContext(Dispatchers.IO) {
+        dao.loadTaskResultsForDay(DaySelection.getDayMask(day))
+    }
+
     companion object {
         private val allTypes = hashMapOf(
             "Academic" to R.drawable.ic_academic,

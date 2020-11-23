@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
 import com.drspaceman.atomicio.model.*
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalTime
 
 @Dao
 interface AtomicIoDao {
@@ -75,7 +76,7 @@ interface AtomicIoDao {
 
     // @TODO: Break up DAOs?
 
-    @Query("SELECT * FROM Task WHERE dayFlags & :dayMask > 0")
+    @Query("SELECT * FROM Task WHERE dayFlags & :dayMask != 0")
     fun loadLiveTasksForDay(dayMask: Int): LiveData<List<Task>>
 
     @Insert(onConflict = IGNORE)
@@ -92,4 +93,29 @@ interface AtomicIoDao {
 
 
     // @TODO: Break up DAOs?
+
+    @Query(
+        "SELECT " +
+                "task.*, " +
+                "result.id as resultId " +
+                "FROM Task task " +
+                "LEFT JOIN TaskResult result ON task.id = result.taskId " +
+                "WHERE dayFlags & :dayMask != 0 " +
+                "ORDER BY task.startTime ASC"
+    )
+    fun loadTaskResultsForDay(dayMask: Int): List<TaskAndResult>
+
+    data class TaskAndResult(
+        var id: Long?,
+        var habitId: Long?,
+        var name: String?,
+        var startTime: LocalTime?,
+        var duration: Int?,
+        var maxVal: Int?,
+        var dayFlags: Int?,
+        var resultId: Long?,
+    )
+
+    @Insert(onConflict = REPLACE)
+    fun saveTaskResults(results: List<TaskResult>)
 }
