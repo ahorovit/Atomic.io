@@ -58,7 +58,7 @@
         style="@style/FormLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/end_label"
+        android:text="@string/duration_label"
         app:layout_constraintBottom_toBottomOf="@+id/editEndTime"
         app:layout_constraintEnd_toStartOf="@+id/editEndTime"
         app:layout_constraintHorizontal_bias="0.5"
@@ -131,66 +131,13 @@
         app:layout_constraintStart_toEndOf="@+id/leftGuideline"
         app:layout_constraintTop_toBottomOf="@+id/identitySpinner" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
+    <include layout="@layout/day_selection"
+        android:id="@+id/daySelectionChipGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:chipSpacingHorizontal="-8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/repeatsText">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/sunday"
-            style="@style/ChoiceChip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="S" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/monday"
-            style="@style/ChoiceChip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="M" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/tuesday"
-            style="@style/ChoiceChip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="T" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/wednesday"
-            style="@style/ChoiceChip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="W" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/thursday"
-            style="@style/ChoiceChip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="T" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/friday"
-            style="@style/ChoiceChip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="F" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/saturday"
-            style="@style/ChoiceChip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="S" />
-
-    </com.google.android.material.chip.ChipGroup>
+        app:layout_constraintTop_toBottomOf="@+id/repeatsText"/>
 
     <Button
         android:id="@+id/newIdentity"
@@ -239,7 +186,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="Repeats..."
+        android:text="@string/repeats_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editStartTime" />
 
@@ -251,6 +198,6 @@
         android:layout_marginTop="16dp"
         android:text="Tracking..."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chipGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/daySelectionChipGroup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

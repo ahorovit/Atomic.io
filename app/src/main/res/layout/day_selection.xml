@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.chip.ChipGroup
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    app:chipSpacingHorizontal="-8dp">
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/sunday"
+        style="@style/ChoiceChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="S" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/monday"
+        style="@style/ChoiceChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="M" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/tuesday"
+        style="@style/ChoiceChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="T" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/wednesday"
+        style="@style/ChoiceChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="W" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/thursday"
+        style="@style/ChoiceChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="T" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/friday"
+        style="@style/ChoiceChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="F" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/saturday"
+        style="@style/ChoiceChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="S" />
+
+</com.google.android.material.chip.ChipGroup>

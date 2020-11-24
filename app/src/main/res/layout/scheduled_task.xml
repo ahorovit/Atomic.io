@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parentLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,36 +16,75 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/taskNameTextView"
+            android:id="@+id/startTime"
+            style="@style/FormLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start_label"
+            app:layout_constraintBottom_toBottomOf="@+id/editStartTime"
+            app:layout_constraintEnd_toStartOf="@+id/editStartTime"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/editStartTime"
+            style="@style/FormEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="Task Name"
-            android:textSize="20sp"
+            android:clickable="true"
+            android:focusable="false"
+            app:layout_constraintBottom_toBottomOf="@+id/durationLabel"
+            app:layout_constraintEnd_toStartOf="@+id/durationLabel"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/startTime" />
+
+        <TextView
+            android:id="@+id/durationLabel"
+            style="@style/FormLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/duration_label"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="@+id/editDuration"
+            app:layout_constraintEnd_toStartOf="@+id/editDuration"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/editStartTime" />
+
+        <EditText
+            android:id="@+id/editDuration"
+            style="@style/FormEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/durationLabel"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/startTimeTextView"
+            android:id="@+id/repeatsLabel"
+            style="@style/FormLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:text="7:00am"
-            app:layout_constraintStart_toStartOf="@id/taskNameTextView"
-            app:layout_constraintTop_toBottomOf="@id/taskNameTextView" />
+            android:text="@string/repeats_label"
+            app:layout_constraintBottom_toBottomOf="@+id/include"
+            app:layout_constraintEnd_toStartOf="@+id/include"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/include" />
 
-        <TextView
-            android:id="@+id/daysTextView"
+        <include
+            android:id="@+id/include"
+            layout="@layout/day_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="M Tu W Th F Sa Su"
-            app:layout_constraintStart_toEndOf="@id/startTimeTextView"
-            app:layout_constraintTop_toTopOf="@id/startTimeTextView" />
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/repeatsLabel"
+            app:layout_constraintTop_toBottomOf="@+id/editDuration" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
