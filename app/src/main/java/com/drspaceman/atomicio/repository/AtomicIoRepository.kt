@@ -100,6 +100,10 @@ constructor(
         dao.loadTaskResultsForDay(DaySelection.getDayMask(day))
     }
 
+    suspend fun loadTasksForHabit(habitId: Long) = withContext(Dispatchers.IO) {
+        dao.loadTasksForHabit(habitId)
+    }
+
     companion object {
         private val allTypes = hashMapOf(
             "Academic" to R.drawable.ic_academic,

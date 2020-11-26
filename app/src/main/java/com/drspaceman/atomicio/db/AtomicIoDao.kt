@@ -79,6 +79,9 @@ interface AtomicIoDao {
     @Query("SELECT * FROM Task WHERE dayFlags & :dayMask != 0")
     fun loadLiveTasksForDay(dayMask: Int): LiveData<List<Task>>
 
+    @Query("SELECT * FROM Task WHERE habitId = :habitId")
+    fun loadTasksForHabit(habitId: Long): List<Task>
+
     @Insert(onConflict = IGNORE)
     fun insertTask(task: Task): Long?
 
@@ -118,4 +121,6 @@ interface AtomicIoDao {
 
     @Insert(onConflict = REPLACE)
     fun saveTaskResults(results: List<TaskResult>)
+
+
 }

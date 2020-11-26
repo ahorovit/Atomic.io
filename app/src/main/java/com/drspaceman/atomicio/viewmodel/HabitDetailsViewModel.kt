@@ -6,6 +6,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.drspaceman.atomicio.repository.AtomicIoRepository
+import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewstate.HabitLoaded
 import com.drspaceman.atomicio.viewstate.HabitViewState
@@ -22,18 +23,41 @@ constructor(
     IdentitiesViewModelInterface by identitiesDelegate,
     SpinnerViewModelInterface by spinnerDelegate {
 
-    private val _habit = MutableLiveData(HabitViewData())
+    private val habit = MutableLiveData(HabitViewData())
 
-    private val _newHabitId = MutableLiveData<Long?>()
+    // TODO: this probably isn't the right way to do this
+    private val newHabitId = MutableLiveData<Long?>()
+
+    private val savedTasks = MutableLiveData<List<TaskViewData>>()
+
+    private fun loadSavedTasks() {
+        val habitId = habit.value?.id
+
+        if (habitId == null) {
+            savedTasks.value = listOf()
+        } else {
+            viewModelScope.launch {
+                savedTasks.value = atomicIoRepo.loadTasksForHabit(habitId).map { TaskViewData.of(it) }
+            }
+        }
+    }
+
+    // User may schedule tasks for a new habit that hasn't been saved yet
+    private val pendingTasks = mutableListOf<TaskViewData>()
 
     private val _viewState = MediatorLiveData<HabitViewState>().apply {
-        addSource(_habit) {
-            value = HabitLoaded(it)
+        addSource(habit) {
+            value = HabitLoaded(it, listOf()) // TODO: refreshForm()
         }
     }
 
     val viewState: LiveData<HabitViewState>
         get() = _viewState
+
+
+    init {
+        loadSavedTasks()
+    }
 
     /**
      * Habit Spinner is a list of parent Identities, so we need to observe with
@@ -49,14 +73,14 @@ constructor(
         if (habitId != null) {
             loadExistingItem(habitId)
         } else if (identityId != null) {
-            _habit.value = HabitViewData(identityId = identityId)
+            habit.value = HabitViewData(identityId = identityId)
         }
 
-        return _habit
+        return habit
     }
 
     override fun loadExistingItem(id: Long) = viewModelScope.launch {
-        _habit.value = HabitViewData.of(atomicIoRepo.getHabit(id))
+        habit.value = HabitViewData.of(atomicIoRepo.getHabit(id))
     }
 
     override fun deleteItem(itemViewData: BaseViewData) = GlobalScope.launch {
@@ -66,8 +90,8 @@ constructor(
     }
 
     override fun clearContext() {
-        _habit.value = HabitViewData()
-        _newHabitId.value = null
+        habit.value = HabitViewData()
+        newHabitId.value = null
     }
 
     private fun updateHabit(habitViewData: HabitViewData) = GlobalScope.launch {
@@ -77,10 +101,10 @@ constructor(
 
     fun saveHabitForReturnId(habitViewData: HabitViewData): LiveData<Long?> {
         viewModelScope.launch {
-            _newHabitId.value = atomicIoRepo.addHabit(habitViewData.toModel())
+            newHabitId.value = atomicIoRepo.addHabit(habitViewData.toModel())
         }
 
-        return _newHabitId
+        return newHabitId
     }
 
     private fun insertHabit(habitViewData: HabitViewData) = GlobalScope.launch {
