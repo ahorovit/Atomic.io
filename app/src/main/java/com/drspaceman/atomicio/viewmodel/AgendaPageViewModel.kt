@@ -1,5 +1,6 @@
 package com.drspaceman.atomicio.viewmodel
 
+import android.text.Editable
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.db.AtomicIoDao.TaskAndResult
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalTime
+import org.threeten.bp.format.DateTimeFormatter
 
 class AgendaPageViewModel
 @ViewModelInject
@@ -109,12 +111,30 @@ constructor(
             duration
         )
 
+        fun getStartTime(): String {
+            var timeString = ""
+
+            startTime?.let {
+                timeString = it.format(DateTimeFormatter.ofPattern("hh:mm a"))
+                if (timeString[0] == '0') {
+                    timeString = timeString.substring(1)
+                }
+            }
+
+            return timeString
+        }
+
+        fun getDuration(): String {
+            return duration?.toString() ?: ""
+        }
+
         companion object {
             fun of(task: Task) = TaskViewData(
                 task.id,
                 task.habitId,
                 task.name,
                 task.startTime,
+                task.duration
             )
         }
     }

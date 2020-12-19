@@ -6,18 +6,24 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.drspaceman.atomicio.R
+import com.drspaceman.atomicio.adapter.TaskListItem
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
 import com.drspaceman.atomicio.viewmodel.HabitDetailsViewModel
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
 import com.drspaceman.atomicio.viewstate.HabitLoaded
 import com.drspaceman.atomicio.viewstate.HabitLoading
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.details_dialog.*
+import kotlinx.android.synthetic.main.details_dialog.viewFlipper
 
 import kotlinx.android.synthetic.main.edit_habit_form.*
+import kotlinx.android.synthetic.main.fragment_agenda.*
 
 @AndroidEntryPoint
 class HabitDetailsFragment : BaseDialogFragment() {
@@ -28,6 +34,8 @@ class HabitDetailsFragment : BaseDialogFragment() {
     override lateinit var itemViewData: HabitViewData
 
     private lateinit var spinnerAdapter: ViewDataSpinnerAdapter
+
+    private var groupAdapter = GroupAdapter<GroupieViewHolder>()
 
     override var itemId: Long? = null
     var identityId: Long? = null
@@ -46,20 +54,38 @@ class HabitDetailsFragment : BaseDialogFragment() {
     }
 
     override fun setObservers() {
-
         viewModel.viewState.observe(
             viewLifecycleOwner,
-            {
-                viewFlipper.displayedChild = when(it) {
+            { viewState ->
+                viewFlipper.displayedChild = when(viewState) {
                     HabitLoading -> LOADING
                     is HabitLoaded -> {
-                        itemViewData = it.habit
+                        itemViewData = viewState.habit
                         populateExistingValues()
+
+                        groupAdapter.apply {
+                            clear()
+                            addAll(viewState.tasks.map { TaskListItem(it, this@HabitDetailsFragment) })
+                        }
+
                         DETAILS_FORM
                     }
                 }
             }
         )
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        newTaskButton.setOnClickListener {
+            viewModel.addNewTask()
+        }
+
+        taskRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = groupAdapter
+        }
     }
 
     override fun populateExistingValues() {

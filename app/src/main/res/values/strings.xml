@@ -27,7 +27,7 @@
     <string name="habit_name_label">Name</string>
     <string name="habit_hint">EG: Wake up at 6am</string>
     <string name="habit_identity_label">Identity (optional)</string>
-    <string name="duration_label">Duration<br>(min)</br></string>
+    <string name="duration_label">Duration</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <!-- TODO: Remove or change this placeholder text -->

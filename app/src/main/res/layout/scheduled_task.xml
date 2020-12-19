@@ -4,12 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parentLayout"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="2dp"
     app:cardBackgroundColor="@color/secondaryDarkColor"
-    app:cardElevation="4dp">
+    app:cardElevation="4dp"
+    android:padding="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/start_label"
-            app:layout_constraintBottom_toBottomOf="@+id/editStartTime"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toStartOf="@+id/editStartTime"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent" />
@@ -29,11 +30,12 @@
         <EditText
             android:id="@+id/editStartTime"
             style="@style/FormEditText"
-            android:layout_width="0dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="false"
-            app:layout_constraintBottom_toBottomOf="@+id/durationLabel"
+            android:maxEms="6"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toStartOf="@+id/durationLabel"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/startTime" />
@@ -45,7 +47,7 @@
             android:layout_height="wrap_content"
             android:text="@string/duration_label"
             android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="@+id/editDuration"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toStartOf="@+id/editDuration"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/editStartTime" />
@@ -53,14 +55,15 @@
         <EditText
             android:id="@+id/editDuration"
             style="@style/FormEditText"
-            android:layout_width="0dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="false"
+            android:maxEms="6"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/durationLabel"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/durationLabel" />
 
         <TextView
             android:id="@+id/repeatsLabel"
@@ -80,11 +83,17 @@
             layout="@layout/day_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/repeatsLabel"
             app:layout_constraintTop_toBottomOf="@+id/editDuration" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="36dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
