@@ -10,12 +10,13 @@ import androidx.fragment.app.DialogFragment
 import com.drspaceman.atomicio.R
 
 import kotlinx.android.synthetic.main.time_picker.*
+import kotlinx.coroutines.selects.select
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 
-class TimePickerFragment: DialogFragment() {
+class TimePickerFragment(initialTime: LocalTime?): DialogFragment() {
 
-    private var selectedTime = LocalTime.now()
+    var selectedTime: LocalTime = initialTime ?: LocalTime.now()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,6 +27,14 @@ class TimePickerFragment: DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            timePicker.hour = selectedTime.hour
+            timePicker.minute = selectedTime.minute
+        } else {
+            timePicker.currentHour = selectedTime.hour
+            timePicker.currentMinute = selectedTime.minute
+        }
 
         okButton.setOnClickListener {
             returnPickedTime()
@@ -59,8 +68,8 @@ class TimePickerFragment: DialogFragment() {
         const val START_TIME_REQUEST = 1
         const val END_TIME_REQUEST = 2
 
-        fun newInstance(): TimePickerFragment {
-            return TimePickerFragment()
+        fun newInstance(initialTime: LocalTime?): TimePickerFragment {
+            return TimePickerFragment(initialTime)
         }
     }
 }

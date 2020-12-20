@@ -207,7 +207,11 @@ class HabitDetailsFragment : BaseDialogFragment(), EditTaskListener {
 
     override fun pickTimeForTask(targetTask: TaskViewData, targetPosition: Int) {
         taskAwaiting = AwaitingTask(targetTask, targetPosition)
-        (activity as MainActivity).showTimePickerDialog(this, START_TIME_REQUEST)
+        (activity as MainActivity).showTimePickerDialog(
+            this,
+            START_TIME_REQUEST,
+            targetTask.startTime
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
