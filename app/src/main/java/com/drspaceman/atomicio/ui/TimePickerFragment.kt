@@ -10,7 +10,6 @@ import androidx.fragment.app.DialogFragment
 import com.drspaceman.atomicio.R
 
 import kotlinx.android.synthetic.main.time_picker.*
-import kotlinx.coroutines.selects.select
 import org.threeten.bp.LocalTime
 import org.threeten.bp.format.DateTimeFormatter
 

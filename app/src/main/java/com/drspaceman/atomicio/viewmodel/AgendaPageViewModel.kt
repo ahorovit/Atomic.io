@@ -134,6 +134,10 @@ constructor(
             return duration?.toString() ?: ""
         }
 
+        fun setDuration(durationString: String) {
+            duration = durationString.toIntOrNull()
+        }
+
         companion object {
             fun of(task: Task) = TaskViewData(
                 task.id,
