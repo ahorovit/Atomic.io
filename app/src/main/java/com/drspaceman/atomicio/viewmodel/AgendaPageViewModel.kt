@@ -111,6 +111,12 @@ constructor(
             duration
         )
 
+        fun setStartTime(pickedTime: String?) {
+            pickedTime?.let {
+                startTime = LocalTime.parse(it)
+            }
+        }
+
         fun getStartTime(): String {
             var timeString = ""
 

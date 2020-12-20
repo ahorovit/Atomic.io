@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.TaskListItem
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
+import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.START_TIME_REQUEST
+import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
+import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewmodel.HabitDetailsViewModel
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
@@ -23,10 +26,13 @@ import kotlinx.android.synthetic.main.details_dialog.*
 import kotlinx.android.synthetic.main.details_dialog.viewFlipper
 
 import kotlinx.android.synthetic.main.edit_habit_form.*
+import kotlinx.android.synthetic.main.edit_habit_form.spinnerImage
+import kotlinx.android.synthetic.main.edit_task_form.*
 import kotlinx.android.synthetic.main.fragment_agenda.*
+import org.threeten.bp.LocalTime
 
 @AndroidEntryPoint
-class HabitDetailsFragment : BaseDialogFragment() {
+class HabitDetailsFragment : BaseDialogFragment(), EditTaskListener {
     override val layoutId: Int = R.layout.edit_habit_form
 
     override val viewModel by activityViewModels<HabitDetailsViewModel>()
@@ -39,6 +45,8 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
     override var itemId: Long? = null
     var identityId: Long? = null
+
+    var taskAwaiting: AwaitingTask? = null
 
     override fun setArguments(args: Bundle?) {
         args?.let {
@@ -57,7 +65,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
         viewModel.viewState.observe(
             viewLifecycleOwner,
             { viewState ->
-                viewFlipper.displayedChild = when(viewState) {
+                viewFlipper.displayedChild = when (viewState) {
                     HabitLoading -> LOADING
                     is HabitLoaded -> {
                         itemViewData = viewState.habit
@@ -65,7 +73,9 @@ class HabitDetailsFragment : BaseDialogFragment() {
 
                         groupAdapter.apply {
                             clear()
-                            addAll(viewState.tasks.map { TaskListItem(it, this@HabitDetailsFragment) })
+                            addAll(viewState.tasks.map {
+                                TaskListItem(it, this@HabitDetailsFragment)
+                            })
                         }
 
                         DETAILS_FORM
@@ -136,7 +146,7 @@ class HabitDetailsFragment : BaseDialogFragment() {
      */
     private fun initializeSpinnerAdapter() {
         spinnerAdapter = ViewDataSpinnerAdapter(
-            parentActivity,
+            requireActivity(),
             android.R.layout.simple_spinner_item
         )
 
@@ -195,6 +205,29 @@ class HabitDetailsFragment : BaseDialogFragment() {
         )
     }
 
+    override fun pickTimeForTask(targetTask: TaskViewData, targetPosition: Int) {
+        taskAwaiting = AwaitingTask(targetTask, targetPosition)
+        (activity as MainActivity).showTimePickerDialog(this, START_TIME_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+
+        when (requestCode) {
+            START_TIME_REQUEST -> {
+                taskAwaiting?.let {
+                    it.task.setStartTime(
+                        data?.extras?.getString(TimePickerFragment.TIME_PICKER_RESULT)
+                    )
+
+                    groupAdapter.notifyItemChanged(it.position)
+                }
+            }
+        }
+    }
+
     companion object {
 
         private const val LOADING = 0
@@ -222,4 +255,10 @@ class HabitDetailsFragment : BaseDialogFragment() {
             return instance
         }
     }
+}
+
+data class AwaitingTask(val task: TaskViewData, val position: Int)
+
+interface EditTaskListener {
+    fun pickTimeForTask(targetTask: TaskViewData, targetPosition: Int)
 }

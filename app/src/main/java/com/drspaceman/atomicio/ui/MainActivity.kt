@@ -98,4 +98,11 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    fun showTimePickerDialog(targetFragment: Fragment, requestCode: Int) {
+        val fragmentManager = supportFragmentManager
+        val timePicker = TimePickerFragment.newInstance()
+        timePicker.setTargetFragment(targetFragment, requestCode)
+        timePicker.show(fragmentManager, "${timePicker::class}_tag")
+    }
 }

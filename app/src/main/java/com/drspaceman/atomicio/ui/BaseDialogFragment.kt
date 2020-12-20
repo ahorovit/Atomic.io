@@ -1,10 +1,8 @@
 package com.drspaceman.atomicio.ui
 
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.viewmodel.BaseDetailsViewModel
@@ -22,8 +20,6 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     // @todo: make lateinit instead of nullable
     protected abstract val itemViewData: BaseViewModel.BaseViewData
-
-    protected lateinit var parentActivity: AppCompatActivity
 
     protected abstract fun setObservers()
 
@@ -84,11 +80,6 @@ abstract class BaseDialogFragment : DialogFragment() {
                 else -> false
             }
         }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        parentActivity = context as AppCompatActivity
     }
 
     override fun onStart() {
