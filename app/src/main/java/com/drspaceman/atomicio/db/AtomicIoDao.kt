@@ -122,5 +122,7 @@ interface AtomicIoDao {
     @Insert(onConflict = REPLACE)
     fun saveTaskResults(results: List<TaskResult>)
 
+    @Insert(onConflict = REPLACE)
+    fun upsertTasks(tasksToSave: List<Task>)
 
 }

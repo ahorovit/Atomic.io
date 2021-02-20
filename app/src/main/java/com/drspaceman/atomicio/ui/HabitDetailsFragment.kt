@@ -12,24 +12,23 @@ import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.TaskListItem
 import com.drspaceman.atomicio.adapter.ViewDataSpinnerAdapter
 import com.drspaceman.atomicio.ui.TimePickerFragment.Companion.START_TIME_REQUEST
-import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewmodel.HabitDetailsViewModel
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
+import com.drspaceman.atomicio.viewstate.HabitCloseable
 import com.drspaceman.atomicio.viewstate.HabitLoaded
 import com.drspaceman.atomicio.viewstate.HabitLoading
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import dagger.hilt.android.AndroidEntryPoint
+
 import kotlinx.android.synthetic.main.details_dialog.*
 import kotlinx.android.synthetic.main.details_dialog.viewFlipper
-
 import kotlinx.android.synthetic.main.edit_habit_form.*
 import kotlinx.android.synthetic.main.edit_habit_form.spinnerImage
 import kotlinx.android.synthetic.main.edit_task_form.*
 import kotlinx.android.synthetic.main.fragment_agenda.*
-import org.threeten.bp.LocalTime
 
 @AndroidEntryPoint
 class HabitDetailsFragment : BaseDialogFragment(), EditTaskListener {
@@ -46,7 +45,7 @@ class HabitDetailsFragment : BaseDialogFragment(), EditTaskListener {
     override var itemId: Long? = null
     var identityId: Long? = null
 
-    var taskAwaiting: AwaitingTask? = null
+    var taskPickingTime: AwaitingTask? = null
 
     override fun setArguments(args: Bundle?) {
         args?.let {
@@ -79,6 +78,11 @@ class HabitDetailsFragment : BaseDialogFragment(), EditTaskListener {
                         }
 
                         DETAILS_FORM
+                    }
+                    is HabitCloseable -> {
+                        targetFragment?.let { returnNewHabitId(viewState.savedHabitId) }
+                        dismiss()
+                        LOADING
                     }
                 }
             }
@@ -143,6 +147,7 @@ class HabitDetailsFragment : BaseDialogFragment(), EditTaskListener {
     /**
      * Habit Spinner is a list of Identity names, so we must observe any changes to the
      * saved Identities in the DB
+     * todo: get Spinner Items from ViewState
      */
     private fun initializeSpinnerAdapter() {
         spinnerAdapter = ViewDataSpinnerAdapter(
@@ -165,48 +170,28 @@ class HabitDetailsFragment : BaseDialogFragment(), EditTaskListener {
     }
 
     override fun saveItemDetails() {
-        val writeHabitView = itemViewData
-
-        val name = editTextHabitName.text.toString()
-        if (name.isEmpty()) {
-            return
-        }
-
         val parentIdentity = spinner.selectedItem as IdentityViewData
-        writeHabitView.name = name
-        writeHabitView.identityId = parentIdentity.id
-        writeHabitView.type = parentIdentity.type
+        itemViewData.name = editTextHabitName.text.toString()
+        itemViewData.identityId = parentIdentity.id
+        itemViewData.type = parentIdentity.type
 
-        if (targetFragment == null) {
-            viewModel.saveHabit(itemViewData)
-            dismiss()
-        } else {
-            returnNewHabitId()
-        }
+        viewModel.attemptSave(itemViewData)
     }
 
     /**
      * TaskDetailFragment is waiting for the saved habit ID
      * --> We need to wait for the habit to be saved before we can dismiss the dialog
      */
-    private fun returnNewHabitId() {
-        viewModel.saveHabitForReturnId(itemViewData).observe(
-            viewLifecycleOwner,
-            {
-                it?.let {
-                    val bundle = Bundle()
-                    bundle.putLong(NEW_HABIT_RESULT, it)
+    private fun returnNewHabitId(newHabitId: Long) {
+        val bundle = Bundle()
+        bundle.putLong(NEW_HABIT_RESULT, newHabitId)
 
-                    val intent = Intent().putExtras(bundle)
-                    targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
-                    dismiss()
-                }
-            }
-        )
+        val intent = Intent().putExtras(bundle)
+        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
     }
 
     override fun pickTimeForTask(targetTask: TaskViewData, targetPosition: Int) {
-        taskAwaiting = AwaitingTask(targetTask, targetPosition)
+        taskPickingTime = AwaitingTask(targetTask, targetPosition)
         (activity as MainActivity).showTimePickerDialog(
             this,
             START_TIME_REQUEST,
@@ -221,12 +206,13 @@ class HabitDetailsFragment : BaseDialogFragment(), EditTaskListener {
 
         when (requestCode) {
             START_TIME_REQUEST -> {
-                taskAwaiting?.let {
+                taskPickingTime?.let {
                     it.task.setStartTime(
                         data?.extras?.getString(TimePickerFragment.TIME_PICKER_RESULT)
                     )
 
                     groupAdapter.notifyItemChanged(it.position)
+                    taskPickingTime = null
                 }
             }
         }

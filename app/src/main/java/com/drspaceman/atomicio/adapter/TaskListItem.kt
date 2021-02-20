@@ -1,8 +1,5 @@
 package com.drspaceman.atomicio.adapter
 
-import android.text.Editable
-import android.text.TextWatcher
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.ui.EditTaskListener
@@ -26,22 +23,6 @@ class TaskListItem(
 
             editDuration.setText(taskViewData.getDuration())
             editDuration.doAfterTextChanged { taskViewData.setDuration(it.toString()) }
-
-//            editDuration.addTextChangedListener(object : TextWatcher {
-//                override fun beforeTextChanged(
-//                    s: CharSequence?,
-//                    start: Int,
-//                    count: Int,
-//                    after: Int
-//                ) {}
-//
-//                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-//
-//                override fun afterTextChanged(s: Editable?) {
-//                    TODO("Not yet implemented")
-//                }
-//
-//            })
         }
     }
 

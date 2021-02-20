@@ -5,14 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.drspaceman.atomicio.isNull
+import com.drspaceman.atomicio.model.Task
 import com.drspaceman.atomicio.repository.AtomicIoRepository
 import com.drspaceman.atomicio.viewmodel.AgendaPageViewModel.TaskViewData
 import com.drspaceman.atomicio.viewmodel.HabitPageViewModel.HabitViewData
 import com.drspaceman.atomicio.viewmodel.IdentityPageViewModel.IdentityViewData
+import com.drspaceman.atomicio.viewstate.HabitCloseable
 import com.drspaceman.atomicio.viewstate.HabitLoaded
+import com.drspaceman.atomicio.viewstate.HabitLoading
 import com.drspaceman.atomicio.viewstate.HabitViewState
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+
 
 class HabitDetailsViewModel
 @ViewModelInject
@@ -90,16 +94,16 @@ constructor(
         }
     }
 
-
     fun addNewTask() {
         pendingTasks.add(TaskViewData())
         refreshViewState()
     }
 
-    private fun refreshViewState() {
+    private fun refreshViewState(errors: List<String>? = null) {
         _viewState.value = HabitLoaded(
             habit.value ?: HabitViewData(),
-            (savedTasks.value ?: listOf()) + pendingTasks
+            (savedTasks.value ?: listOf()) + pendingTasks,
+                errors
         )
     }
 
@@ -107,17 +111,67 @@ constructor(
         atomicIoRepo.addHabit(habitViewData.toModel())
     }
 
-    fun saveHabit(habitViewData: HabitViewData) {
-        if (habitViewData.id != null) {
-            updateHabit(habitViewData)
+    fun attemptSave(habitToSave: HabitViewData) = viewModelScope.launch {
+        _viewState.value = HabitLoading
+
+        val errors = validate(habitToSave)
+
+        if (errors.isEmpty()) {
+            _viewState.value = HabitCloseable(save(habitToSave))
         } else {
-            insertHabit(habitViewData)
+            refreshViewState(errors)
         }
     }
 
-    private fun updateHabit(habitViewData: HabitViewData) = GlobalScope.launch {
-        val habit = habitViewData.toModel()
-        atomicIoRepo.updateHabit(habit)
+    private suspend fun save(habitToSave: HabitViewData): Long {
+
+        val deferredId = viewModelScope.async {
+            if (habitToSave.id != null) {
+                atomicIoRepo.updateHabit(habitToSave.toModel())
+                habitToSave.id
+            } else {
+                atomicIoRepo.addHabit(habitToSave.toModel())
+            }
+        }
+
+        val savedHabitId  = deferredId.await() as Long
+
+        val tasksToSave = ((savedTasks.value ?: listOf()) + pendingTasks).map {
+            it.habitId = savedHabitId
+            it.toModel()
+        }
+
+        atomicIoRepo.upsertTasks(tasksToSave)
+
+        return savedHabitId
+    }
+
+    private fun validate(habitToSave: HabitViewData): List<String> {
+        val errors = mutableListOf<String>()
+
+        if (habitToSave.name.isNullOrEmpty()) {
+            errors.add("Habit name cannot be empty")
+        }
+        if (habitToSave.identityId.isNull()) {
+            errors.add("Parent Identity myst be selected")
+        }
+
+        val allTasks = (savedTasks.value ?: listOf()) + pendingTasks
+        allTasks.forEach { task ->
+            if(task.startTime.isNull()) {
+                errors.add("All scheduled Tasks must have a Start Time")
+            }
+
+            if(task.startTime.isNull()) {
+                errors.add("All scheduled Tasks must have an estimated duration")
+            }
+
+            if (task.dayFlags.isEmpty()) {
+                errors.add("All scheduled Tasks must have at least one day selected")
+            }
+        }
+
+        return errors.distinct()
     }
 
     fun saveHabitForReturnId(habitViewData: HabitViewData): LiveData<Long?> {
@@ -127,7 +181,6 @@ constructor(
 
         return newHabitId
     }
-
 
     override fun clearContext() {
         habit.value = HabitViewData()

@@ -3,6 +3,7 @@ package com.drspaceman.atomicio.viewmodel
 import android.text.Editable
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.drspaceman.atomicio.adapter.DaySelection
 import com.drspaceman.atomicio.db.AtomicIoDao.TaskAndResult
 import com.drspaceman.atomicio.model.Task
 import com.drspaceman.atomicio.model.TaskResultViewData
@@ -99,7 +100,8 @@ constructor(
         var habitId: Long? = null,
         var title: String? = "",
         var startTime: LocalTime? = null,
-        var duration: Int? = null
+        var duration: Int? = null,
+        var dayFlags: DaySelection = DaySelection(0)
     ) : BaseViewData() {
         override fun toString() = title ?: ""
 
@@ -108,7 +110,9 @@ constructor(
             habitId,
             title,
             startTime,
-            duration
+            duration,
+            0, // Todo: implement maxVal
+            dayFlags.toInt()
         )
 
         fun setStartTime(pickedTime: String?) {

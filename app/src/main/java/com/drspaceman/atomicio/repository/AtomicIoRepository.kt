@@ -104,6 +104,10 @@ constructor(
         dao.loadTasksForHabit(habitId)
     }
 
+    suspend fun upsertTasks(tasksToSave: List<Task>) = withContext(Dispatchers.IO) {
+        dao.upsertTasks(tasksToSave)
+    }
+
     companion object {
         private val allTypes = hashMapOf(
             "Academic" to R.drawable.ic_academic,

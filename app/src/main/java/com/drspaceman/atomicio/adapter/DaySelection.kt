@@ -33,6 +33,10 @@ class DaySelection(private val dayBits: Int = 0) {
         return result
     }
 
+    fun isEmpty(): Boolean {
+        return toInt() == 0
+    }
+
     companion object {
         val DAYS = listOf(
             DayOfWeek.MONDAY,
