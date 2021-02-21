@@ -64,9 +64,9 @@ constructor(
         get() = _viewState
 
 
-    init {
-        loadSavedTasks()
-    }
+//    init {
+//        loadSavedTasks()
+//    }
 
     fun getSpinnerItems(): LiveData<List<IdentityViewData>> {
         return identitiesDelegate.identities
@@ -86,6 +86,7 @@ constructor(
 
     override fun loadExistingItem(id: Long) = viewModelScope.launch {
         habit.value = HabitViewData.of(atomicIoRepo.getHabit(id))
+        loadSavedTasks()
     }
 
     override fun deleteItem(itemViewData: BaseViewData) = GlobalScope.launch {

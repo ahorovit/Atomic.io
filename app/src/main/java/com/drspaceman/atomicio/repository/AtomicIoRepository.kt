@@ -53,7 +53,7 @@ constructor(
         dao.deleteIdentity(identity)
     }
 
-    fun updateHabit(habit: Habit) {
+    suspend fun updateHabit(habit: Habit) = withContext(Dispatchers.IO) {
         dao.updateHabit(habit)
     }
 

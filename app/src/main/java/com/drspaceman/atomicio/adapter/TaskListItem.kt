@@ -8,6 +8,8 @@ import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 
 import kotlinx.android.synthetic.main.scheduled_task.*
+import kotlinx.android.synthetic.main.day_selection.*
+import org.threeten.bp.DayOfWeek
 
 
 class TaskListItem(
@@ -23,6 +25,27 @@ class TaskListItem(
 
             editDuration.setText(taskViewData.getDuration())
             editDuration.doAfterTextChanged { taskViewData.setDuration(it.toString()) }
+
+            val dayChips = listOf(
+                Pair(sunday, DayOfWeek.SUNDAY),
+                Pair(monday, DayOfWeek.MONDAY),
+                Pair(tuesday, DayOfWeek.TUESDAY),
+                Pair(wednesday, DayOfWeek.WEDNESDAY),
+                Pair(thursday, DayOfWeek.THURSDAY),
+                Pair(friday, DayOfWeek.FRIDAY),
+                Pair(saturday, DayOfWeek.SATURDAY),
+                Pair(sunday, DayOfWeek.SUNDAY)
+            )
+
+            dayChips.forEach {
+                val chip = it.first
+                val day = it.second
+
+                chip.isChecked = taskViewData.dayFlags.isDaySelected(day)
+                chip.setOnClickListener {
+                    taskViewData.dayFlags.toggleDay(day)
+                }
+            }
         }
     }
 

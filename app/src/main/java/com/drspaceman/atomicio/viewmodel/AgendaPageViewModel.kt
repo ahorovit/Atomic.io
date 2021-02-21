@@ -148,7 +148,8 @@ constructor(
                 task.habitId,
                 task.name,
                 task.startTime,
-                task.duration
+                task.duration,
+                DaySelection(task.dayFlags ?: 0)
             )
         }
     }
