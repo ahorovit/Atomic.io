@@ -1,5 +1,6 @@
 package com.drspaceman.atomicio.viewmodel
 
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.isNull
@@ -11,14 +12,15 @@ import com.drspaceman.atomicio.viewstate.TaskLoaded
 import com.drspaceman.atomicio.viewstate.TaskLoading
 import com.drspaceman.atomicio.viewstate.TaskViewState
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class TaskDetailsViewModel
 @ViewModelInject
 constructor(
     atomicIoRepo: AtomicIoRepository,
-    private val identitiesDelegate: IdentitiesDelegate,
-    private val habitsDelegate: HabitsDelegate
+    val identitiesDelegate: IdentitiesDelegate,
+    val habitsDelegate: HabitsDelegate
 ) : BaseDetailsViewModel(atomicIoRepo),
     HabitsViewModelInterface by habitsDelegate,
     IdentitiesViewModelInterface by identitiesDelegate {
@@ -80,6 +82,16 @@ constructor(
     override fun loadExistingItem(id: Long) = viewModelScope.launch {
         val loadedTask = TaskViewData.of(atomicIoRepo.getTask(id))
         task.value = loadedTask
+
+        // @todo: remove -- this is a hack
+        var count = 0
+        while (!habitsDelegate.isLoaded) {
+            if (++count > 5) throw Exception("Habits took too long to load")
+
+            Log.println(Log.INFO,"ViewModel","delay loading...")
+            delay(100)
+        }
+
         setSelectedHabit(loadedTask.habitId)
     }
 

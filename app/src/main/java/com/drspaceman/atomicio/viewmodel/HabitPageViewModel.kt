@@ -13,9 +13,9 @@ class HabitPageViewModel
 @ViewModelInject
 constructor(
     atomicIoRepo: AtomicIoRepository,
-    private val identitiesDelegate: IdentitiesDelegate,
-    private val habitsDelegate: HabitsDelegate,
-    private val spinnerDelegate: SpinnerDelegate
+    val identitiesDelegate: IdentitiesDelegate,
+    val habitsDelegate: HabitsDelegate,
+    val spinnerDelegate: SpinnerDelegate
 ) : BaseViewModel(atomicIoRepo),
     IdentitiesViewModelInterface by identitiesDelegate,
     HabitsViewModelInterface by habitsDelegate,

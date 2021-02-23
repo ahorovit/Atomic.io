@@ -1,6 +1,5 @@
 package com.drspaceman.atomicio.viewmodel
 
-import android.text.Editable
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.drspaceman.atomicio.adapter.DaySelection
@@ -23,7 +22,7 @@ class AgendaPageViewModel
 @ViewModelInject
 constructor(
     atomicIoRepo: AtomicIoRepository,
-    private val habitsDelegate: HabitsDelegate,
+    val habitsDelegate: HabitsDelegate,
 ) : BaseViewModel(atomicIoRepo), HabitsViewModelInterface by habitsDelegate {
 
     private val displayedDate = MutableLiveData<LocalDate>(LocalDate.now()) // TODO push date from UI when selecting tab

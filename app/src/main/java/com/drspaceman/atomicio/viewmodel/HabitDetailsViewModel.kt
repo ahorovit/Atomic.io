@@ -22,8 +22,8 @@ class HabitDetailsViewModel
 @ViewModelInject
 constructor(
     atomicIoRepo: AtomicIoRepository,
-    private val identitiesDelegate: IdentitiesDelegate,
-    private val spinnerDelegate: SpinnerDelegate
+    val identitiesDelegate: IdentitiesDelegate,
+    val spinnerDelegate: SpinnerDelegate
 ) : BaseDetailsViewModel(atomicIoRepo),
     IdentitiesViewModelInterface by identitiesDelegate,
     SpinnerViewModelInterface by spinnerDelegate {
