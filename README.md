@@ -1,6 +1,34 @@
-# Atomic.io Notes/Features
+# Atomic.io Overview
+
+The purpose of this app is to organize, plan, and track habits. Broadly inspired by concepts in  James Clear's [*Atomic Habits*](https://jamesclear.com/atomic-habits),
+a user of this app establishes Habits in order to realize an aspirational Identity. For example, habits around regular exercise
+and healthy eating could be grouped together under the identity "I am a Healthy Person." Or habits around studying and getting to bed 
+on time might be oriented toward an academic identity, like "I am an 'A' Student." The rationale for this approach is 
+thoroughly explained in the book, and is outside the scope of this README. But, because the app does not explain itself, I want
+to provide some context here.
+
+A MVP version (in progress) of this app will allow a user to create Identities (eg "Android Developer") with supporting 
+Habits (eg "Study Android Concepts"), which are scheduled as routine Tasks (eg "2 hours, at 6pm on MWF"). Once configured, these
+Identity > Habit > Task entities are automatically planned each day, and viewable as a Calendar or Checklist View for the day. 
+As the day progresses, the app will push notifications reminding the user to start a Task, and will allow tracking completion
+of those tasks. And of course, tracking progress requires some Analytics features, so the user can view their performance
+over time. 
+
+As of this date, these are the working components of the MVP:
+
+- [x] Create/Edit Identities
+- [x] Create/Edit Habits
+- [x] Create/Edit Tasks
+- [x] Populate daily agenda from configured Tasks
+- [x] Display Calendar View
+- [x] Display Checklist View
+- [ ] Push Notifications for Tasks
+- [ ] Input for completed tasks (eg "check off" items)
+- [ ] Analytics for Habit adherence
 
 ---
+# Notes/Features
+
 ## Layered Application
 
 ### `Room` persistence
@@ -33,7 +61,7 @@
   * Navigation/Layouts/Transitions/Menus all live here
   * Lifecycle is accounted for by `LiveData` objects exposed by `ViewModel`, which persists through config changes
   * Layout binding through Kotlin synthetic properties (which are now deprecated). @todo migrate to ViewBinding/Databinding or possibly Jetpack Compose
----
+
 ## Complex UI Features
 
 ### Responsive Loading/Loaded/Error states:
@@ -47,7 +75,7 @@
  - `Activity.supportFragmentManager` swaps 1Fragments1 via transactions @todo: migrate to Navigation Component and/or Declarative UI
  - `FAB` and `BottomNavigation` bar initiates changes in presented Fragment
 
-### Expandable `RecyclerView` showing Identity > Habit lists
+### Expandable `RecyclerView` showing `Identity` > `Habit` lists
  - `Groupie` library provides `ExpandableGroup` class
  - JOINed read provides full set of Identity/Habit relationships
    - Each `Identity` and its child `Habits` comprise a group 
