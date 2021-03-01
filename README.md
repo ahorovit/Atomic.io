@@ -14,20 +14,22 @@ As the day progresses, the app will push notifications reminding the user to sta
 of those tasks. And of course, tracking progress requires some Analytics features, so the user can view their performance
 over time. 
 
-As of this date, these are the working components of the MVP:
-
+## Progress to date of MVP Features:
 - [x] Create/Edit Identities
+  - [x] Group Identities into categories (eg Professional, Wellness, etc)
 - [x] Create/Edit Habits
-- [x] Create/Edit Tasks
-- [x] Populate daily agenda from configured Tasks
-- [x] Display Calendar View
+    - [x] Create/Edit Tasks
+- [x] Populate daily agenda automatically from configured Tasks
+- [ ] Display Calendar View
+    - [x] Represent tasks as blocks on a Google Calendar style screen (Tachyon library)
+    - [ ] Display task details in blocks
 - [x] Display Checklist View
+    - [ ] Input for completed tasks (eg "check off" items)
 - [ ] Push Notifications for Tasks
-- [ ] Input for completed tasks (eg "check off" items)
 - [ ] Analytics for Habit adherence
 
 ---
-# Notes/Features
+# Technical Notes
 
 ## Layered Application
 
@@ -88,3 +90,9 @@ As of this date, these are the working components of the MVP:
    - Results from changes in DetailDialog returned via `Intent/onActivityResult()`
  - Child Habits also have edit button (opens HabitDetailsDialog)
  - Placeholder “Add Habits” hint is shown for any expanded Identity without children
+
+### Dual Identity/Habit spinner selection
+ - Agenda FAB opens CRUD dialog for Task creation, with spinners for selecting Identity and Habit
+ - Selected Habit with no Identity updates Identity Selection
+ - Selected Identity filters Habit choices
+ - Change of selected Identity resets selected Habit
