@@ -6,39 +6,17 @@ import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
 import com.drspaceman.atomicio.model.*
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalTime
 
 @Dao
 interface AtomicIoDao {
-    @Query("SELECT * FROM TaskChain")
-    fun loadAllTaskChains(): LiveData<List<TaskChain>>
-
-    @Query("SELECT * FROM TaskChain WHERE id = :sequenceId")
-    fun loadTaskChain(sequenceId: Long): TaskChain
-
-    @Query("SELECT * FROM TaskChain WHERE id = :sequenceId")
-    fun loadLiveTaskChain(sequenceId: Long): LiveData<TaskChain>
-
-    @Insert(onConflict = IGNORE)
-    fun insertTaskChain(sequence: TaskChain)
-
-    @Update(onConflict = REPLACE)
-    fun updateTaskChain(sequence: TaskChain)
-
-    @Delete
-    fun deleteTaskChain(sequence: TaskChain)
-
-
     // @TODO: Break up DAOs?
-
 
     @Query("SELECT * FROM Identity ORDER BY name")
     fun loadAllIdentities(): LiveData<List<Identity>>
 
     @Query("SELECT * FROM Identity WHERE id = :identityId")
     fun loadIdentity(identityId: Long): Identity
-
-    @Query("SELECT * FROM Identity WHERE id = :identityId")
-    fun loadLiveIdentity(identityId: Long): LiveData<Identity>
 
     @Insert(onConflict = IGNORE)
     fun insertIdentity(identity: Identity): Long?
@@ -48,9 +26,6 @@ interface AtomicIoDao {
 
     @Delete
     fun deleteIdentity(identity: Identity)
-
-    @Query("DELETE FROM Identity WHERE id = :identityId")
-    fun deleteIdentityById(identityId: Long)
 
     @Query(
         "SELECT " +
@@ -89,9 +64,6 @@ interface AtomicIoDao {
     @Query("SELECT * FROM Habit WHERE id = :habitId")
     fun loadHabit(habitId: Long): Habit
 
-    @Query("SELECT * FROM Habit WHERE id = :habitId")
-    fun loadLiveHabit(habitId: Long): LiveData<Habit>
-
     @Insert(onConflict = IGNORE)
     fun insertHabit(habit: Habit): Long?
 
@@ -104,14 +76,14 @@ interface AtomicIoDao {
 
     // @TODO: Break up DAOs?
 
-    @Query("SELECT * FROM Task WHERE dayFlags & :dayMask > 0")
+    @Query("SELECT * FROM Task WHERE dayFlags & :dayMask != 0")
     fun loadLiveTasksForDay(dayMask: Int): LiveData<List<Task>>
+
+    @Query("SELECT * FROM Task WHERE habitId = :habitId")
+    fun loadTasksForHabit(habitId: Long): List<Task>
 
     @Insert(onConflict = IGNORE)
     fun insertTask(task: Task): Long?
-
-    @Query("SELECT * FROM Task WHERE id = :taskId")
-    fun loadLiveTask(taskId: Long): LiveData<Task>
 
     @Query("SELECT * FROM Task WHERE id = :taskId")
     fun loadTask(taskId: Long): Task
@@ -125,10 +97,32 @@ interface AtomicIoDao {
 
     // @TODO: Break up DAOs?
 
+    @Query(
+        "SELECT " +
+                "task.*, " +
+                "result.id as resultId " +
+                "FROM Task task " +
+                "LEFT JOIN TaskResult result ON task.id = result.taskId " +
+                "WHERE dayFlags & :dayMask != 0 " +
+                "ORDER BY task.startTime ASC"
+    )
+    fun loadTaskResultsForDay(dayMask: Int): List<TaskAndResult>
 
-    @Query("SELECT * from Agenda WHERE date = :date")
-    suspend fun getAgenda(date: LocalDate): Agenda?
+    data class TaskAndResult(
+        var id: Long?,
+        var habitId: Long?,
+        var name: String?,
+        var startTime: LocalTime?,
+        var duration: Int?,
+        var maxVal: Int?,
+        var dayFlags: Int?,
+        var resultId: Long?,
+    )
 
-    @Insert(onConflict = IGNORE)
-    suspend fun insertAgenda(agenda: Agenda): Long?
+    @Insert(onConflict = REPLACE)
+    fun saveTaskResults(results: List<TaskResult>)
+
+    @Insert(onConflict = REPLACE)
+    fun upsertTasks(tasksToSave: List<Task>)
+
 }

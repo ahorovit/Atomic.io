@@ -11,6 +11,7 @@ import com.drspaceman.atomicio.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.threeten.bp.LocalTime
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -97,5 +98,16 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun showTimePickerDialog(
+        targetFragment: Fragment,
+        requestCode: Int,
+        selectedTime: LocalTime? = null
+    ) {
+        val fragmentManager = supportFragmentManager
+        val timePicker = TimePickerFragment.newInstance(selectedTime)
+        timePicker.setTargetFragment(targetFragment, requestCode)
+        timePicker.show(fragmentManager, "${timePicker::class}_tag")
     }
 }

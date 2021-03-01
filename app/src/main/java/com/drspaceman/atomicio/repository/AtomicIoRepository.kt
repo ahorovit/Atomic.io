@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import com.drspaceman.atomicio.R
 import com.drspaceman.atomicio.adapter.DaySelection
 import com.drspaceman.atomicio.db.AtomicIoDao
-import com.drspaceman.atomicio.model.Agenda
 import com.drspaceman.atomicio.model.Habit
 import com.drspaceman.atomicio.model.Identity
 import com.drspaceman.atomicio.model.Task
@@ -24,10 +23,6 @@ class AtomicIoRepository
 constructor(
     private val dao: AtomicIoDao
 ) {
-
-//    private var db = AtomicIoDatabase.getInstance(context)
-//    private var dao = db.atomicIoDao()
-
     // @todo: standardize
     val allIdentities: LiveData<List<Identity>>
         get() {
@@ -39,19 +34,11 @@ constructor(
             return dao.loadAllHabits()
         }
 
-    fun createIdentity(): Identity {
-        return Identity()
-    }
-
     fun addIdentity(identity: Identity): Long? {
         val newId = dao.insertIdentity(identity)
         identity.id = newId
 
         return newId
-    }
-
-    fun getLiveIdentity(identityId: Long): LiveData<Identity> {
-        return dao.loadLiveIdentity(identityId)
     }
 
     fun updateIdentity(identity: Identity) {
@@ -66,19 +53,11 @@ constructor(
         dao.deleteIdentity(identity)
     }
 
-    fun getLiveHabit(habitId: Long): LiveData<Habit> {
-        return dao.loadLiveHabit(habitId)
-    }
-
-    fun updateHabit(habit: Habit) {
+    suspend fun updateHabit(habit: Habit) = withContext(Dispatchers.IO) {
         dao.updateHabit(habit)
     }
 
     suspend fun getHabit(habitId: Long) = withContext(Dispatchers.IO) { dao.loadHabit(habitId) }
-
-    fun createHabit(): Habit {
-        return Habit()
-    }
 
     suspend fun addHabit(habit: Habit): Long? = withContext(Dispatchers.IO) {
         dao.insertHabit(habit)
@@ -88,10 +67,6 @@ constructor(
         dao.deleteHabit(habit)
     }
 
-    fun createTask(): Task {
-        return Task()
-    }
-
     fun addTask(task: Task): Long? {
         val newId = dao.insertTask(task)
         task.id = newId
@@ -99,25 +74,11 @@ constructor(
         return newId
     }
 
-    fun getLiveTask(taskId: Long): LiveData<Task> {
-        return dao.loadLiveTask(taskId)
-    }
-
     suspend fun updateTask(task: Task) = withContext(Dispatchers.IO) { dao.updateTask(task) }
 
     suspend fun getTask(taskId: Long) = withContext(Dispatchers.IO) { dao.loadTask(taskId) }
 
     suspend fun deleteTask(task: Task) = withContext(Dispatchers.IO) { dao.deleteTask(task) }
-
-    suspend fun getAgendaForDate(date: LocalDate) = withContext(Dispatchers.IO) {
-        dao.getAgenda(date) ?: createAgendaForDate(date)
-    }
-
-    private suspend fun createAgendaForDate(date: LocalDate): Agenda {
-        val agenda = Agenda(date = date)
-        agenda.id = dao.insertAgenda(agenda)
-        return agenda
-    }
 
     suspend fun loadTasksForDay(day: DayOfWeek) = withContext(Dispatchers.IO) {
         dao.loadLiveTasksForDay(DaySelection.getDayMask(day))
@@ -133,6 +94,18 @@ constructor(
 
     suspend fun deleteHabitsForIdentity(identityId: Long) = withContext(Dispatchers.IO) {
         dao.deleteHabitsForIdentity(identityId)
+    }
+
+    suspend fun loadTasksAndResults(day: DayOfWeek) = withContext(Dispatchers.IO) {
+        dao.loadTaskResultsForDay(DaySelection.getDayMask(day))
+    }
+
+    suspend fun loadTasksForHabit(habitId: Long) = withContext(Dispatchers.IO) {
+        dao.loadTasksForHabit(habitId)
+    }
+
+    suspend fun upsertTasks(tasksToSave: List<Task>) = withContext(Dispatchers.IO) {
+        dao.upsertTasks(tasksToSave)
     }
 
     companion object {

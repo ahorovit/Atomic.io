@@ -19,8 +19,8 @@ class IdentityPageViewModel
 @ViewModelInject
 constructor(
     atomicIoRepo: AtomicIoRepository,
-    private val identitiesDelegate: IdentitiesDelegate,
-    private val spinnerDelegate: SpinnerDelegate
+    val identitiesDelegate: IdentitiesDelegate,
+    val spinnerDelegate: SpinnerDelegate
 ) : BaseViewModel(atomicIoRepo),
     IdentitiesViewModelInterface by identitiesDelegate,
     SpinnerViewModelInterface by spinnerDelegate {
@@ -47,6 +47,7 @@ constructor(
         }
     }
 
+    // TODO: move into apply{} block(s)
     init {
         _identityHabits.value = Pair(listOf(),listOf())
 

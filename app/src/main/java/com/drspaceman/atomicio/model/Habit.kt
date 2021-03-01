@@ -21,5 +21,5 @@ data class Habit(
     var identityId: Long? = null,
     var name: String? = "",
     var type: String? = "",
-    var duration: Int? = null
+    var duration: Int? = null // @todo: remove
 )

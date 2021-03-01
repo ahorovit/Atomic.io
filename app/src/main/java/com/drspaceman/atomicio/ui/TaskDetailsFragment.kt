@@ -51,12 +51,12 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
         // TODO: default to NOW
         editStartTime.setOnClickListener {
-            showTimePickerDialog(START_TIME_REQUEST)
+            (activity as MainActivity).showTimePickerDialog(this, START_TIME_REQUEST)
         }
 
         // TODO: change to duration picker
         editEndTime.setOnClickListener {
-            showTimePickerDialog(END_TIME_REQUEST)
+            (activity as MainActivity).showTimePickerDialog(this, END_TIME_REQUEST)
         }
 
         // @todo: move to ViewModel
@@ -106,12 +106,12 @@ class TaskDetailsFragment : BaseDialogFragment() {
         newHabitFragment.show(fragmentManager, "${newHabitFragment::class}_tag")
     }
 
-    private fun showTimePickerDialog(requestCode: Int) {
-        val fragmentManager = activity?.supportFragmentManager ?: return
-        val timePicker = TimePickerFragment.newInstance()
-        timePicker.setTargetFragment(this, requestCode)
-        timePicker.show(fragmentManager, "${timePicker::class}_tag")
-    }
+//    private fun showTimePickerDialog(requestCode: Int) {
+//        val fragmentManager = activity?.supportFragmentManager ?: return
+//        val timePicker = TimePickerFragment.newInstance()
+//        timePicker.setTargetFragment(this, requestCode)
+//        timePicker.show(fragmentManager, "${timePicker::class}_tag")
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_OK) {
@@ -216,14 +216,14 @@ class TaskDetailsFragment : BaseDialogFragment() {
 
         identitySpinner.onItemSelectedListener = itemSelectedListener
         identitySpinner.adapter = ViewDataSpinnerAdapter(
-            parentActivity,
+            requireActivity(),
             android.R.layout.simple_spinner_item,
             "Identity"
         )
 
         habitSpinner.onItemSelectedListener = itemSelectedListener
         habitSpinner.adapter = ViewDataSpinnerAdapter(
-            parentActivity,
+            requireActivity(),
             android.R.layout.simple_spinner_item,
             "Habit"
         )

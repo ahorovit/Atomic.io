@@ -21,6 +21,10 @@ class DaySelection(private val dayBits: Int = 0) {
         selectedDays[day] = false
     }
 
+    fun toggleDay(day: DayOfWeek) {
+        selectedDays[day] = !(selectedDays[day] ?: false)
+    }
+
     fun toInt(): Int {
         var result = 0
 
@@ -31,6 +35,10 @@ class DaySelection(private val dayBits: Int = 0) {
         }
 
         return result
+    }
+
+    fun isEmpty(): Boolean {
+        return toInt() == 0
     }
 
     companion object {

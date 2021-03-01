@@ -16,7 +16,7 @@ class IdentityDetailsViewModel
 @ViewModelInject
 constructor(
     atomicIoRepo: AtomicIoRepository,
-    private val spinnerDelegate: SpinnerDelegate
+    val spinnerDelegate: SpinnerDelegate
 ) : BaseDetailsViewModel(atomicIoRepo),
     SpinnerViewModelInterface by spinnerDelegate {
 

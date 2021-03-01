@@ -60,7 +60,7 @@ class IdentityDetailsFragment : BaseDialogFragment() {
         val spinnerViewModel = viewModel as SpinnerViewModelInterface
 
         spinnerAdapter = ArrayAdapter(
-            parentActivity,
+            requireActivity(),
             android.R.layout.simple_spinner_item,
             viewModel.getSpinnerItems()
         )
@@ -123,7 +123,7 @@ class IdentityDetailsFragment : BaseDialogFragment() {
 
     override fun deleteSelectedItem() {
         itemViewData.id?.let {
-            AlertDialog.Builder(parentActivity)
+            AlertDialog.Builder(requireActivity())
                 .setTitle(getString(R.string.confirm_identity_delete))
                 .setMessage("Child Habits will become 'Misc Habits' if not deleted")
                 .setPositiveButton("Delete Habits") { _, _ ->
