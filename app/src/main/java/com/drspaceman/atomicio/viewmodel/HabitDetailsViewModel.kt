@@ -63,11 +63,6 @@ constructor(
     val viewState: LiveData<HabitViewState>
         get() = _viewState
 
-
-//    init {
-//        loadSavedTasks()
-//    }
-
     fun getSpinnerItems(): LiveData<List<IdentityViewData>> {
         return identitiesDelegate.identities
     }
@@ -139,6 +134,7 @@ constructor(
 
         val tasksToSave = ((savedTasks.value ?: listOf()) + pendingTasks).map {
             it.habitId = savedHabitId
+            it.title = habitToSave.name
             it.toModel()
         }
 
